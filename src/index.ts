@@ -4,3 +4,7 @@ export {DeploymentInstanceInfo} from "./deployment-instance-info";
 export {RegistrationResult} from "./registration-result";
 export {AdmissionClient} from "./admission-client";
 export {Endpoint} from "./endpoint";
+export {
+  DeploymentModification,
+  ReconfigDeploymentModification,
+  ScalingDeploymentModification} from "./deployment-modification";

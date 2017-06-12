@@ -12,10 +12,6 @@ rm -rf $H/node_modules/acs-client/src/*
 cp -r $ACS/src/* $H/node_modules/acs-client/src
 
 cd $H
-for p in ./src ./tests;do
-  rm $p/*js
-  rm $p/*map
-done
-$H/node_modules/.bin/tsc -p $H/tsconfig.json
-node test/test.js
+npm run dist
+node dist/test/local-stamp-test.js
 

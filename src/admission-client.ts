@@ -1,5 +1,6 @@
 import Swagger = require("./swagger/api");
-import {Deployment, DeploymentInstanceInfo, DeploymentList, Endpoint, RegistrationResult } from ".";
+import {Deployment, DeploymentInstanceInfo, DeploymentList, 
+  Endpoint, RegistrationResult, DeploymentModification } from ".";
 import q = require("q");
 import Promise = q.Promise;
 
@@ -15,19 +16,28 @@ import Promise = q.Promise;
 //   extended
 // }
 
+/**
+ * Stub to give access to an ECloud admission instance.
+ */ 
 export class AdmissionClient {
 
   protected basePath: string;
   protected accessToken: string|undefined;
   protected api: Swagger.DefaultApi;
-
+  
+  /**
+   * 
+   * @param basePath  URL where admission is waiting requests. For example:
+   *  http://localhost:8090/admission
+   * @param accessToken ACS token with credentials for operating in the stamp.
+   */
   constructor(basePath: string, accessToken?: string) {
       this.basePath = basePath;
       this.accessToken = accessToken;
 
       this.api = new Swagger.DefaultApi(this.basePath);
       if (this.accessToken == null) {
-        // stuff to modify protected property and fix api error
+        // stuff to modify protected property and fix generated api error
         const free: any = this.api;
         free.authentications.apiAuthorization = new Swagger.VoidAuth();
       } else {
@@ -35,10 +45,20 @@ export class AdmissionClient {
       }
   }
 
+  /**
+   * Asynchronous initialization of the stub.
+   */
   public init(): q.Promise<void> {
     return q();
   }
 
+  /**
+   * Returns data of deployed services in system.
+   * @param urn urn of deployment whose data is needed. 
+   * If not provided, data about any accesible deployment is returned.
+   * @param owner Only the deployments whose owner matches the value 
+   * of the parameter are listed
+   */
   public findDeployments(urn?: string, owner?: string): Promise<{[key: string]: Deployment}> {
     const deferred = q.defer<{[key: string]: Deployment}>();
     this.api.findDeployments(urn, owner)
@@ -64,6 +84,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   *  Returns data of registered entities in the system.
+   *  These can be component, services, runtimes and resources.
+   */
   public findStorage(): Promise<string[]> {
     const deferred = q.defer<string[]>();
     this.api.registriesGet()
@@ -81,6 +105,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * Remove a registered entity based on its urn.
+   * @param urn  The urn of registered entity to be deleted.
+   */
   public removeStorage(urn: string): Promise<any> {
     const deferred = q.defer<any>();
     this.api.registriesUrnDelete(urn)
@@ -98,6 +126,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   *  Returns manifest of a registered entity based on its urn.
+   * @param urn The urn of registered entity to get its manifest.
+   */
   public getStorageManifest(urn: string): Promise<any> {
     const deferred = q.defer<any>();
     this.api.registriesGet(urn)
@@ -115,6 +147,14 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * Registers a set of bundles in the system. 
+   * At least one of the parameters must have a proper value.
+   * @param bundlesZip A zip with a set of bundles, each one of them in a different folder. 
+   * The structure of a bundle is documented in ECloud SDK manual, section 4.1.
+   * @param bundlesJson A Json file with a list of references to bundles. 
+   * The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
+   */
   public sendBundle(bundlesZip?: Buffer, bundlesJson?: Buffer): Promise<RegistrationResult> {
     const deferred = q.defer<RegistrationResult>();
     this.api.bundlesPost(bundlesZip, bundlesJson)
@@ -147,6 +187,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * Performs a new deployment in the system.
+   * @param buffer Deployment file following specification in ECloud Manual, section 4.
+   */
   public deploy(buffer: Buffer): Promise<DeploymentList> {
     const deferred = q.defer<DeploymentList>();
     this.api.deploymentsPost(buffer)
@@ -171,6 +215,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * Undeploys a deployment in the system.
+   * @param urn Urn of deployment to be undeployed
+   */
   public undeploy(urn: string): Promise<DeploymentInstanceInfo[]> {
     const deferred = q.defer<DeploymentInstanceInfo[]>();
     this.api.deploymentsDelete(urn)
@@ -195,6 +243,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * Creates a new link between two deployed services.
+   * @param endpoints An array of 2 elements with desired link endpoints data.
+   */
   public linkDeployments(endpoints: Endpoint[]): Promise<any> {
     const deferred = q.defer<any>();
     this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
@@ -212,6 +264,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * Removes a link between two services
+   * @param endpoints  An array of 2 elements with endpoints data of the link to be removed.
+   */
   public unlinkDeployments(endpoints: Endpoint[]): Promise<any> {
     const deferred = q.defer<any>();
     this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
@@ -229,9 +285,14 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
-  public configureDeployment(configuration: any): Promise<any> {
+  /**
+   *  Modifies the configuration of a deployed service.
+   * @param configuration Specification of the modification. Currently, two classes of modifications
+   *  are supported: ScalingDeploymentModification and ReconfigDeploymentModification.
+   */
+  public modifyDeployment(configuration: DeploymentModification): Promise<any> {
     const deferred = q.defer<any>();
-    this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration)))
+    this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration.generate())))
     .then((value) => {
       if (value.body.success) {
         const result: any = value.body.data;
@@ -246,6 +307,9 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * List current test contexts in the stamp.
+   */
   public listTestContexts(): Promise<string[]> {
     const deferred = q.defer<any>();
     this.api.testContextsGet()
@@ -263,6 +327,10 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
+  /**
+   * Removes a test context
+   * @param urn Identifier of the test context to be removed.
+   */
   public removeTestContext(urn: string): Promise<any> {
     const deferred = q.defer<any>();
     this.api.testContextsDelete(urn)
@@ -280,22 +348,6 @@ export class AdmissionClient {
     return deferred.promise;
   }
 
-  public scaleInstances(buffer: Buffer): Promise<any> {
-    const deferred = q.defer<any>();
-    this.api.scaleInstances(buffer)
-    .then((value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
-        deferred.resolve(result);
-      } else {
-        deferred.reject(new Error(value.body.message));
-      }
-    })
-    .catch((reason) => {
-      deferred.reject(reason);
-    });
-    return deferred.promise;
-    }
 }
 
 const mapDeploymentDefault = (urn: string, data: any): Deployment => {
