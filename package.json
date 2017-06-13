@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#ticket782",
+    "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#master",
     "bluebird": "3.5.0",
     "q": "1.5.0",
     "request": "2.81.0",
