@@ -1,6 +1,6 @@
 import Swagger = require("./swagger/api");
-import {Deployment, DeploymentInstanceInfo, DeploymentList, 
-  Endpoint, RegistrationResult, DeploymentModification } from ".";
+import {Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification,
+  Endpoint, RegistrationResult } from ".";
 import q = require("q");
 import Promise = q.Promise;
 
@@ -18,15 +18,15 @@ import Promise = q.Promise;
 
 /**
  * Stub to give access to an ECloud admission instance.
- */ 
+ */
 export class AdmissionClient {
 
   protected basePath: string;
   protected accessToken: string|undefined;
   protected api: Swagger.DefaultApi;
-  
+
   /**
-   * 
+   *
    * @param basePath  URL where admission is waiting requests. For example:
    *  http://localhost:8090/admission
    * @param accessToken ACS token with credentials for operating in the stamp.
@@ -54,9 +54,9 @@ export class AdmissionClient {
 
   /**
    * Returns data of deployed services in system.
-   * @param urn urn of deployment whose data is needed. 
+   * @param urn urn of deployment whose data is needed.
    * If not provided, data about any accesible deployment is returned.
-   * @param owner Only the deployments whose owner matches the value 
+   * @param owner Only the deployments whose owner matches the value
    * of the parameter are listed
    */
   public findDeployments(urn?: string, owner?: string): Promise<{[key: string]: Deployment}> {
@@ -148,11 +148,11 @@ export class AdmissionClient {
   }
 
   /**
-   * Registers a set of bundles in the system. 
+   * Registers a set of bundles in the system.
    * At least one of the parameters must have a proper value.
-   * @param bundlesZip A zip with a set of bundles, each one of them in a different folder. 
+   * @param bundlesZip A zip with a set of bundles, each one of them in a different folder.
    * The structure of a bundle is documented in ECloud SDK manual, section 4.1.
-   * @param bundlesJson A Json file with a list of references to bundles. 
+   * @param bundlesJson A Json file with a list of references to bundles.
    * The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
    */
   public sendBundle(bundlesZip?: Buffer, bundlesJson?: Buffer): Promise<RegistrationResult> {
