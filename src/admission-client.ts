@@ -32,17 +32,17 @@ export class AdmissionClient {
    * @param accessToken ACS token with credentials for operating in the stamp.
    */
   constructor(basePath: string, accessToken?: string) {
-      this.basePath = basePath;
-      this.accessToken = accessToken;
+    this.basePath = basePath;
+    this.accessToken = accessToken;
 
-      this.api = new Swagger.DefaultApi(this.basePath);
-      if (this.accessToken == null) {
-        // stuff to modify protected property and fix generated api error
-        const free: any = this.api;
-        free.authentications.apiAuthorization = new Swagger.VoidAuth();
-      } else {
-        this.api.accessToken = this.accessToken || "";
-      }
+    this.api = new Swagger.DefaultApi(this.basePath);
+    if (this.accessToken == null) {
+      // stuff to modify protected property and fix generated api error
+      const free: any = this.api;
+      free.authentications.apiAuthorization = new Swagger.VoidAuth();
+    } else {
+      this.api.accessToken = this.accessToken || "";
+    }
   }
 
   /**
