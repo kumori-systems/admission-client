@@ -1,7 +1,7 @@
 /// <reference types="q" />
 /// <reference types="node" />
 import Swagger = require("./swagger/api");
-import { Deployment, DeploymentInstanceInfo, DeploymentList, Endpoint, RegistrationResult, DeploymentModification } from ".";
+import { Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
 import q = require("q");
 import Promise = q.Promise;
 /**

@@ -3,8 +3,10 @@ import { AdmissionClient, Deployment} from "../src";
 let admission: AdmissionClient;
 
 admission = new AdmissionClient("http://localhost:8090/admission");
-
-admission.findDeployments()
+admission.init().
+then (()=> {
+  return admission.findDeployments();
+})
 .then((result: {[key: string]: Deployment}) => {
   console.log("Deployments");
   for (const k in result) {

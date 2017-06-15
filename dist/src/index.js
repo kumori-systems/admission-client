@@ -14,6 +14,4 @@ var endpoint_1 = require("./endpoint");
 exports.Endpoint = endpoint_1.Endpoint;
 var deployment_modification_1 = require("./deployment-modification");
 exports.DeploymentModification = deployment_modification_1.DeploymentModification;
-exports.ReconfigDeploymentModification = deployment_modification_1.ReconfigDeploymentModification;
-exports.ScalingDeploymentModification = deployment_modification_1.ScalingDeploymentModification;
 //# sourceMappingURL=index.js.map
