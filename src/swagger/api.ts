@@ -13,6 +13,8 @@
 import request = require('request');
 import http = require('http');
 import Promise = require('bluebird');
+import {ReadStream} from 'fs';
+import {stringify} from 'querystring'
 
 let defaultBasePath = 'http://admission-stability.osdmz.iti.es/admission';
 
@@ -189,7 +191,7 @@ export class DefaultApi {
      * @param bundlesZip A zip with a set of bundles, each one of them in a different folder. The structure of a bundle is documented in ECloud SDK manual, section 4.1.
      * @param bundlesJson A Json file with a list of references to bundles. The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
      */
-    public bundlesPost (bundlesZip?: Buffer, bundlesJson?: Buffer) : Promise<{ response: http.ClientResponse; body: InlineResponse200;  }> {
+    public bundlesPost (bundlesZip?: ReadStream, bundlesJson?: ReadStream) : Promise<{ response: http.ClientResponse; body: InlineResponse200;  }> {
         const localVarPath = this.basePath + '/bundles';
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -651,9 +653,8 @@ export class DefaultApi {
      * @param urn The urn of registered entity to be deleted.
      */
     public registriesUrnDelete (urn: string) : Promise<{ response: http.ClientResponse; body: InlineResponse2002;  }> {
-        const localVarPath = this.basePath + '/registries/{urn}'
-            .replace('{' + 'urn' + '}', String(urn));
-        let queryParameters: any = {};
+        const localVarPath = this.basePath + '/registries';
+        let queryParameters: any = {'urn': urn};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let formParams: any = {};
 

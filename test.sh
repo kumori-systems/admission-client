@@ -10,5 +10,5 @@ cp -r $ACS/dist/* $H/node_modules/acs-client/dist
 
 cd $H
 npm run dist|grep -v swagger
-node dist/test/local-stamp-test.js
+node dist/test/test.js
 

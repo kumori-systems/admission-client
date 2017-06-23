@@ -17,14 +17,17 @@
     "bluebird": "3.5.0",
     "q": "1.5.0",
     "request": "2.81.0",
-    "tslint-config-standard": "^5.0.2"
+    "socket.io-client": "2.0.3",
+    "typed-event-emitter": "^1.0.3"
   },
   "devDependencies": {
     "tslint": "5.4.3",
+    "tslint-config-standard": "5.0.2",
     "typescript": "2.3.3",
     "@types/request": "0.0.43",
     "@types/node": "7.0.22",
     "@types/bluebird": "3.5.4",
-    "@types/q": "1.0.0"
+    "@types/q": "1.0.0",
+    "@types/socket.io-client": "1.4.29"
   }
 }

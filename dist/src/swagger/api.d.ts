@@ -15,6 +15,7 @@
 import request = require('request');
 import http = require('http');
 import Promise = require('bluebird');
+import { ReadStream } from 'fs';
 export declare class Deployment {
     'service': string;
     'roles': {
@@ -133,7 +134,7 @@ export declare class DefaultApi {
      * @param bundlesZip A zip with a set of bundles, each one of them in a different folder. The structure of a bundle is documented in ECloud SDK manual, section 4.1.
      * @param bundlesJson A Json file with a list of references to bundles. The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
      */
-    bundlesPost(bundlesZip?: Buffer, bundlesJson?: Buffer): Promise<{
+    bundlesPost(bundlesZip?: ReadStream, bundlesJson?: ReadStream): Promise<{
         response: http.ClientResponse;
         body: InlineResponse200;
     }>;

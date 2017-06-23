@@ -1,16 +1,23 @@
 /// <reference types="q" />
 /// <reference types="node" />
 import Swagger = require("./swagger/api");
-import { Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
+import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
 import q = require("q");
 import Promise = q.Promise;
+import { EventEmitter, Listener } from "typed-event-emitter";
+import { ReadStream } from "fs";
 /**
  * Stub to give access to an ECloud admission instance.
  */
-export declare class AdmissionClient {
+export declare class AdmissionClient extends EventEmitter {
+    onConnected: (handler: () => any) => Listener;
+    onDisconnected: (handler: () => any) => Listener;
+    onEcloudEvent: (handler: (event: AdmissionEvent) => any) => Listener;
+    onError: (handler: (reason: any) => any) => Listener;
     protected basePath: string;
     protected accessToken: string | undefined;
     protected api: Swagger.DefaultApi;
+    private ws;
     /**
      *
      * @param basePath  URL where admission is waiting requests. For example:
@@ -22,6 +29,7 @@ export declare class AdmissionClient {
      * Asynchronous initialization of the stub.
      */
     init(): q.Promise<void>;
+    close(): void;
     /**
      * Returns data of deployed services in system.
      * @param urn urn of deployment whose data is needed.
@@ -50,15 +58,18 @@ export declare class AdmissionClient {
     /**
      * Registers a set of bundles in the system.
      * At least one of the parameters must have a proper value.
-     * @param bundlesZip A zip with a set of bundles, each one of them in a different folder.
+     * @param bundlesZip A zip with a set of bundles, each one of them in a
+     * different folder.
      * The structure of a bundle is documented in ECloud SDK manual, section 4.1.
      * @param bundlesJson A Json file with a list of references to bundles.
-     * The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
+     * The format of this file must follow the specification in the ECloud SDK
+     * manual, section 4.1.1.
      */
-    sendBundle(bundlesZip?: Buffer, bundlesJson?: Buffer): Promise<RegistrationResult>;
+    sendBundle(bundlesZip?: ReadStream, bundlesJson?: ReadStream): Promise<RegistrationResult>;
     /**
      * Performs a new deployment in the system.
-     * @param buffer Deployment file following specification in ECloud Manual, section 4.
+     * @param buffer Deployment file following specification in ECloud Manual,
+     *  section 4.
      */
     deploy(buffer: Buffer): Promise<DeploymentList>;
     /**
@@ -73,13 +84,15 @@ export declare class AdmissionClient {
     linkDeployments(endpoints: Endpoint[]): Promise<any>;
     /**
      * Removes a link between two services
-     * @param endpoints  An array of 2 elements with endpoints data of the link to be removed.
+     * @param endpoints  An array of 2 elements with endpoints data of the link
+     *  to be removed.
      */
     unlinkDeployments(endpoints: Endpoint[]): Promise<any>;
     /**
      *  Modifies the configuration of a deployed service.
-     * @param configuration Specification of the modification. Currently, two classes of modifications
-     *  are supported: ScalingDeploymentModification and ReconfigDeploymentModification.
+     * @param configuration Specification of the modification. Currently, two
+     * classes of modifications are supported: ScalingDeploymentModification and
+     * ReconfigDeploymentModification.
      */
     modifyDeployment(configuration: DeploymentModification): Promise<any>;
     /**

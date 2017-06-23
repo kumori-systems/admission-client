@@ -551,9 +551,8 @@ class DefaultApi {
      * @param urn The urn of registered entity to be deleted.
      */
     registriesUrnDelete(urn) {
-        const localVarPath = this.basePath + '/registries/{urn}'
-            .replace('{' + 'urn' + '}', String(urn));
-        let queryParameters = {};
+        const localVarPath = this.basePath + '/registries';
+        let queryParameters = { 'urn': urn };
         let headerParams = Object.assign({}, this.defaultHeaders);
         let formParams = {};
         // verify required parameter 'urn' is not null or undefined
