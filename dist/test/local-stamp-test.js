@@ -3,7 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const src_1 = require("../src");
 let admission;
 admission = new src_1.AdmissionClient("http://localhost:8090/admission");
-admission.findDeployments()
+admission.init().
+    then(() => {
+    return admission.findDeployments();
+})
     .then((result) => {
     console.log("Deployments");
     for (const k in result) {

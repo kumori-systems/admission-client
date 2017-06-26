@@ -1,8 +1,12 @@
 import Swagger = require("./swagger/api");
-import {Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification,
-  Endpoint, RegistrationResult } from ".";
+import {AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList,
+   DeploymentModification, EcloudEventName, EcloudEventType, Endpoint,
+   RegistrationResult } from ".";
 import q = require("q");
 import Promise = q.Promise;
+import {EventEmitter, Listener} from "typed-event-emitter";
+import sio = require("socket.io-client");
+import {ReadStream} from "fs";
 
 // export class GeneralResponse {
 //   public "success": boolean;
@@ -19,11 +23,18 @@ import Promise = q.Promise;
 /**
  * Stub to give access to an ECloud admission instance.
  */
-export class AdmissionClient {
+export class AdmissionClient extends EventEmitter {
+
+  public onConnected = this.registerEvent<() => any>();
+  public onDisconnected = this.registerEvent<() => any>();
+  public onEcloudEvent =
+    this.registerEvent<(event: AdmissionEvent) => any>();
+  public onError = this.registerEvent<(reason: any) => any>();
 
   protected basePath: string;
   protected accessToken: string|undefined;
   protected api: Swagger.DefaultApi;
+  private ws: SocketIOClient.Socket;
 
   /**
    *
@@ -32,6 +43,7 @@ export class AdmissionClient {
    * @param accessToken ACS token with credentials for operating in the stamp.
    */
   constructor(basePath: string, accessToken?: string) {
+    super();
     this.basePath = basePath;
     this.accessToken = accessToken;
 
@@ -49,7 +61,43 @@ export class AdmissionClient {
    * Asynchronous initialization of the stub.
    */
   public init(): q.Promise<void> {
-    return q();
+    const deferred = q.defer<void>();
+    if (this.accessToken) {
+      const wsConfig = {
+        extraHeaders: {Authorization: "Bearer " + this.accessToken},
+        reconnection: true,
+      };
+      const aux = this.basePath.split("/");
+      const wsUri = aux[0] + "//" + aux[2];
+      this.ws = sio(wsUri, wsConfig);
+
+      this.ws.on("connect", () => {
+        this.emit(this.onConnected);
+      });
+      this.ws.on("disconnect", () => {
+        this.emit(this.onDisconnected);
+      });
+      this.ws.on("ecloud-event", (data: any) => {
+        const event = new AdmissionEvent();
+        event.timestamp = data.timestamp;
+        event.entity = data.entity;
+        event.strType = data.type;
+        event.strName = data.name;
+        event.type = EcloudEventType[data.type as keyof typeof EcloudEventType];
+        event.name = EcloudEventName[data.name as keyof typeof EcloudEventName];
+        event.data = data.data;
+        this.emit(this.onEcloudEvent, event);
+      });
+      this.ws.on("error", (reason: any) => {
+        this.emit(this.onError, reason);
+      });
+      deferred.resolve();
+    }
+    return deferred.promise;
+  }
+
+  public close(): void {
+    this.ws.close();
   }
 
   /**
@@ -59,7 +107,8 @@ export class AdmissionClient {
    * @param owner Only the deployments whose owner matches the value
    * of the parameter are listed
    */
-  public findDeployments(urn?: string, owner?: string): Promise<{[key: string]: Deployment}> {
+  public findDeployments(urn?: string, owner?: string): Promise<{[key: string]:
+      Deployment}> {
     const deferred = q.defer<{[key: string]: Deployment}>();
     this.api.findDeployments(urn, owner)
     .then( (value) => {
@@ -150,12 +199,15 @@ export class AdmissionClient {
   /**
    * Registers a set of bundles in the system.
    * At least one of the parameters must have a proper value.
-   * @param bundlesZip A zip with a set of bundles, each one of them in a different folder.
+   * @param bundlesZip A zip with a set of bundles, each one of them in a
+   * different folder.
    * The structure of a bundle is documented in ECloud SDK manual, section 4.1.
    * @param bundlesJson A Json file with a list of references to bundles.
-   * The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
+   * The format of this file must follow the specification in the ECloud SDK
+   * manual, section 4.1.1.
    */
-  public sendBundle(bundlesZip?: Buffer, bundlesJson?: Buffer): Promise<RegistrationResult> {
+  public sendBundle(bundlesZip?: ReadStream, bundlesJson?: ReadStream):
+      Promise<RegistrationResult> {
     const deferred = q.defer<RegistrationResult>();
     this.api.bundlesPost(bundlesZip, bundlesJson)
     .then( (value) => {
@@ -174,11 +226,12 @@ export class AdmissionClient {
           successful: deployments,
         };
         data.deployments.successful.forEach((item: any) => {
-          deployments.push(mapDeploymentDefault(item.deploymentURN, item.topology));
+          deployments.push(mapDeploymentDefault(
+            item.deploymentURN, item.topology));
         });
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(JSON.stringify(value.body)));
       }
     })
     .catch( (reason) => {
@@ -189,7 +242,8 @@ export class AdmissionClient {
 
   /**
    * Performs a new deployment in the system.
-   * @param buffer Deployment file following specification in ECloud Manual, section 4.
+   * @param buffer Deployment file following specification in ECloud Manual,
+   *  section 4.
    */
   public deploy(buffer: Buffer): Promise<DeploymentList> {
     const deferred = q.defer<DeploymentList>();
@@ -229,7 +283,8 @@ export class AdmissionClient {
         for (const killed in response.killedInstances) {
           if (response.killedInstances[killed]) {
           const killedInfo: any = response.killedInstances[killed];
-          result.push(mapInstanceInfoDefault(killed, killedInfo.component, killedInfo));
+          result.push(
+            mapInstanceInfoDefault(killed, killedInfo.component, killedInfo));
           }
         }
         deferred.resolve(result);
@@ -266,7 +321,8 @@ export class AdmissionClient {
 
   /**
    * Removes a link between two services
-   * @param endpoints  An array of 2 elements with endpoints data of the link to be removed.
+   * @param endpoints  An array of 2 elements with endpoints data of the link
+   *  to be removed.
    */
   public unlinkDeployments(endpoints: Endpoint[]): Promise<any> {
     const deferred = q.defer<any>();
@@ -287,12 +343,14 @@ export class AdmissionClient {
 
   /**
    *  Modifies the configuration of a deployed service.
-   * @param configuration Specification of the modification. Currently, two classes of modifications
-   *  are supported: ScalingDeploymentModification and ReconfigDeploymentModification.
+   * @param configuration Specification of the modification. Currently, two
+   * classes of modifications are supported: ScalingDeploymentModification and
+   * ReconfigDeploymentModification.
    */
   public modifyDeployment(configuration: DeploymentModification): Promise<any> {
     const deferred = q.defer<any>();
-    this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration.generate())))
+    this.api.modifyDeployment(Buffer.from(
+      JSON.stringify(configuration.generate())))
     .then((value) => {
       if (value.body.success) {
         const result: any = value.body.data;
@@ -368,10 +426,11 @@ const mapDeploymentDefault = (urn: string, data: any): Deployment => {
       };
       for (const instanceName in data.roles[roleName].instances) {
         if (data.roles[roleName].instances[instanceName]) {
-          result.roles[roleName].instances[instanceName] = mapInstanceInfoDefault(
-            instanceName,
-            roleName,
-            data.roles[roleName].instances[instanceName],
+          result.roles[roleName].instances[instanceName] =
+            mapInstanceInfoDefault(
+              instanceName,
+              roleName,
+              data.roles[roleName].instances[instanceName],
           );
         }
       }
