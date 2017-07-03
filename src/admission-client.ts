@@ -2,11 +2,9 @@ import Swagger = require("./swagger/api");
 import {AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList,
    DeploymentModification, EcloudEventName, EcloudEventType, Endpoint,
    RegistrationResult } from ".";
-import q = require("q");
-import Promise = q.Promise;
+import {Promise, defer} from "q";
 import {EventEmitter, Listener} from "typed-event-emitter";
 import sio = require("socket.io-client");
-import {ReadStream} from "fs";
 
 // export class GeneralResponse {
 //   public "success": boolean;
@@ -60,8 +58,8 @@ export class AdmissionClient extends EventEmitter {
   /**
    * Asynchronous initialization of the stub.
    */
-  public init(): q.Promise<void> {
-    const deferred = q.defer<void>();
+  public init(): Promise<void> {
+    const deferred = defer<void>();
     if (this.accessToken) {
       const wsConfig = {
         extraHeaders: {Authorization: "Bearer " + this.accessToken},
@@ -109,7 +107,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public findDeployments(urn?: string, owner?: string): Promise<{[key: string]:
       Deployment}> {
-    const deferred = q.defer<{[key: string]: Deployment}>();
+    const deferred = defer<{[key: string]: Deployment}>();
     this.api.findDeployments(urn, owner)
     .then( (value) => {
       if (value.body.success) {
@@ -138,7 +136,7 @@ export class AdmissionClient extends EventEmitter {
    *  These can be component, services, runtimes and resources.
    */
   public findStorage(): Promise<string[]> {
-    const deferred = q.defer<string[]>();
+    const deferred = defer<string[]>();
     this.api.registriesGet()
     .then((value) => {
       if (value.body.success) {
@@ -159,7 +157,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn  The urn of registered entity to be deleted.
    */
   public removeStorage(urn: string): Promise<any> {
-    const deferred = q.defer<any>();
+    const deferred = defer<any>();
     this.api.registriesUrnDelete(urn)
     .then((value) => {
       if (value.body.success) {
@@ -180,7 +178,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn The urn of registered entity to get its manifest.
    */
   public getStorageManifest(urn: string): Promise<any> {
-    const deferred = q.defer<any>();
+    const deferred = defer<any>();
     this.api.registriesGet(urn)
     .then((value) => {
       if (value.body.success) {
@@ -206,9 +204,9 @@ export class AdmissionClient extends EventEmitter {
    * The format of this file must follow the specification in the ECloud SDK
    * manual, section 4.1.1.
    */
-  public sendBundle(bundlesZip?: ReadStream, bundlesJson?: ReadStream):
+  public sendBundle(bundlesZip?: FileReader, bundlesJson?: FileReader):
       Promise<RegistrationResult> {
-    const deferred = q.defer<RegistrationResult>();
+    const deferred = defer<RegistrationResult>();
     this.api.bundlesPost(bundlesZip, bundlesJson)
     .then( (value) => {
       if (value.body.success) {
@@ -246,7 +244,7 @@ export class AdmissionClient extends EventEmitter {
    *  section 4.
    */
   public deploy(buffer: Buffer): Promise<DeploymentList> {
-    const deferred = q.defer<DeploymentList>();
+    const deferred = defer<DeploymentList>();
     this.api.deploymentsPost(buffer)
     .then( (value) => {
        if (value.body.success) {
@@ -274,7 +272,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn Urn of deployment to be undeployed
    */
   public undeploy(urn: string): Promise<DeploymentInstanceInfo[]> {
-    const deferred = q.defer<DeploymentInstanceInfo[]>();
+    const deferred = defer<DeploymentInstanceInfo[]>();
     this.api.deploymentsDelete(urn)
     .then( (value) => {
       if (value.body.success) {
@@ -303,7 +301,7 @@ export class AdmissionClient extends EventEmitter {
    * @param endpoints An array of 2 elements with desired link endpoints data.
    */
   public linkDeployments(endpoints: Endpoint[]): Promise<any> {
-    const deferred = q.defer<any>();
+    const deferred = defer<any>();
     this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
     .then( (value) => {
       if (value.body.success) {
@@ -325,7 +323,7 @@ export class AdmissionClient extends EventEmitter {
    *  to be removed.
    */
   public unlinkDeployments(endpoints: Endpoint[]): Promise<any> {
-    const deferred = q.defer<any>();
+    const deferred = defer<any>();
     this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
     .then((value) => {
       if (value.body.success) {
@@ -348,7 +346,7 @@ export class AdmissionClient extends EventEmitter {
    * ReconfigDeploymentModification.
    */
   public modifyDeployment(configuration: DeploymentModification): Promise<any> {
-    const deferred = q.defer<any>();
+    const deferred = defer<any>();
     this.api.modifyDeployment(Buffer.from(
       JSON.stringify(configuration.generate())))
     .then((value) => {
@@ -369,7 +367,7 @@ export class AdmissionClient extends EventEmitter {
    * List current test contexts in the stamp.
    */
   public listTestContexts(): Promise<string[]> {
-    const deferred = q.defer<any>();
+    const deferred = defer<any>();
     this.api.testContextsGet()
     .then((value) => {
       if (value.body.success) {
@@ -390,7 +388,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn Identifier of the test context to be removed.
    */
   public removeTestContext(urn: string): Promise<any> {
-    const deferred = q.defer<any>();
+    const deferred = defer<any>();
     this.api.testContextsDelete(urn)
     .then((value) => {
       if (value.body.success) {

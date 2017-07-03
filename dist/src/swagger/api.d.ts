@@ -1,6 +1,6 @@
 /// <reference types="request" />
-/// <reference types="node" />
 /// <reference types="bluebird" />
+/// <reference types="node" />
 /**
  * ECloud Admission
  * The Admission API is the entry point for ECloud users to interact with the system. With this API you can perform operations such as registering components, services, deploying them, checking their status, etc.  In order to correctly understand the terms used in descriptions of API elements, it is necessary to have some knowledge about the structure of the services within the ECloud PAAS. Information on this topic can be found in the ECloud manual.
@@ -15,7 +15,6 @@
 import request = require('request');
 import http = require('http');
 import Promise = require('bluebird');
-import { ReadStream } from 'fs';
 export declare class Deployment {
     'service': string;
     'roles': {
@@ -134,7 +133,7 @@ export declare class DefaultApi {
      * @param bundlesZip A zip with a set of bundles, each one of them in a different folder. The structure of a bundle is documented in ECloud SDK manual, section 4.1.
      * @param bundlesJson A Json file with a list of references to bundles. The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
      */
-    bundlesPost(bundlesZip?: ReadStream, bundlesJson?: ReadStream): Promise<{
+    bundlesPost(bundlesZip?: FileReader, bundlesJson?: FileReader): Promise<{
         response: http.ClientResponse;
         body: InlineResponse200;
     }>;

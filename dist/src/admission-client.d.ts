@@ -2,10 +2,8 @@
 /// <reference types="node" />
 import Swagger = require("./swagger/api");
 import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
-import q = require("q");
-import Promise = q.Promise;
+import { Promise } from "q";
 import { EventEmitter, Listener } from "typed-event-emitter";
-import { ReadStream } from "fs";
 /**
  * Stub to give access to an ECloud admission instance.
  */
@@ -28,7 +26,7 @@ export declare class AdmissionClient extends EventEmitter {
     /**
      * Asynchronous initialization of the stub.
      */
-    init(): q.Promise<void>;
+    init(): Promise<void>;
     close(): void;
     /**
      * Returns data of deployed services in system.
@@ -65,7 +63,7 @@ export declare class AdmissionClient extends EventEmitter {
      * The format of this file must follow the specification in the ECloud SDK
      * manual, section 4.1.1.
      */
-    sendBundle(bundlesZip?: ReadStream, bundlesJson?: ReadStream): Promise<RegistrationResult>;
+    sendBundle(bundlesZip?: FileReader, bundlesJson?: FileReader): Promise<RegistrationResult>;
     /**
      * Performs a new deployment in the system.
      * @param buffer Deployment file following specification in ECloud Manual,

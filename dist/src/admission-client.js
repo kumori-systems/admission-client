@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Swagger = require("./swagger/api");
 const _1 = require(".");
-const q = require("q");
+const q_1 = require("q");
 const typed_event_emitter_1 = require("typed-event-emitter");
 const sio = require("socket.io-client");
 // export class GeneralResponse {
@@ -47,7 +47,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * Asynchronous initialization of the stub.
      */
     init() {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         if (this.accessToken) {
             const wsConfig = {
                 extraHeaders: { Authorization: "Bearer " + this.accessToken },
@@ -91,7 +91,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * of the parameter are listed
      */
     findDeployments(urn, owner) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.findDeployments(urn, owner)
             .then((value) => {
             if (value.body.success) {
@@ -122,7 +122,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  These can be component, services, runtimes and resources.
      */
     findStorage() {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.registriesGet()
             .then((value) => {
             if (value.body.success) {
@@ -143,7 +143,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn  The urn of registered entity to be deleted.
      */
     removeStorage(urn) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.registriesUrnDelete(urn)
             .then((value) => {
             if (value.body.success) {
@@ -164,7 +164,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn The urn of registered entity to get its manifest.
      */
     getStorageManifest(urn) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.registriesGet(urn)
             .then((value) => {
             if (value.body.success) {
@@ -191,7 +191,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * manual, section 4.1.1.
      */
     sendBundle(bundlesZip, bundlesJson) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.bundlesPost(bundlesZip, bundlesJson)
             .then((value) => {
             if (value.body.success) {
@@ -227,7 +227,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  section 4.
      */
     deploy(buffer) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.deploymentsPost(buffer)
             .then((value) => {
             if (value.body.success) {
@@ -255,7 +255,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Urn of deployment to be undeployed
      */
     undeploy(urn) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.deploymentsDelete(urn)
             .then((value) => {
             if (value.body.success) {
@@ -283,7 +283,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param endpoints An array of 2 elements with desired link endpoints data.
      */
     linkDeployments(endpoints) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
             if (value.body.success) {
@@ -305,7 +305,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  to be removed.
      */
     unlinkDeployments(endpoints) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
             if (value.body.success) {
@@ -328,7 +328,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * ReconfigDeploymentModification.
      */
     modifyDeployment(configuration) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration.generate())))
             .then((value) => {
             if (value.body.success) {
@@ -348,7 +348,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * List current test contexts in the stamp.
      */
     listTestContexts() {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.testContextsGet()
             .then((value) => {
             if (value.body.success) {
@@ -369,7 +369,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Identifier of the test context to be removed.
      */
     removeTestContext(urn) {
-        const deferred = q.defer();
+        const deferred = q_1.defer();
         this.api.testContextsDelete(urn)
             .then((value) => {
             if (value.body.success) {
