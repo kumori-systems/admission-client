@@ -59,37 +59,37 @@ export class AdmissionClient extends EventEmitter {
    */
   public init(): Promise<void> {
     const deferred = new Deferred<void>();
+    const wsConfig:any = {
+      reconnection: true,
+    };
     if (this.accessToken) {
-      const wsConfig = {
-        extraHeaders: {Authorization: "Bearer " + this.accessToken},
-        reconnection: true,
-      };
-      const aux = this.basePath.split("/");
-      const wsUri = aux[0] + "//" + aux[2];
-      this.ws = sio(wsUri, wsConfig);
-
-      this.ws.on("connect", () => {
-        this.emit(this.onConnected);
-      });
-      this.ws.on("disconnect", () => {
-        this.emit(this.onDisconnected);
-      });
-      this.ws.on("ecloud-event", (data: any) => {
-        const event = new AdmissionEvent();
-        event.timestamp = data.timestamp;
-        event.entity = data.entity;
-        event.strType = data.type;
-        event.strName = data.name;
-        event.type = EcloudEventType[data.type as keyof typeof EcloudEventType];
-        event.name = EcloudEventName[data.name as keyof typeof EcloudEventName];
-        event.data = data.data;
-        this.emit(this.onEcloudEvent, event);
-      });
-      this.ws.on("error", (reason: any) => {
-        this.emit(this.onError, reason);
-      });
-      deferred.resolve();
+      wsConfig.extraHeaders = {Authorization: "Bearer " + this.accessToken}
     }
+    const aux = this.basePath.split("/");
+    const wsUri = aux[0] + "//" + aux[2];
+    this.ws = sio(wsUri, wsConfig);
+
+    this.ws.on("connect", () => {
+      this.emit(this.onConnected);
+    });
+    this.ws.on("disconnect", () => {
+      this.emit(this.onDisconnected);
+    });
+    this.ws.on("ecloud-event", (data: any) => {
+      const event = new AdmissionEvent();
+      event.timestamp = data.timestamp;
+      event.entity = data.entity;
+      event.strType = data.type;
+      event.strName = data.name;
+      event.type = EcloudEventType[data.type as keyof typeof EcloudEventType];
+      event.name = EcloudEventName[data.name as keyof typeof EcloudEventName];
+      event.data = data.data;
+      this.emit(this.onEcloudEvent, event);
+    });
+    this.ws.on("error", (reason: any) => {
+      this.emit(this.onError, reason);
+    });
+    deferred.resolve();
     return deferred.promise;
   }
 

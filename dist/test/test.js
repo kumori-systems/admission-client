@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const acs_client_1 = require("acs-client");
 const src_1 = require("../src");
 const fs_1 = require("fs");
 let admission;
@@ -60,12 +59,14 @@ const removeIfRegistered = (adm, urn) => {
         ;
     });
 };
-acs = new acs_client_1.AcsClient(ACS_URI);
-acs.login(username, password)
-    .then((token) => {
-    const accessToken = token.accessToken;
-    console.log("access_token", accessToken);
-    admission = new src_1.AdmissionClient(ADMISSION_URI, accessToken);
+// acs = new AcsClient(ACS_URI);
+// acs.login(username, password)
+// .then ((token) => {
+//   const accessToken = token.accessToken;
+//   console.log("access_token", accessToken);
+Promise.all([])
+    .then(() => {
+    admission = new src_1.AdmissionClient(ADMISSION_URI);
     admission.onConnected(() => {
         console.log("===========================CONNECT***************");
     });
