@@ -22,7 +22,7 @@ then (()=> {
    });
   console.log("TRUE END");
 })
-.fail((reason) => {
+.catch((reason) => {
   console.log("Error:", reason);
 });
 

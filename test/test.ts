@@ -122,7 +122,7 @@ acs.login(username, password)
   console.log("Final registries:", registries);
   console.log("ASYNC END");
 })
-.fail((reason) => {
+.catch((reason) => {
   console.log("Error en Test:", reason);
 });
 console.log("SYNC END");
