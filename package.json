@@ -13,14 +13,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/form-data": "0.0.33",
     "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#ticket820",
     "axios": "0.16.2",
-    "bluebird": "3.5.0",
     "q": "1.5.0",
-    "request": "^2.81.0",
     "socket.io-client": "2.0.3",
-    "typed-event-emitter": "^1.0.3"
+    "typed-event-emitter": "^1.0.3",
+    "form-data": "2.2.0"
   },
   "devDependencies": {
     "tslint": "5.4.3",
@@ -31,7 +29,6 @@
     "@types/bluebird": "3.5.4",
     "@types/q": "1.0.0",
     "@types/socket.io-client": "1.4.29",
-    "@types/form-data": "0.0.33",
-    "form-data": "2.2.0"
+    "@types/form-data": "0.0.33"
   }
 }
