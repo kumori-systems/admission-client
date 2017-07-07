@@ -1,5 +1,4 @@
 /// <reference types="q" />
-/// <reference types="node" />
 import Swagger = require("./swagger/api");
 import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
 import { Promise } from "q";
@@ -63,13 +62,13 @@ export declare class AdmissionClient extends EventEmitter {
      * The format of this file must follow the specification in the ECloud SDK
      * manual, section 4.1.1.
      */
-    sendBundle(bundlesZip?: FileReader, bundlesJson?: FileReader): Promise<RegistrationResult>;
+    sendBundle(bundlesZip?: any, bundlesJson?: any): Promise<RegistrationResult>;
     /**
      * Performs a new deployment in the system.
      * @param buffer Deployment file following specification in ECloud Manual,
      *  section 4.
      */
-    deploy(buffer: Buffer): Promise<DeploymentList>;
+    deploy(buffer: any): Promise<DeploymentList>;
     /**
      * Undeploys a deployment in the system.
      * @param urn Urn of deployment to be undeployed

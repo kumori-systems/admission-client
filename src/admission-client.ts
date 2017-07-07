@@ -110,19 +110,19 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<{[key: string]: Deployment}>();
     this.api.findDeployments(urn, owner)
     .then( (value) => {
-      if (value.body.success) {
+      if (value.success) {
         const result: {[key: string]: Deployment} = {};
-        // console.log("=====", JSON.stringify( value.body.data, null, 2));
-        for (const dname in value.body.data) {
+        // console.log("=====", JSON.stringify( value.data, null, 2));
+        for (const dname in value.data) {
           // Predefined deployment in local-stamp
           if (dname === "default") {continue; }
-          const d0 = value.body.data[dname];
+          const d0 = value.data[dname];
           const d1 = mapDeploymentDefault(dname, d0);
           result[dname] = d1;
         }
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {
@@ -139,11 +139,11 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<string[]>();
     this.api.registriesGet()
     .then((value) => {
-      if (value.body.success) {
-        const result: string[] = value.body.data;
+      if (value.success) {
+        const result: string[] = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch( (reason) => {
@@ -160,11 +160,11 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<any>();
     this.api.registriesUrnDelete(urn)
     .then((value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
+      if (value.success) {
+        const result: any = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {
@@ -181,11 +181,11 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<any>();
     this.api.registriesGet(urn)
     .then((value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
+      if (value.success) {
+        const result: any = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {
@@ -204,13 +204,13 @@ export class AdmissionClient extends EventEmitter {
    * The format of this file must follow the specification in the ECloud SDK
    * manual, section 4.1.1.
    */
-  public sendBundle(bundlesZip?: FileReader, bundlesJson?: FileReader):
+  public sendBundle(bundlesZip?: any, bundlesJson?: any):
       Promise<RegistrationResult> {
     const deferred = defer<RegistrationResult>();
     this.api.bundlesPost(bundlesZip, bundlesJson)
     .then( (value) => {
-      if (value.body.success) {
-        const data: Swagger.InlineResponse200Data = value.body.data;
+      if (value.success) {
+        const data: Swagger.InlineResponse200Data = value.data;
         const result = new RegistrationResult();
 
         result.links = data.links;
@@ -224,12 +224,14 @@ export class AdmissionClient extends EventEmitter {
           successful: deployments,
         };
         data.deployments.successful.forEach((item: any) => {
+          console.log("========== item deployments ================");
+          console.log(JSON.stringify(item, null, 2));
           deployments.push(mapDeploymentDefault(
             item.deploymentURN, item.topology));
         });
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(JSON.stringify(value.body)));
+        deferred.reject(new Error(JSON.stringify(value)));
       }
     })
     .catch( (reason) => {
@@ -243,22 +245,22 @@ export class AdmissionClient extends EventEmitter {
    * @param buffer Deployment file following specification in ECloud Manual,
    *  section 4.
    */
-  public deploy(buffer: Buffer): Promise<DeploymentList> {
+  public deploy(buffer: any): Promise<DeploymentList> {
     const deferred = defer<DeploymentList>();
     this.api.deploymentsPost(buffer)
     .then( (value) => {
-       if (value.body.success) {
+       if (value.success) {
         const result: {[key: string]: Deployment} = {};
-        for (const dname in value.body.data) {
-          if (value.body.data[dname]) {
-            const d0 = value.body.data[dname];
+        for (const dname in value.data) {
+          if (value.data[dname]) {
+            const d0 = value.data[dname];
             const d1 = mapDeploymentDefault(dname, d0);
             result[dname] = d1;
           }
         }
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {
@@ -275,8 +277,8 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<DeploymentInstanceInfo[]>();
     this.api.deploymentsDelete(urn)
     .then( (value) => {
-      if (value.body.success) {
-        const response: any = value.body.data;
+      if (value.success) {
+        const response: any = value.data;
         const result = new Array<DeploymentInstanceInfo>();
         for (const killed in response.killedInstances) {
           if (response.killedInstances[killed]) {
@@ -287,7 +289,7 @@ export class AdmissionClient extends EventEmitter {
         }
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch( (reason) => {
@@ -304,11 +306,11 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<any>();
     this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
     .then( (value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
+      if (value.success) {
+        const result: any = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch( (reason) => {
@@ -326,11 +328,11 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<any>();
     this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
     .then((value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
+      if (value.success) {
+        const result: any = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {
@@ -350,11 +352,11 @@ export class AdmissionClient extends EventEmitter {
     this.api.modifyDeployment(Buffer.from(
       JSON.stringify(configuration.generate())))
     .then((value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
+      if (value.success) {
+        const result: any = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {
@@ -370,11 +372,11 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<any>();
     this.api.testContextsGet()
     .then((value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
+      if (value.success) {
+        const result: any = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {
@@ -391,11 +393,11 @@ export class AdmissionClient extends EventEmitter {
     const deferred = defer<any>();
     this.api.testContextsDelete(urn)
     .then((value) => {
-      if (value.body.success) {
-        const result: any = value.body.data;
+      if (value.success) {
+        const result: any = value.data;
         deferred.resolve(result);
       } else {
-        deferred.reject(new Error(value.body.message));
+        deferred.reject(new Error(value.message));
       }
     })
     .catch((reason) => {

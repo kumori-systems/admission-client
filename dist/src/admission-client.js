@@ -94,22 +94,22 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.findDeployments(urn, owner)
             .then((value) => {
-            if (value.body.success) {
+            if (value.success) {
                 const result = {};
-                // console.log("=====", JSON.stringify( value.body.data, null, 2));
-                for (const dname in value.body.data) {
+                // console.log("=====", JSON.stringify( value.data, null, 2));
+                for (const dname in value.data) {
                     // Predefined deployment in local-stamp
                     if (dname === "default") {
                         continue;
                     }
-                    const d0 = value.body.data[dname];
+                    const d0 = value.data[dname];
                     const d1 = mapDeploymentDefault(dname, d0);
                     result[dname] = d1;
                 }
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -125,12 +125,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.registriesGet()
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -146,12 +146,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.registriesUrnDelete(urn)
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -167,12 +167,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.registriesGet(urn)
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -194,8 +194,8 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.bundlesPost(bundlesZip, bundlesJson)
             .then((value) => {
-            if (value.body.success) {
-                const data = value.body.data;
+            if (value.success) {
+                const data = value.data;
                 const result = new _1.RegistrationResult();
                 result.links = data.links;
                 result.tests = data.tests;
@@ -208,12 +208,14 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                     successful: deployments,
                 };
                 data.deployments.successful.forEach((item) => {
+                    console.log("========== item deployments ================");
+                    console.log(JSON.stringify(item, null, 2));
                     deployments.push(mapDeploymentDefault(item.deploymentURN, item.topology));
                 });
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(JSON.stringify(value.body)));
+                deferred.reject(new Error(JSON.stringify(value)));
             }
         })
             .catch((reason) => {
@@ -230,11 +232,11 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.deploymentsPost(buffer)
             .then((value) => {
-            if (value.body.success) {
+            if (value.success) {
                 const result = {};
-                for (const dname in value.body.data) {
-                    if (value.body.data[dname]) {
-                        const d0 = value.body.data[dname];
+                for (const dname in value.data) {
+                    if (value.data[dname]) {
+                        const d0 = value.data[dname];
                         const d1 = mapDeploymentDefault(dname, d0);
                         result[dname] = d1;
                     }
@@ -242,7 +244,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -258,8 +260,8 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.deploymentsDelete(urn)
             .then((value) => {
-            if (value.body.success) {
-                const response = value.body.data;
+            if (value.success) {
+                const response = value.data;
                 const result = new Array();
                 for (const killed in response.killedInstances) {
                     if (response.killedInstances[killed]) {
@@ -270,7 +272,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -286,12 +288,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -308,12 +310,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -331,12 +333,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration.generate())))
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -351,12 +353,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.testContextsGet()
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -372,12 +374,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const deferred = q_1.defer();
         this.api.testContextsDelete(urn)
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
