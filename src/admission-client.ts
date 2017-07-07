@@ -2,7 +2,6 @@ import Swagger = require("./swagger/api");
 import {AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList,
    DeploymentModification, EcloudEventName, EcloudEventType, Endpoint,
    RegistrationResult } from ".";
-import {Promise, defer} from "q";
 import {EventEmitter, Listener} from "typed-event-emitter";
 import sio = require("socket.io-client");
 
@@ -59,7 +58,7 @@ export class AdmissionClient extends EventEmitter {
    * Asynchronous initialization of the stub.
    */
   public init(): Promise<void> {
-    const deferred = defer<void>();
+    const deferred = new Deferred<void>();
     if (this.accessToken) {
       const wsConfig = {
         extraHeaders: {Authorization: "Bearer " + this.accessToken},
@@ -107,7 +106,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public findDeployments(urn?: string, owner?: string): Promise<{[key: string]:
       Deployment}> {
-    const deferred = defer<{[key: string]: Deployment}>();
+    const deferred = new Deferred<{[key: string]: Deployment}>();
     this.api.findDeployments(urn, owner)
     .then( (value) => {
       if (value.success) {
@@ -136,7 +135,7 @@ export class AdmissionClient extends EventEmitter {
    *  These can be component, services, runtimes and resources.
    */
   public findStorage(): Promise<string[]> {
-    const deferred = defer<string[]>();
+    const deferred = new Deferred<string[]>();
     this.api.registriesGet()
     .then((value) => {
       if (value.success) {
@@ -157,7 +156,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn  The urn of registered entity to be deleted.
    */
   public removeStorage(urn: string): Promise<any> {
-    const deferred = defer<any>();
+    const deferred = new Deferred<any>();
     this.api.registriesUrnDelete(urn)
     .then((value) => {
       if (value.success) {
@@ -178,7 +177,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn The urn of registered entity to get its manifest.
    */
   public getStorageManifest(urn: string): Promise<any> {
-    const deferred = defer<any>();
+    const deferred = new Deferred<any>();
     this.api.registriesGet(urn)
     .then((value) => {
       if (value.success) {
@@ -206,7 +205,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public sendBundle(bundlesZip?: any, bundlesJson?: any):
       Promise<RegistrationResult> {
-    const deferred = defer<RegistrationResult>();
+    const deferred = new Deferred<RegistrationResult>();
     this.api.bundlesPost(bundlesZip, bundlesJson)
     .then( (value) => {
       if (value.success) {
@@ -246,7 +245,7 @@ export class AdmissionClient extends EventEmitter {
    *  section 4.
    */
   public deploy(buffer: any): Promise<DeploymentList> {
-    const deferred = defer<DeploymentList>();
+    const deferred = new Deferred<DeploymentList>();
     this.api.deploymentsPost(buffer)
     .then( (value) => {
        if (value.success) {
@@ -274,7 +273,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn Urn of deployment to be undeployed
    */
   public undeploy(urn: string): Promise<DeploymentInstanceInfo[]> {
-    const deferred = defer<DeploymentInstanceInfo[]>();
+    const deferred = new Deferred<DeploymentInstanceInfo[]>();
     this.api.deploymentsDelete(urn)
     .then( (value) => {
       if (value.success) {
@@ -303,7 +302,7 @@ export class AdmissionClient extends EventEmitter {
    * @param endpoints An array of 2 elements with desired link endpoints data.
    */
   public linkDeployments(endpoints: Endpoint[]): Promise<any> {
-    const deferred = defer<any>();
+    const deferred = new Deferred<any>();
     this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
     .then( (value) => {
       if (value.success) {
@@ -325,7 +324,7 @@ export class AdmissionClient extends EventEmitter {
    *  to be removed.
    */
   public unlinkDeployments(endpoints: Endpoint[]): Promise<any> {
-    const deferred = defer<any>();
+    const deferred = new Deferred<any>();
     this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
     .then((value) => {
       if (value.success) {
@@ -348,7 +347,7 @@ export class AdmissionClient extends EventEmitter {
    * ReconfigDeploymentModification.
    */
   public modifyDeployment(configuration: DeploymentModification): Promise<any> {
-    const deferred = defer<any>();
+    const deferred = new Deferred<any>();
     this.api.modifyDeployment(Buffer.from(
       JSON.stringify(configuration.generate())))
     .then((value) => {
@@ -369,7 +368,7 @@ export class AdmissionClient extends EventEmitter {
    * List current test contexts in the stamp.
    */
   public listTestContexts(): Promise<string[]> {
-    const deferred = defer<any>();
+    const deferred = new Deferred<any>();
     this.api.testContextsGet()
     .then((value) => {
       if (value.success) {
@@ -390,7 +389,7 @@ export class AdmissionClient extends EventEmitter {
    * @param urn Identifier of the test context to be removed.
    */
   public removeTestContext(urn: string): Promise<any> {
-    const deferred = defer<any>();
+    const deferred = new Deferred<any>();
     this.api.testContextsDelete(urn)
     .then((value) => {
       if (value.success) {
@@ -495,3 +494,58 @@ const mapInstanceInfoDefault = (name: string, role: string, i0: any) => {
   }
   return instanceInfo;
 };
+
+export class Deferred<T> {
+	public promise: Promise<T>;
+
+	private fate: "resolved" | "unresolved";
+	private state: "pending" | "fulfilled" | "rejected";
+
+	private _resolve: Function;
+	private _reject: Function;
+
+	constructor() {
+		this.state = "pending";
+		this.fate = "unresolved";
+		this.promise = new Promise((resolve, reject) => {
+			this._resolve = resolve;
+			this._reject = reject;
+		});
+		this.promise.then(
+			() => this.state = "fulfilled",
+			() => this.state = "rejected"
+		);
+	}
+
+	resolve(value?: any) {
+		if (this.fate === "resolved") {
+			throw "Deferred cannot be resolved twice";
+		}
+		this.fate = "resolved";
+		this._resolve(value);
+	}
+
+	reject(reason?: any) {
+		if (this.fate === "resolved") {
+			throw "Deferred cannot be resolved twice";
+		}
+		this.fate = "resolved";
+		this._reject(reason);
+	}
+
+	isResolved() {
+		return this.fate === "resolved";
+	}
+
+	isPending() {
+		return this.state === "pending";
+	}
+
+	isFulfilled() {
+		return this.state === "fulfilled";
+	}
+
+	isRejected() {
+		return this.state === "rejected";
+	}
+}

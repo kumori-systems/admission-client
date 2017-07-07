@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const acs_client_1 = require("acs-client");
 const src_1 = require("../src");
-const q_1 = require("q");
 const fs_1 = require("fs");
 let admission;
 let acs;
@@ -26,7 +25,7 @@ const undeployService = (adm, serviceUrn) => {
                 promises.push(admission.undeploy(result[k].urn));
             }
         }
-        return q_1.all(promises);
+        return Promise.all(promises);
     });
 };
 const updateState = (adm) => {

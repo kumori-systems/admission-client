@@ -2,7 +2,6 @@
 import {AcsClient} from "acs-client";
 import {AdmissionClient, AdmissionEvent, Deployment, EcloudEventType} 
   from "../src";
-import {all,Promise} from "q";
 import {createReadStream} from 'fs';
 
 let admission: AdmissionClient;
@@ -29,7 +28,7 @@ const undeployService = (adm:AdmissionClient,serviceUrn:string)=> {
         promises.push(admission.undeploy(result[k].urn));
       }
     }
-    return all(promises);
+    return Promise.all(promises);
   });
 }
 

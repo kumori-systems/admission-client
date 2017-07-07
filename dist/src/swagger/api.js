@@ -12,7 +12,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
-const q_1 = require("q");
 const FormData = require("form-data");
 let defaultBasePath = 'http://admission.argo.kumori.cloud/admission';
 /* tslint:disable:no-unused-variable */
@@ -129,7 +128,7 @@ class DefaultApi {
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
         // console.log(JSON.stringify(requestOptions.headers,null,2));
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -168,7 +167,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -209,7 +208,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -252,7 +251,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -295,7 +294,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -336,7 +335,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -377,7 +376,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -412,7 +411,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -448,7 +447,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -487,7 +486,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -528,7 +527,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -569,7 +568,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -600,7 +599,7 @@ class DefaultApi {
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
@@ -628,5 +627,43 @@ exports.DefaultApi = DefaultApi;
 // }
 // function isObject(val:any) {
 //   return val !== null && typeof val === 'object';
-// } 
+// }
+class Deferred {
+    constructor() {
+        this.state = "pending";
+        this.fate = "unresolved";
+        this.promise = new Promise((resolve, reject) => {
+            this._resolve = resolve;
+            this._reject = reject;
+        });
+        this.promise.then(() => this.state = "fulfilled", () => this.state = "rejected");
+    }
+    resolve(value) {
+        if (this.fate === "resolved") {
+            throw "Deferred cannot be resolved twice";
+        }
+        this.fate = "resolved";
+        this._resolve(value);
+    }
+    reject(reason) {
+        if (this.fate === "resolved") {
+            throw "Deferred cannot be resolved twice";
+        }
+        this.fate = "resolved";
+        this._reject(reason);
+    }
+    isResolved() {
+        return this.fate === "resolved";
+    }
+    isPending() {
+        return this.state === "pending";
+    }
+    isFulfilled() {
+        return this.state === "fulfilled";
+    }
+    isRejected() {
+        return this.state === "rejected";
+    }
+}
+exports.Deferred = Deferred;
 //# sourceMappingURL=api.js.map

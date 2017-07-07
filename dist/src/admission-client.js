@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Swagger = require("./swagger/api");
 const _1 = require(".");
-const q_1 = require("q");
 const typed_event_emitter_1 = require("typed-event-emitter");
 const sio = require("socket.io-client");
 // export class GeneralResponse {
@@ -47,7 +46,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * Asynchronous initialization of the stub.
      */
     init() {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         if (this.accessToken) {
             const wsConfig = {
                 extraHeaders: { Authorization: "Bearer " + this.accessToken },
@@ -91,7 +90,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * of the parameter are listed
      */
     findDeployments(urn, owner) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.findDeployments(urn, owner)
             .then((value) => {
             if (value.success) {
@@ -122,7 +121,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  These can be component, services, runtimes and resources.
      */
     findStorage() {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.registriesGet()
             .then((value) => {
             if (value.success) {
@@ -143,7 +142,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn  The urn of registered entity to be deleted.
      */
     removeStorage(urn) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.registriesUrnDelete(urn)
             .then((value) => {
             if (value.success) {
@@ -164,7 +163,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn The urn of registered entity to get its manifest.
      */
     getStorageManifest(urn) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.registriesGet(urn)
             .then((value) => {
             if (value.success) {
@@ -191,7 +190,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * manual, section 4.1.1.
      */
     sendBundle(bundlesZip, bundlesJson) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.bundlesPost(bundlesZip, bundlesJson)
             .then((value) => {
             if (value.success) {
@@ -229,7 +228,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  section 4.
      */
     deploy(buffer) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.deploymentsPost(buffer)
             .then((value) => {
             if (value.success) {
@@ -257,7 +256,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Urn of deployment to be undeployed
      */
     undeploy(urn) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.deploymentsDelete(urn)
             .then((value) => {
             if (value.success) {
@@ -285,7 +284,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param endpoints An array of 2 elements with desired link endpoints data.
      */
     linkDeployments(endpoints) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
             if (value.success) {
@@ -307,7 +306,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  to be removed.
      */
     unlinkDeployments(endpoints) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
             if (value.success) {
@@ -330,7 +329,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * ReconfigDeploymentModification.
      */
     modifyDeployment(configuration) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration.generate())))
             .then((value) => {
             if (value.success) {
@@ -350,7 +349,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * List current test contexts in the stamp.
      */
     listTestContexts() {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.testContextsGet()
             .then((value) => {
             if (value.success) {
@@ -371,7 +370,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Identifier of the test context to be removed.
      */
     removeTestContext(urn) {
-        const deferred = q_1.defer();
+        const deferred = new Deferred();
         this.api.testContextsDelete(urn)
             .then((value) => {
             if (value.success) {
@@ -472,4 +471,42 @@ const mapInstanceInfoDefault = (name, role, i0) => {
     }
     return instanceInfo;
 };
+class Deferred {
+    constructor() {
+        this.state = "pending";
+        this.fate = "unresolved";
+        this.promise = new Promise((resolve, reject) => {
+            this._resolve = resolve;
+            this._reject = reject;
+        });
+        this.promise.then(() => this.state = "fulfilled", () => this.state = "rejected");
+    }
+    resolve(value) {
+        if (this.fate === "resolved") {
+            throw "Deferred cannot be resolved twice";
+        }
+        this.fate = "resolved";
+        this._resolve(value);
+    }
+    reject(reason) {
+        if (this.fate === "resolved") {
+            throw "Deferred cannot be resolved twice";
+        }
+        this.fate = "resolved";
+        this._reject(reason);
+    }
+    isResolved() {
+        return this.fate === "resolved";
+    }
+    isPending() {
+        return this.state === "pending";
+    }
+    isFulfilled() {
+        return this.state === "fulfilled";
+    }
+    isRejected() {
+        return this.state === "rejected";
+    }
+}
+exports.Deferred = Deferred;
 //# sourceMappingURL=admission-client.js.map

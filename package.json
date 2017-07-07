@@ -15,7 +15,6 @@
   "dependencies": {
     "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#ticket820",
     "axios": "0.16.2",
-    "q": "1.5.0",
     "socket.io-client": "2.0.3",
     "typed-event-emitter": "^1.0.3",
     "form-data": "2.2.0"

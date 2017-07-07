@@ -12,7 +12,6 @@
 
 import Axios from 'axios';
 import {AxiosResponse, AxiosRequestConfig} from 'axios'
-import {defer, Deferred, Promise as qPromise} from 'q';
 import FormData = require('form-data');
 
 let defaultBasePath = 'http://admission.argo.kumori.cloud/admission';
@@ -167,7 +166,7 @@ export class DefaultApi {
      * @param bundlesJson A Json file with a list of references to bundles. The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
      */
     public bundlesPost (bundlesZip?: any, bundlesJson?: any) : 
-        qPromise<InlineResponse200> {
+        Promise<InlineResponse200> {
       const localVarPath = this.basePath + '/bundles';
       let queryParameters: any = {};
       //let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -197,7 +196,7 @@ export class DefaultApi {
 
       // console.log(JSON.stringify(requestOptions.headers,null,2));
 
-      const deferred:Deferred<InlineResponse200> = defer<InlineResponse200>();
+      const deferred:Deferred<InlineResponse200> = new Deferred<InlineResponse200>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -218,7 +217,7 @@ export class DefaultApi {
      * Undeploys a deployment in the system.
      * @param urn Urn of deployment to be undeployed
      */
-    public deploymentsDelete (urn: string) : qPromise<InlineResponse2002> {
+    public deploymentsDelete (urn: string) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/deployments';
       let queryParameters: any = {};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -243,7 +242,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
        
-     const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+     const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -263,7 +262,7 @@ export class DefaultApi {
      * Performs a new deployment in the system.
      * @param inline The uploaded deployment file following specification in ECloud Manual, section 4.
      */
-    public deploymentsPost (inline: File) : qPromise<InlineResponse2001> {
+    public deploymentsPost (inline: File) : Promise<InlineResponse2001> {
       const localVarPath = this.basePath + '/deployments';
       let queryParameters: any = {};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -290,7 +289,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
       
-      const deferred:Deferred<InlineResponse2001> = defer<InlineResponse2001>();
+      const deferred:Deferred<InlineResponse2001> = new Deferred<InlineResponse2001>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -314,7 +313,7 @@ export class DefaultApi {
      * @param show Desired format of the information provided for each deployment. Possible values are&amp;#58; * topology. It is the default value. * extended. * urn. Only urns are listed.
      */
     public findDeployments (urn?: string, owner?: string, show?: string) : 
-        qPromise<InlineResponse2001> {
+        Promise<InlineResponse2001> {
       const localVarPath = this.basePath + '/deployments';
       const queryParameters: any = {};
       const headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -342,7 +341,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2001> = defer<InlineResponse2001>();
+      const deferred:Deferred<InlineResponse2001> = new Deferred<InlineResponse2001>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -363,7 +362,7 @@ export class DefaultApi {
      * Removes a link between two services
      * @param linkManifest The manifest of the link to be removed.
      */
-    public linksDelete (linkManifest: Buffer) : qPromise<InlineResponse2002> {
+    public linksDelete (linkManifest: Buffer) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/links';
       let queryParameters: any = {};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -394,7 +393,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+      const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -416,7 +415,7 @@ export class DefaultApi {
      * Creates a new link between two deployed services.
      * @param linkManifest The manifest of the desired link.
      */
-    public linksPost (linkManifest: Buffer) : qPromise<InlineResponse2002> {
+    public linksPost (linkManifest: Buffer) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/links';
       let queryParameters: any = {};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -443,7 +442,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+      const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -464,7 +463,7 @@ export class DefaultApi {
      * Modification of some parameter of the deployment.      There are two possible actions&amp;#58; * Reconfiguration of parameters or deployment and * Manual scaling.
      * @param inline The uploaded deployment file with the new configuration. The file must be a JSON with this keys&amp;#58; * deploymentURN. URN of the deployment to be reconfigured. * action. manualScaling/reconfig * entryPoints (only when reconfig action) * configuration (only when reconfig action) * roles (only when manualScaling action)
      */
-    public modifyDeployment (inline: Buffer) : qPromise<InlineResponse2002> {
+    public modifyDeployment (inline: Buffer) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/deployments/configuration';
       let queryParameters: any = {};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -492,7 +491,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+      const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -512,7 +511,7 @@ export class DefaultApi {
      * Returns data of registered entities in the system. These can be component, services, runtimes and resources.
      * @param urn urn of deployment whose data is needed. If not provided, data about any accesible deployment is returned.
      */
-    public registriesGet (urn?: string) : qPromise<InlineResponse2002> {
+    public registriesGet (urn?: string) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/registries';
       const queryParameters: any = {};
       const headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -532,7 +531,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2001> = defer<InlineResponse2001>();
+      const deferred:Deferred<InlineResponse2001> = new Deferred<InlineResponse2001>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -553,7 +552,7 @@ export class DefaultApi {
      * Remove a registered entity based on its urn.
      * @param urn The urn of registered entity to be deleted.
      */
-    public registriesUrnDelete (urn: string) : qPromise<InlineResponse2002> {
+    public registriesUrnDelete (urn: string) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/registries';
       let queryParameters: any = {'urn': urn};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -574,7 +573,7 @@ export class DefaultApi {
 
       this.authentications.default.applyToRequest(requestOptions);
 
-     const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+     const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -595,7 +594,7 @@ export class DefaultApi {
      * Returns manifest of a registered entity based on its urn.
      * @param urn The urn of registered entity to get its manifest .
      */
-    public registriesUrnGet (urn: string) : qPromise<InlineResponse2002> {
+    public registriesUrnGet (urn: string) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/registries/{urn}'
           .replace('{' + 'urn' + '}', String(urn));
       let queryParameters: any = {};
@@ -619,7 +618,7 @@ export class DefaultApi {
       this.authentications.apiAuthorization.applyToRequest(requestOptions);
       this.authentications.default.applyToRequest(requestOptions);
 
-     const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+     const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -639,7 +638,7 @@ export class DefaultApi {
      * Modifies the number of instances of some role of a deployment
      * @param inline 
      */
-    public scaleInstances (inline: Buffer) : qPromise<InlineResponse2002> {
+    public scaleInstances (inline: Buffer) : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/deployments/instances';
       let queryParameters: any = {};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -665,7 +664,7 @@ export class DefaultApi {
       this.authentications.apiAuthorization.applyToRequest(requestOptions);
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+      const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -685,7 +684,7 @@ export class DefaultApi {
      * Removes a test context
      * @param urn Identifier of the test context to be removed.
      */
-    public testContextsDelete (urn: string) : qPromise<InlineResponse2002> {
+    public testContextsDelete (urn: string) : Promise<InlineResponse2002> {
         const localVarPath = this.basePath + '/test-contexts';
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -712,7 +711,7 @@ export class DefaultApi {
       this.authentications.apiAuthorization.applyToRequest(requestOptions);
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+      const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -731,7 +730,7 @@ export class DefaultApi {
      * 
      * List current test contexts in the stamp.
      */
-    public testContextsGet () : qPromise<InlineResponse2002> {
+    public testContextsGet () : Promise<InlineResponse2002> {
       const localVarPath = this.basePath + '/test-contexts';
       let queryParameters: any = {};
       let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -746,7 +745,7 @@ export class DefaultApi {
       this.authentications.apiAuthorization.applyToRequest(requestOptions);
       this.authentications.default.applyToRequest(requestOptions);
 
-      const deferred:Deferred<InlineResponse2002> = defer<InlineResponse2002>();
+      const deferred:Deferred<InlineResponse2002> = new Deferred<InlineResponse2002>();
 
       Axios(requestOptions)
       .then((response:AxiosResponse) => {
@@ -778,3 +777,58 @@ export class DefaultApi {
 // function isObject(val:any) {
 //   return val !== null && typeof val === 'object';
 // }
+
+export class Deferred<T> {
+	public promise: Promise<T>;
+
+	private fate: "resolved" | "unresolved";
+	private state: "pending" | "fulfilled" | "rejected";
+
+	private _resolve: Function;
+	private _reject: Function;
+
+	constructor() {
+		this.state = "pending";
+		this.fate = "unresolved";
+		this.promise = new Promise((resolve, reject) => {
+			this._resolve = resolve;
+			this._reject = reject;
+		});
+		this.promise.then(
+			() => this.state = "fulfilled",
+			() => this.state = "rejected"
+		);
+	}
+
+	resolve(value?: any) {
+		if (this.fate === "resolved") {
+			throw "Deferred cannot be resolved twice";
+		}
+		this.fate = "resolved";
+		this._resolve(value);
+	}
+
+	reject(reason?: any) {
+		if (this.fate === "resolved") {
+			throw "Deferred cannot be resolved twice";
+		}
+		this.fate = "resolved";
+		this._reject(reason);
+	}
+
+	isResolved() {
+		return this.fate === "resolved";
+	}
+
+	isPending() {
+		return this.state === "pending";
+	}
+
+	isFulfilled() {
+		return this.state === "fulfilled";
+	}
+
+	isRejected() {
+		return this.state === "rejected";
+	}
+}

@@ -1,7 +1,5 @@
-/// <reference types="q" />
 import Swagger = require("./swagger/api");
 import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
-import { Promise } from "q";
 import { EventEmitter, Listener } from "typed-event-emitter";
 /**
  * Stub to give access to an ECloud admission instance.
@@ -101,4 +99,18 @@ export declare class AdmissionClient extends EventEmitter {
      * @param urn Identifier of the test context to be removed.
      */
     removeTestContext(urn: string): Promise<any>;
+}
+export declare class Deferred<T> {
+    promise: Promise<T>;
+    private fate;
+    private state;
+    private _resolve;
+    private _reject;
+    constructor();
+    resolve(value?: any): void;
+    reject(reason?: any): void;
+    isResolved(): boolean;
+    isPending(): boolean;
+    isFulfilled(): boolean;
+    isRejected(): boolean;
 }

@@ -1,6 +1,4 @@
-/// <reference types="q" />
 /// <reference types="node" />
-import { Promise as qPromise } from 'q';
 export declare class Deployment {
     'service': string;
     'roles': {
@@ -109,19 +107,19 @@ export declare class DefaultApi {
      * @param bundlesZip A zip with a set of bundles, each one of them in a different folder. The structure of a bundle is documented in ECloud SDK manual, section 4.1.
      * @param bundlesJson A Json file with a list of references to bundles. The format of this file must follow the specification in the ECloud SDK manual, section 4.1.1.
      */
-    bundlesPost(bundlesZip?: any, bundlesJson?: any): qPromise<InlineResponse200>;
+    bundlesPost(bundlesZip?: any, bundlesJson?: any): Promise<InlineResponse200>;
     /**
      *
      * Undeploys a deployment in the system.
      * @param urn Urn of deployment to be undeployed
      */
-    deploymentsDelete(urn: string): qPromise<InlineResponse2002>;
+    deploymentsDelete(urn: string): Promise<InlineResponse2002>;
     /**
      *
      * Performs a new deployment in the system.
      * @param inline The uploaded deployment file following specification in ECloud Manual, section 4.
      */
-    deploymentsPost(inline: File): qPromise<InlineResponse2001>;
+    deploymentsPost(inline: File): Promise<InlineResponse2001>;
     /**
      *
      * Returns data of deployed services in system.
@@ -129,58 +127,72 @@ export declare class DefaultApi {
      * @param owner Only the deployments whose owner matches the value of the parameter are listed
      * @param show Desired format of the information provided for each deployment. Possible values are&amp;#58; * topology. It is the default value. * extended. * urn. Only urns are listed.
      */
-    findDeployments(urn?: string, owner?: string, show?: string): qPromise<InlineResponse2001>;
+    findDeployments(urn?: string, owner?: string, show?: string): Promise<InlineResponse2001>;
     /**
      *
      * Removes a link between two services
      * @param linkManifest The manifest of the link to be removed.
      */
-    linksDelete(linkManifest: Buffer): qPromise<InlineResponse2002>;
+    linksDelete(linkManifest: Buffer): Promise<InlineResponse2002>;
     /**
      *
      * Creates a new link between two deployed services.
      * @param linkManifest The manifest of the desired link.
      */
-    linksPost(linkManifest: Buffer): qPromise<InlineResponse2002>;
+    linksPost(linkManifest: Buffer): Promise<InlineResponse2002>;
     /**
      *
      * Modification of some parameter of the deployment.      There are two possible actions&amp;#58; * Reconfiguration of parameters or deployment and * Manual scaling.
      * @param inline The uploaded deployment file with the new configuration. The file must be a JSON with this keys&amp;#58; * deploymentURN. URN of the deployment to be reconfigured. * action. manualScaling/reconfig * entryPoints (only when reconfig action) * configuration (only when reconfig action) * roles (only when manualScaling action)
      */
-    modifyDeployment(inline: Buffer): qPromise<InlineResponse2002>;
+    modifyDeployment(inline: Buffer): Promise<InlineResponse2002>;
     /**
      *
      * Returns data of registered entities in the system. These can be component, services, runtimes and resources.
      * @param urn urn of deployment whose data is needed. If not provided, data about any accesible deployment is returned.
      */
-    registriesGet(urn?: string): qPromise<InlineResponse2002>;
+    registriesGet(urn?: string): Promise<InlineResponse2002>;
     /**
      *
      * Remove a registered entity based on its urn.
      * @param urn The urn of registered entity to be deleted.
      */
-    registriesUrnDelete(urn: string): qPromise<InlineResponse2002>;
+    registriesUrnDelete(urn: string): Promise<InlineResponse2002>;
     /**
      *
      * Returns manifest of a registered entity based on its urn.
      * @param urn The urn of registered entity to get its manifest .
      */
-    registriesUrnGet(urn: string): qPromise<InlineResponse2002>;
+    registriesUrnGet(urn: string): Promise<InlineResponse2002>;
     /**
      *
      * Modifies the number of instances of some role of a deployment
      * @param inline
      */
-    scaleInstances(inline: Buffer): qPromise<InlineResponse2002>;
+    scaleInstances(inline: Buffer): Promise<InlineResponse2002>;
     /**
      *
      * Removes a test context
      * @param urn Identifier of the test context to be removed.
      */
-    testContextsDelete(urn: string): qPromise<InlineResponse2002>;
+    testContextsDelete(urn: string): Promise<InlineResponse2002>;
     /**
      *
      * List current test contexts in the stamp.
      */
-    testContextsGet(): qPromise<InlineResponse2002>;
+    testContextsGet(): Promise<InlineResponse2002>;
+}
+export declare class Deferred<T> {
+    promise: Promise<T>;
+    private fate;
+    private state;
+    private _resolve;
+    private _reject;
+    constructor();
+    resolve(value?: any): void;
+    reject(reason?: any): void;
+    isResolved(): boolean;
+    isPending(): boolean;
+    isFulfilled(): boolean;
+    isRejected(): boolean;
 }
