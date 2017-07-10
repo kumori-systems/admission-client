@@ -512,12 +512,12 @@ export class DefaultApi {
      * @param urn urn of deployment whose data is needed. If not provided, data about any accesible deployment is returned.
      */
     public registriesGet (urn?: string) : Promise<InlineResponse2002> {
-      const localVarPath = this.basePath + '/registries';
+      let localVarPath = this.basePath + '/registries';
       const queryParameters: any = {};
       const headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
 
       if (urn !== undefined) {
-          queryParameters['urn'] = urn;
+        localVarPath = localVarPath + '/' + encodeURIComponent(urn)
       }
 
       const requestOptions:AxiosRequestConfig = {

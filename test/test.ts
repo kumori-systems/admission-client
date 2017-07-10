@@ -17,6 +17,7 @@ const ADMISSION_URI = "http://admission.argo.kumori.cloud/admission";
 const BUNDLE = "/workspaces/slap/git/examples/calculator_1_0_0/deploy_bundle.zip";
 const SERVICE = "eslap://sampleservicecalculator/services/sampleservicecalculator/1_0_0";
 const COMPONENT = "eslap://sampleservicecalculator/components/cfe/1_0_0"
+const TEST_MANIFEST = "eslap://eslap.cloud/components/acs/1_0_0"
 
 const undeployService = (adm:AdmissionClient,serviceUrn:string)=> {
   return adm.findDeployments()
@@ -66,14 +67,12 @@ const removeIfRegistered = (adm:AdmissionClient, urn:string):Promise<void> => {
   });
 };
 
-// acs = new AcsClient(ACS_URI);
-// acs.login(username, password)
-// .then ((token) => {
-//   const accessToken = token.accessToken;
-//   console.log("access_token", accessToken);
-Promise.all([])
-.then( () => {
-  admission = new AdmissionClient(ADMISSION_URI);
+acs = new AcsClient(ACS_URI);
+acs.login(username, password)
+.then ((token) => {
+  const accessToken = token.accessToken;
+  console.log("access_token", accessToken);
+  admission = new AdmissionClient(ADMISSION_URI, accessToken);
   admission.onConnected(() => {
     console.log("===========================CONNECT***************");
   });
@@ -90,6 +89,12 @@ Promise.all([])
   return admission.init();
 }).then(() => {
   return updateState(admission);
+})
+.then(() => {
+  return admission.getStorageManifest(TEST_MANIFEST);
+})
+.then((manifest) => {
+  console.log(JSON.stringify(manifest, null, 2));
 })
 .then(() => {
   console.log("UNDEPLOYING SERVICE");

@@ -51,7 +51,9 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             reconnection: true,
         };
         if (this.accessToken) {
-            wsConfig.extraHeaders = { Authorization: "Bearer " + this.accessToken };
+            wsConfig.extraHeaders = {
+                Authorization: "Bearer " + this.accessToken
+            };
         }
         const aux = this.basePath.split("/");
         const wsUri = aux[0] + "//" + aux[2];

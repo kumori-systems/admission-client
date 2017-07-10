@@ -397,11 +397,11 @@ class DefaultApi {
      * @param urn urn of deployment whose data is needed. If not provided, data about any accesible deployment is returned.
      */
     registriesGet(urn) {
-        const localVarPath = this.basePath + '/registries';
+        let localVarPath = this.basePath + '/registries';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         if (urn !== undefined) {
-            queryParameters['urn'] = urn;
+            localVarPath = localVarPath + '/' + encodeURIComponent(urn);
         }
         const requestOptions = {
             method: 'GET',
