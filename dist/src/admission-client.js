@@ -59,7 +59,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const aux = this.basePath.split("/");
         let wsUri = aux[0] + "//" + aux[2];
         if (true) {
-            wsUri = aux[0] + "//" + this.accessToken + "@" + aux[2];
+            wsUri = aux[0] + "//" + this.accessToken + ":Bearer@" + aux[2];
             console.log(wsUri);
         }
         this.ws = sio(wsUri, wsConfig);

@@ -74,7 +74,7 @@ export class AdmissionClient extends EventEmitter {
     let wsUri = aux[0] + "//" + aux[2];
 
     if (true){
-      wsUri = aux[0] + "//" + this.accessToken + "@" + aux[2]
+      wsUri = aux[0] + "//" + this.accessToken + ":Bearer@" + aux[2]
       console.log(wsUri);
     }
 
