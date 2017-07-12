@@ -62,36 +62,57 @@ export class AdmissionClient extends EventEmitter {
     const wsConfig:any = {
       reconnection: true,
     };
+
     if (this.accessToken) {
       wsConfig.extraHeaders = {
-        Authorization: "Bearer " + this.accessToken
+        Authorization: "Basic " +
+          new Buffer(this.accessToken).toString('base64')
       }
     }
+
     const aux = this.basePath.split("/");
     const wsUri = aux[0] + "//" + aux[2];
     this.ws = sio(wsUri, wsConfig);
 
     this.ws.on("connect", () => {
+        
       this.emit(this.onConnected);
+
+      this.ws.on("disconnect", () => {
+        this.emit(this.onDisconnected);
+      });
+      
+      this.ws.on("ecloud-event", (data: any) => {
+        const event = new AdmissionEvent();
+        event.timestamp = data.timestamp;
+        event.entity = data.entity;
+        event.strType = data.type;
+        event.strName = data.name;
+        event.type = 
+          EcloudEventType[data.type as keyof typeof EcloudEventType];
+        event.name = 
+          EcloudEventName[data.name as keyof typeof EcloudEventName];
+        event.data = data.data;
+        this.emit(this.onEcloudEvent, event);
+      });
+      this.ws.on("error", (reason: any) => {
+        this.emit(this.onError, reason);
+      });
+      deferred.resolve();
     });
-    this.ws.on("disconnect", () => {
-      this.emit(this.onDisconnected);
+
+    this.ws.on('unauthorized', (err:any) => {
+      if (deferred.isPending()){
+        deferred.reject(new Error(err.message));
+      } 
     });
-    this.ws.on("ecloud-event", (data: any) => {
-      const event = new AdmissionEvent();
-      event.timestamp = data.timestamp;
-      event.entity = data.entity;
-      event.strType = data.type;
-      event.strName = data.name;
-      event.type = EcloudEventType[data.type as keyof typeof EcloudEventType];
-      event.name = EcloudEventName[data.name as keyof typeof EcloudEventName];
-      event.data = data.data;
-      this.emit(this.onEcloudEvent, event);
+
+    this.ws.on("connect_error", () => {
+      if (deferred.isPending()){
+        deferred.reject(new Error("Connection error!"));
+      }
     });
-    this.ws.on("error", (reason: any) => {
-      this.emit(this.onError, reason);
-    });
-    deferred.resolve();
+
     return deferred.promise;
   }
 

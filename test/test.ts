@@ -12,8 +12,10 @@ const password = userid;
 let deployments:number = 0;
 let registries:number = 0;
 
-const ACS_URI       = "http://acs.argo.kumori.cloud/acs";
-const ADMISSION_URI = "http://admission.argo.kumori.cloud/admission";
+// const ACS_URI       = "http://acs.argo.kumori.cloud/acs";
+// const ADMISSION_URI = "http://admission.argo.kumori.cloud/admission";
+const ACS_URI       = "http://acs-dame-argo.slap53.iti.es/acs";
+const ADMISSION_URI = "http://admission-dame-argo.slap53.iti.es/admission";
 const BUNDLE = "/workspaces/slap/git/examples/calculator_1_0_0/deploy_bundle.zip";
 const SERVICE = "eslap://sampleservicecalculator/services/sampleservicecalculator/1_0_0";
 const COMPONENT = "eslap://sampleservicecalculator/components/cfe/1_0_0"
@@ -132,6 +134,7 @@ acs.login(username, password)
 .catch((reason) => {
   console.log("Error en Test:", reason);
 });
+
 console.log("SYNC END");
 setTimeout(() => {
   console.log("REAL END");

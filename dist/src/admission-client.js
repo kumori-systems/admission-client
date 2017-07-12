@@ -52,33 +52,47 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         };
         if (this.accessToken) {
             wsConfig.extraHeaders = {
-                Authorization: "Bearer " + this.accessToken
+                Authorization: "Basic " +
+                    new Buffer(this.accessToken).toString('base64')
             };
         }
+        console.log(JSON.stringify(wsConfig.extraHeaders));
         const aux = this.basePath.split("/");
         const wsUri = aux[0] + "//" + aux[2];
         this.ws = sio(wsUri, wsConfig);
         this.ws.on("connect", () => {
             this.emit(this.onConnected);
+            this.ws.on("disconnect", () => {
+                this.emit(this.onDisconnected);
+            });
+            this.ws.on("ecloud-event", (data) => {
+                const event = new _1.AdmissionEvent();
+                event.timestamp = data.timestamp;
+                event.entity = data.entity;
+                event.strType = data.type;
+                event.strName = data.name;
+                event.type =
+                    _1.EcloudEventType[data.type];
+                event.name =
+                    _1.EcloudEventName[data.name];
+                event.data = data.data;
+                this.emit(this.onEcloudEvent, event);
+            });
+            this.ws.on("error", (reason) => {
+                this.emit(this.onError, reason);
+            });
+            deferred.resolve();
         });
-        this.ws.on("disconnect", () => {
-            this.emit(this.onDisconnected);
+        this.ws.on('unauthorized', (err) => {
+            if (deferred.isPending()) {
+                deferred.reject(new Error(err.message));
+            }
         });
-        this.ws.on("ecloud-event", (data) => {
-            const event = new _1.AdmissionEvent();
-            event.timestamp = data.timestamp;
-            event.entity = data.entity;
-            event.strType = data.type;
-            event.strName = data.name;
-            event.type = _1.EcloudEventType[data.type];
-            event.name = _1.EcloudEventName[data.name];
-            event.data = data.data;
-            this.emit(this.onEcloudEvent, event);
+        this.ws.on("connect_error", () => {
+            if (deferred.isPending()) {
+                deferred.reject(new Error("Connection error!"));
+            }
         });
-        this.ws.on("error", (reason) => {
-            this.emit(this.onError, reason);
-        });
-        deferred.resolve();
         return deferred.promise;
     }
     close() {
