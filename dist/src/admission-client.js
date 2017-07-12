@@ -56,9 +56,12 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                     new Buffer(this.accessToken).toString('base64')
             };
         }
-        console.log(JSON.stringify(wsConfig.extraHeaders));
         const aux = this.basePath.split("/");
-        const wsUri = aux[0] + "//" + aux[2];
+        let wsUri = aux[0] + "//" + aux[2];
+        if (true) {
+            wsUri = aux[0] + "//" + this.accessToken + "@" + aux[2];
+            console.log(wsUri);
+        }
         this.ws = sio(wsUri, wsConfig);
         this.ws.on("connect", () => {
             this.emit(this.onConnected);

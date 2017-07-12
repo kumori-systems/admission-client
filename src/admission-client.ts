@@ -71,7 +71,13 @@ export class AdmissionClient extends EventEmitter {
     }
 
     const aux = this.basePath.split("/");
-    const wsUri = aux[0] + "//" + aux[2];
+    let wsUri = aux[0] + "//" + aux[2];
+
+    if (true){
+      wsUri = aux[0] + "//" + this.accessToken + "@" + aux[2]
+      console.log(wsUri);
+    }
+
     this.ws = sio(wsUri, wsConfig);
 
     this.ws.on("connect", () => {
