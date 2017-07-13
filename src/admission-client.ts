@@ -63,18 +63,18 @@ export class AdmissionClient extends EventEmitter {
       reconnection: true,
     };
 
-    if (this.accessToken) {
-      wsConfig.extraHeaders = {
-        Authorization: "Basic " +
-          new Buffer(this.accessToken).toString('base64')
-      }
-    }
+    // if (this.accessToken) {
+    //   wsConfig.extraHeaders = {
+    //     Authorization: "Basic " +
+    //       new Buffer(this.accessToken).toString('base64')
+    //   }
+    // }
 
     const aux = this.basePath.split("/");
     let wsUri = aux[0] + "//" + aux[2];
 
     if (true){
-      wsUri = aux[0] + "//" + this.accessToken + ":Bearer@" + aux[2]
+      wsUri = aux[0] + "//" + aux[2] + "?token=" + this.accessToken
       console.log(wsUri);
     }
 
