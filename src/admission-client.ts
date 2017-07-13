@@ -1,9 +1,9 @@
-import Swagger = require("./swagger/api");
-import {AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList,
-   DeploymentModification, EcloudEventName, EcloudEventType, Endpoint,
-   RegistrationResult } from ".";
-import {EventEmitter, Listener} from "typed-event-emitter";
 import sio = require("socket.io-client");
+import {EventEmitter, Listener} from "typed-event-emitter";
+import Swagger = require("./swagger/api");
+import {AdmissionEvent, Deferred, Deployment, DeploymentInstanceInfo,
+  DeploymentList, DeploymentModification, EcloudEventName, EcloudEventType,
+  Endpoint, RegistrationResult } from ".";
 
 // export class GeneralResponse {
 //   public "success": boolean;
@@ -59,7 +59,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public init(): Promise<void> {
     const deferred = new Deferred<void>();
-    const wsConfig:any = {
+    const wsConfig: any = {
       reconnection: true,
     };
 
@@ -73,30 +73,29 @@ export class AdmissionClient extends EventEmitter {
     const aux = this.basePath.split("/");
     let wsUri = aux[0] + "//" + aux[2];
 
-    if (true){
-      wsUri = aux[0] + "//" + aux[2] + "?token=" + this.accessToken
-      console.log(wsUri);
+    if (true) {
+      wsUri = aux[0] + "//" + aux[2] + "?token=" + this.accessToken;
     }
 
     this.ws = sio(wsUri, wsConfig);
 
     this.ws.on("connect", () => {
-        
+
       this.emit(this.onConnected);
 
       this.ws.on("disconnect", () => {
         this.emit(this.onDisconnected);
       });
-      
+
       this.ws.on("ecloud-event", (data: any) => {
         const event = new AdmissionEvent();
         event.timestamp = data.timestamp;
         event.entity = data.entity;
         event.strType = data.type;
         event.strName = data.name;
-        event.type = 
+        event.type =
           EcloudEventType[data.type as keyof typeof EcloudEventType];
-        event.name = 
+        event.name =
           EcloudEventName[data.name as keyof typeof EcloudEventName];
         event.data = data.data;
         this.emit(this.onEcloudEvent, event);
@@ -107,14 +106,14 @@ export class AdmissionClient extends EventEmitter {
       deferred.resolve();
     });
 
-    this.ws.on('unauthorized', (err:any) => {
-      if (deferred.isPending()){
+    this.ws.on("unauthorized", (err: any) => {
+      if (deferred.isPending()) {
         deferred.reject(new Error(err.message));
-      } 
+      }
     });
 
     this.ws.on("connect_error", () => {
-      if (deferred.isPending()){
+      if (deferred.isPending()) {
         deferred.reject(new Error("Connection error!"));
       }
     });
@@ -252,8 +251,6 @@ export class AdmissionClient extends EventEmitter {
           successful: deployments,
         };
         data.deployments.successful.forEach((item: any) => {
-          console.log("========== item deployments ================");
-          console.log(JSON.stringify(item, null, 2));
           deployments.push(mapDeploymentDefault(
             item.deploymentURN, item.topology));
         });
@@ -523,58 +520,3 @@ const mapInstanceInfoDefault = (name: string, role: string, i0: any) => {
   }
   return instanceInfo;
 };
-
-export class Deferred<T> {
-	public promise: Promise<T>;
-
-	private fate: "resolved" | "unresolved";
-	private state: "pending" | "fulfilled" | "rejected";
-
-	private _resolve: Function;
-	private _reject: Function;
-
-	constructor() {
-		this.state = "pending";
-		this.fate = "unresolved";
-		this.promise = new Promise((resolve, reject) => {
-			this._resolve = resolve;
-			this._reject = reject;
-		});
-		this.promise.then(
-			() => this.state = "fulfilled",
-			() => this.state = "rejected"
-		);
-	}
-
-	resolve(value?: any) {
-		if (this.fate === "resolved") {
-			throw "Deferred cannot be resolved twice";
-		}
-		this.fate = "resolved";
-		this._resolve(value);
-	}
-
-	reject(reason?: any) {
-		if (this.fate === "resolved") {
-			throw "Deferred cannot be resolved twice";
-		}
-		this.fate = "resolved";
-		this._reject(reason);
-	}
-
-	isResolved() {
-		return this.fate === "resolved";
-	}
-
-	isPending() {
-		return this.state === "pending";
-	}
-
-	isFulfilled() {
-		return this.state === "fulfilled";
-	}
-
-	isRejected() {
-		return this.state === "rejected";
-	}
-}

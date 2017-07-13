@@ -18,4 +18,6 @@ exports.EcloudEventName = admission_event_1.EcloudEventName;
 exports.EcloudEventType = admission_event_1.EcloudEventType;
 var deployment_modification_1 = require("./deployment-modification");
 exports.DeploymentModification = deployment_modification_1.DeploymentModification;
+var deferred_1 = require("./deferred");
+exports.Deferred = deferred_1.Deferred;
 //# sourceMappingURL=index.js.map

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const sio = require("socket.io-client");
+const typed_event_emitter_1 = require("typed-event-emitter");
 const Swagger = require("./swagger/api");
 const _1 = require(".");
-const typed_event_emitter_1 = require("typed-event-emitter");
-const sio = require("socket.io-client");
 // export class GeneralResponse {
 //   public "success": boolean;
 //   public "message": string;
@@ -46,7 +46,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * Asynchronous initialization of the stub.
      */
     init() {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         const wsConfig = {
             reconnection: true,
         };
@@ -60,7 +60,6 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         let wsUri = aux[0] + "//" + aux[2];
         if (true) {
             wsUri = aux[0] + "//" + aux[2] + "?token=" + this.accessToken;
-            console.log(wsUri);
         }
         this.ws = sio(wsUri, wsConfig);
         this.ws.on("connect", () => {
@@ -86,7 +85,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             });
             deferred.resolve();
         });
-        this.ws.on('unauthorized', (err) => {
+        this.ws.on("unauthorized", (err) => {
             if (deferred.isPending()) {
                 deferred.reject(new Error(err.message));
             }
@@ -109,7 +108,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * of the parameter are listed
      */
     findDeployments(urn, owner) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.findDeployments(urn, owner)
             .then((value) => {
             if (value.success) {
@@ -140,7 +139,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  These can be component, services, runtimes and resources.
      */
     findStorage() {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.registriesGet()
             .then((value) => {
             if (value.success) {
@@ -161,7 +160,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn  The urn of registered entity to be deleted.
      */
     removeStorage(urn) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.registriesUrnDelete(urn)
             .then((value) => {
             if (value.success) {
@@ -182,7 +181,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn The urn of registered entity to get its manifest.
      */
     getStorageManifest(urn) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.registriesGet(urn)
             .then((value) => {
             if (value.success) {
@@ -209,7 +208,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * manual, section 4.1.1.
      */
     sendBundle(bundlesZip, bundlesJson) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.bundlesPost(bundlesZip, bundlesJson)
             .then((value) => {
             if (value.success) {
@@ -226,8 +225,6 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                     successful: deployments,
                 };
                 data.deployments.successful.forEach((item) => {
-                    console.log("========== item deployments ================");
-                    console.log(JSON.stringify(item, null, 2));
                     deployments.push(mapDeploymentDefault(item.deploymentURN, item.topology));
                 });
                 deferred.resolve(result);
@@ -247,7 +244,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  section 4.
      */
     deploy(buffer) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.deploymentsPost(buffer)
             .then((value) => {
             if (value.success) {
@@ -275,7 +272,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Urn of deployment to be undeployed
      */
     undeploy(urn) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.deploymentsDelete(urn)
             .then((value) => {
             if (value.success) {
@@ -303,7 +300,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param endpoints An array of 2 elements with desired link endpoints data.
      */
     linkDeployments(endpoints) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
             if (value.success) {
@@ -325,7 +322,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  to be removed.
      */
     unlinkDeployments(endpoints) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
             .then((value) => {
             if (value.success) {
@@ -348,7 +345,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * ReconfigDeploymentModification.
      */
     modifyDeployment(configuration) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration.generate())))
             .then((value) => {
             if (value.success) {
@@ -368,7 +365,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * List current test contexts in the stamp.
      */
     listTestContexts() {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.testContextsGet()
             .then((value) => {
             if (value.success) {
@@ -389,7 +386,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Identifier of the test context to be removed.
      */
     removeTestContext(urn) {
-        const deferred = new Deferred();
+        const deferred = new _1.Deferred();
         this.api.testContextsDelete(urn)
             .then((value) => {
             if (value.success) {
@@ -490,42 +487,4 @@ const mapInstanceInfoDefault = (name, role, i0) => {
     }
     return instanceInfo;
 };
-class Deferred {
-    constructor() {
-        this.state = "pending";
-        this.fate = "unresolved";
-        this.promise = new Promise((resolve, reject) => {
-            this._resolve = resolve;
-            this._reject = reject;
-        });
-        this.promise.then(() => this.state = "fulfilled", () => this.state = "rejected");
-    }
-    resolve(value) {
-        if (this.fate === "resolved") {
-            throw "Deferred cannot be resolved twice";
-        }
-        this.fate = "resolved";
-        this._resolve(value);
-    }
-    reject(reason) {
-        if (this.fate === "resolved") {
-            throw "Deferred cannot be resolved twice";
-        }
-        this.fate = "resolved";
-        this._reject(reason);
-    }
-    isResolved() {
-        return this.fate === "resolved";
-    }
-    isPending() {
-        return this.state === "pending";
-    }
-    isFulfilled() {
-        return this.state === "fulfilled";
-    }
-    isRejected() {
-        return this.state === "rejected";
-    }
-}
-exports.Deferred = Deferred;
 //# sourceMappingURL=admission-client.js.map

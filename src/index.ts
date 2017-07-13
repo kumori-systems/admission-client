@@ -7,3 +7,4 @@ export {Endpoint} from "./endpoint";
 export {AdmissionEvent, EcloudEventName, EcloudEventType}
   from "./admission-event";
 export {DeploymentModification} from "./deployment-modification";
+export {Deferred} from "./deferred";
