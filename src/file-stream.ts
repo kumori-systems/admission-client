@@ -1,18 +1,16 @@
-import {ReadStream} from 'fs';
-
 export class FileStream{
 
-  private stream: ReadStream;
+  private stream: any;
 
-  public constructor(stream: ReadStream) {
+  public constructor(stream: any) {
     this.stream = stream;
   }
 
-  public setStream(stream: ReadStream): void {
+  public setStream(stream: any): void {
     this.stream = stream;
   }
 
-  public getStream():ReadStream {
+  public getStream():any {
     return this.stream;
   }
   
