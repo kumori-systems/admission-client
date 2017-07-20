@@ -3,7 +3,7 @@ import {} from 'jest'
 
 import {AcsClient} from "acs-client";
 import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList, 
-  EcloudEventType, RegistrationResult} 
+  EcloudEventType, FileStream, RegistrationResult} 
   from "../src";
 import {createReadStream, readFileSync} from 'fs';
 
@@ -114,7 +114,7 @@ describe('Check Admission-client', () => {
 
   it('deploys a service', () => {
     return beforeAndAfter(admission, 
-      admission.sendBundle(createReadStream(config.bundle)))
+      admission.sendBundle(new FileStream(createReadStream(config.bundle))))
     .then((result:RegistrationResult) => {
         // console.log(JSON.stringify(result, null, 2));
         expect(preRegistries +1 === registries);
@@ -132,7 +132,7 @@ describe('Check Admission-client', () => {
 
   it('redeploys the service', () => {
     return beforeAndAfter(admission, 
-      admission.deploy(createReadStream(config.deployFile)))
+      admission.deploy(new FileStream(createReadStream(config.deployFile))))
     .then((result:DeploymentList) => {
       // console.log(JSON.stringify(result, null, 2));
       expect(preRegistries +2 === registries);

@@ -3,7 +3,7 @@ import {EventEmitter, Listener} from "typed-event-emitter";
 import Swagger = require("./swagger/api");
 import {AdmissionEvent, Deferred, Deployment, DeploymentInstanceInfo,
   DeploymentList, DeploymentModification, EcloudEventName, EcloudEventType,
-  Endpoint, RegistrationResult } from ".";
+  Endpoint, FileStream, RegistrationResult } from ".";
 
 // export class GeneralResponse {
 //   public "success": boolean;
@@ -231,10 +231,12 @@ export class AdmissionClient extends EventEmitter {
    * The format of this file must follow the specification in the ECloud SDK
    * manual, section 4.1.1.
    */
-  public sendBundle(bundlesZip?: any, bundlesJson?: any):
+  public sendBundle(bundlesZip?: FileStream, bundlesJson?: FileStream):
       Promise<RegistrationResult> {
     const deferred = new Deferred<RegistrationResult>();
-    this.api.bundlesPost(bundlesZip, bundlesJson)
+    const zipStream = bundlesZip ? bundlesZip.getStream(): undefined;
+    const zipJson = bundlesJson ? bundlesJson.getStream(): undefined;
+    this.api.bundlesPost(zipStream, zipJson)
     .then( (value) => {
       if (value.success) {
         const data: Swagger.InlineResponse200Data = value.data;
@@ -270,9 +272,9 @@ export class AdmissionClient extends EventEmitter {
    * @param buffer Deployment file following specification in ECloud Manual,
    *  section 4.
    */
-  public deploy(buffer: any): Promise<DeploymentList> {
+  public deploy(buffer: FileStream): Promise<DeploymentList> {
     const deferred = new Deferred<DeploymentList>();
-    this.api.deploymentsPost(buffer)
+    this.api.deploymentsPost(buffer.getStream())
     .then( (value) => {
        if (value.success) {
         const result: {[key: string]: Deployment} = {};

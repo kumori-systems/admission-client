@@ -215,7 +215,7 @@ class DefaultApi {
         };
         if (fd.getHeaders !== undefined) {
             requestOptions.headers = fd.getHeaders();
-            console.log("Headers", requestOptions.headers);
+            // console.log("Headers", requestOptions.headers);
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);

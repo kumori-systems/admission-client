@@ -275,7 +275,7 @@ export class DefaultApi {
    * @param inline The uploaded deployment file following specification
    * in ECloud Manual, section 4.
    */
-  public deploymentsPost(inline: string): Promise<InlineResponse2003> {
+  public deploymentsPost(inline: any): Promise<InlineResponse2003> {
     const localVarPath = this.basePath + "/deployments";
     const queryParameters: any = {};
     const headerParams: any =  Object.assign({}, this.defaultHeaders);

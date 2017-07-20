@@ -120,7 +120,7 @@ export declare class DefaultApi {
      * @param inline The uploaded deployment file following specification
      * in ECloud Manual, section 4.
      */
-    deploymentsPost(inline: string): Promise<InlineResponse2003>;
+    deploymentsPost(inline: any): Promise<InlineResponse2003>;
     /**
      *
      * Returns data of deployed services in system.

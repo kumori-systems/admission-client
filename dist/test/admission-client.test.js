@@ -96,7 +96,7 @@ describe('Check Admission-client', () => {
         });
     });
     it('deploys a service', () => {
-        return beforeAndAfter(admission, admission.sendBundle(fs_1.createReadStream(config.bundle)))
+        return beforeAndAfter(admission, admission.sendBundle(new src_1.FileStream(fs_1.createReadStream(config.bundle))))
             .then((result) => {
             // console.log(JSON.stringify(result, null, 2));
             expect(preRegistries + 1 === registries);
@@ -112,7 +112,7 @@ describe('Check Admission-client', () => {
         });
     });
     it('redeploys the service', () => {
-        return beforeAndAfter(admission, admission.deploy(fs_1.createReadStream(config.deployFile)))
+        return beforeAndAfter(admission, admission.deploy(new src_1.FileStream(fs_1.createReadStream(config.deployFile))))
             .then((result) => {
             // console.log(JSON.stringify(result, null, 2));
             expect(preRegistries + 2 === registries);

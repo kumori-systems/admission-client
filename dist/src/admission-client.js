@@ -209,7 +209,9 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      */
     sendBundle(bundlesZip, bundlesJson) {
         const deferred = new _1.Deferred();
-        this.api.bundlesPost(bundlesZip, bundlesJson)
+        const zipStream = bundlesZip ? bundlesZip.getStream() : undefined;
+        const zipJson = bundlesJson ? bundlesJson.getStream() : undefined;
+        this.api.bundlesPost(zipStream, zipJson)
             .then((value) => {
             if (value.success) {
                 const data = value.data;
@@ -245,14 +247,14 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      */
     deploy(buffer) {
         const deferred = new _1.Deferred();
-        this.api.deploymentsPost(buffer)
+        this.api.deploymentsPost(buffer.getStream())
             .then((value) => {
             if (value.success) {
                 const result = {};
                 const data = {};
                 const urn = value.data.deploymentURN;
                 data[urn] = value.data.topology;
-                console.log("Deployment:", JSON.stringify(value.data, null, 2));
+                // console.log("Deployment:",JSON.stringify(value.data, null, 2));
                 for (const dname in data) {
                     if (data[dname]) {
                         const d0 = data[dname];

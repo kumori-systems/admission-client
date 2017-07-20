@@ -1,6 +1,6 @@
 import { EventEmitter, Listener } from "typed-event-emitter";
 import Swagger = require("./swagger/api");
-import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
+import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, FileStream, RegistrationResult } from ".";
 /**
  * Stub to give access to an ECloud admission instance.
  */
@@ -60,13 +60,13 @@ export declare class AdmissionClient extends EventEmitter {
      * The format of this file must follow the specification in the ECloud SDK
      * manual, section 4.1.1.
      */
-    sendBundle(bundlesZip?: any, bundlesJson?: any): Promise<RegistrationResult>;
+    sendBundle(bundlesZip?: FileStream, bundlesJson?: FileStream): Promise<RegistrationResult>;
     /**
      * Performs a new deployment in the system.
      * @param buffer Deployment file following specification in ECloud Manual,
      *  section 4.
      */
-    deploy(buffer: any): Promise<DeploymentList>;
+    deploy(buffer: FileStream): Promise<DeploymentList>;
     /**
      * Undeploys a deployment in the system.
      * @param urn Urn of deployment to be undeployed

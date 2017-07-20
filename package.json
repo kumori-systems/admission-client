@@ -16,6 +16,9 @@
       "js"
     ]
   },
+  "browser": {
+    "./dist/src/file-stream.js": "./dist/src/file-stream-browser.js"
+  },
   "scripts": {
     "test": "./node_modules/.bin/jest test/*.test.ts",
     "clean": "rm -rf dist/src/index.js",

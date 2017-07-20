@@ -20,4 +20,6 @@ var deployment_modification_1 = require("./deployment-modification");
 exports.DeploymentModification = deployment_modification_1.DeploymentModification;
 var deferred_1 = require("./deferred");
 exports.Deferred = deferred_1.Deferred;
+var file_stream_1 = require("./file-stream");
+exports.FileStream = file_stream_1.FileStream;
 //# sourceMappingURL=index.js.map
