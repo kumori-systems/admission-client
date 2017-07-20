@@ -1,0 +1,1 @@
+{"version":3,"file":"file-stream-browser.js","sourceRoot":"","sources":["../../src/file-stream-browser.ts"],"names":[],"mappings":";;AAAA;IAIE,YAAmB,MAAiB;QAClC,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;IACvB,CAAC;IAEM,SAAS,CAAC,MAAiB;QAChC,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;IACvB,CAAC;IAEM,SAAS;QACd,MAAM,CAAC,IAAI,CAAC,MAAM,CAAC;IACrB,CAAC;CAEF;AAhBD,gCAgBC"}
