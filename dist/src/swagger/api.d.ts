@@ -29,6 +29,14 @@ export declare class InlineResponse2001Data {
         [key: string]: InlineResponse2001Roles;
     };
 }
+export declare class InlineResponse2003 {
+    "success": boolean;
+    "message": string;
+    "data": {
+        deploymentURN: string;
+        topology: InlineResponse2001Data;
+    };
+}
 export declare class InlineResponse2001Instances {
     "id": string;
     "privateIp": string;
@@ -112,7 +120,7 @@ export declare class DefaultApi {
      * @param inline The uploaded deployment file following specification
      * in ECloud Manual, section 4.
      */
-    deploymentsPost(inline: File): Promise<InlineResponse2001>;
+    deploymentsPost(inline: string): Promise<InlineResponse2003>;
     /**
      *
      * Returns data of deployed services in system.

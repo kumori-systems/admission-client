@@ -2,8 +2,8 @@
 import {} from 'jest'
 
 import {AcsClient} from "acs-client";
-import {AdmissionClient, AdmissionEvent, Deployment, EcloudEventType,
-   RegistrationResult} 
+import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList, 
+  EcloudEventType, RegistrationResult} 
   from "../src";
 import {createReadStream, readFileSync} from 'fs';
 
@@ -79,6 +79,10 @@ describe('Check Admission-client', () => {
       deployments = Object.keys(result).length;
       // console.log("Deployments:", registries);
       expect(deployments > 5);
+      const deployment:Deployment = result[Object.keys(result)[5]];
+      expect(deployment.service).toBeDefined();
+      expect(deployment.urn).toBeDefined();
+      expect(Object.keys(deployment.roles).length>0);
     });
   });
 
@@ -124,6 +128,24 @@ describe('Check Admission-client', () => {
         expect(Object.keys(deploymentInfo.roles.worker.instances))
         .toHaveLength(1);
       });
+  });
+
+  it('redeploys the service', () => {
+    return beforeAndAfter(admission, 
+      admission.deploy(createReadStream(config.deployFile)))
+    .then((result:DeploymentList) => {
+      // console.log(JSON.stringify(result, null, 2));
+      expect(preRegistries +2 === registries);
+      expect(preDeployments +2 === deployments);
+      expect(result).toBeDefined();
+      expect(Object.keys(result)).toHaveLength(1);
+      const deploymentInfo:Deployment = result[Object.keys(result)[0]];
+      expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
+      expect(Object.keys(deploymentInfo.roles.cfe.instances))
+      .toHaveLength(1);
+      expect(Object.keys(deploymentInfo.roles.worker.instances))
+      .toHaveLength(1);
+    });
   });
 
   it('clean stamp again', () => {

@@ -32,6 +32,9 @@ exports.InlineResponse2001Arrangement = InlineResponse2001Arrangement;
 class InlineResponse2001Data {
 }
 exports.InlineResponse2001Data = InlineResponse2001Data;
+class InlineResponse2003 {
+}
+exports.InlineResponse2003 = InlineResponse2003;
 class InlineResponse2001Instances {
 }
 exports.InlineResponse2001Instances = InlineResponse2001Instances;
@@ -194,22 +197,26 @@ class DefaultApi {
         const localVarPath = this.basePath + "/deployments";
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
-        const formParams = new FormData();
+        const fd = new FormData();
         // verify required parameter "inline" is not null or undefined
         if (inline === null || inline === undefined) {
             throw new Error("Required parameter inline was null or undefined \
           when calling deploymentsPost.");
         }
         if (inline !== undefined) {
-            formParams.append("inline", inline, inline.name);
+            fd.append("inline", inline, 'Manifest.json');
         }
         const requestOptions = {
-            data: formParams,
+            data: fd,
             headers: headerParams,
             method: "POST",
             params: queryParameters,
             url: localVarPath,
         };
+        if (fd.getHeaders !== undefined) {
+            requestOptions.headers = fd.getHeaders();
+            console.log("Headers", requestOptions.headers);
+        }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
         const deferred = new __1.Deferred();

@@ -276,9 +276,13 @@ export class AdmissionClient extends EventEmitter {
     .then( (value) => {
        if (value.success) {
         const result: {[key: string]: Deployment} = {};
-        for (const dname in value.data) {
-          if (value.data[dname]) {
-            const d0 = value.data[dname];
+        const data:any = {}
+        const urn: string = value.data.deploymentURN;
+        data[urn] = value.data.topology;
+        // console.log("Deployment:",JSON.stringify(value.data, null, 2));
+        for (const dname in data) {
+          if (data[dname]) {
+            const d0 = data[dname];
             const d1 = mapDeploymentDefault(dname, d0);
             result[dname] = d1;
           }

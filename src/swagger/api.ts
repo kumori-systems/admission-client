@@ -51,6 +51,16 @@ export class InlineResponse2001Data {
   public "roles": { [key: string]: InlineResponse2001Roles; };
 }
 
+export class InlineResponse2003 {
+  public "success": boolean;
+  public "message": string;
+  public "data": {
+    deploymentURN: string;
+    topology: InlineResponse2001Data;
+  };
+}
+
+
 export class InlineResponse2001Instances {
   public "id": string;
   public "privateIp": string;
@@ -265,11 +275,11 @@ export class DefaultApi {
    * @param inline The uploaded deployment file following specification
    * in ECloud Manual, section 4.
    */
-  public deploymentsPost(inline: File): Promise<InlineResponse2001> {
+  public deploymentsPost(inline: string): Promise<InlineResponse2003> {
     const localVarPath = this.basePath + "/deployments";
     const queryParameters: any = {};
     const headerParams: any =  Object.assign({}, this.defaultHeaders);
-    const formParams: FormData = new FormData();
+    const fd: FormData = new FormData();
 
     // verify required parameter "inline" is not null or undefined
     if (inline === null || inline === undefined) {
@@ -278,23 +288,28 @@ export class DefaultApi {
     }
 
     if (inline !== undefined) {
-      formParams.append("inline", inline, inline.name);
+      fd.append("inline", inline, 'Manifest.json');
     }
 
     const requestOptions: AxiosRequestConfig = {
-      data: formParams,
+      data: fd,
       headers: headerParams,
       method: "POST",
       params: queryParameters,
       url: localVarPath,
     };
 
+    if (fd.getHeaders !== undefined){
+      requestOptions.headers = fd.getHeaders();
+      // console.log("Headers", requestOptions.headers);
+    }
+
     this.authentications.apiAuthorization.applyToRequest(requestOptions);
 
     this.authentications.default.applyToRequest(requestOptions);
 
-    const deferred: Deferred<InlineResponse2001> =
-      new Deferred<InlineResponse2001>();
+    const deferred: Deferred<InlineResponse2003> =
+      new Deferred<InlineResponse2003>();
 
     Axios(requestOptions)
       .then((response: AxiosResponse) => {

@@ -71,6 +71,10 @@ describe('Check Admission-client', () => {
             deployments = Object.keys(result).length;
             // console.log("Deployments:", registries);
             expect(deployments > 5);
+            const deployment = result[Object.keys(result)[5]];
+            expect(deployment.service).toBeDefined();
+            expect(deployment.urn).toBeDefined();
+            expect(Object.keys(deployment.roles).length > 0);
         });
     });
     it('gets a manifest', (done) => {
@@ -100,6 +104,22 @@ describe('Check Admission-client', () => {
             expect(result).toHaveProperty('deployments.successful');
             expect(result.deployments.successful).toHaveLength(1);
             const deploymentInfo = result.deployments.successful[0];
+            expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
+            expect(Object.keys(deploymentInfo.roles.cfe.instances))
+                .toHaveLength(1);
+            expect(Object.keys(deploymentInfo.roles.worker.instances))
+                .toHaveLength(1);
+        });
+    });
+    it('redeploys the service', () => {
+        return beforeAndAfter(admission, admission.deploy(fs_1.createReadStream(config.deployFile)))
+            .then((result) => {
+            // console.log(JSON.stringify(result, null, 2));
+            expect(preRegistries + 2 === registries);
+            expect(preDeployments + 2 === deployments);
+            expect(result).toBeDefined();
+            expect(Object.keys(result)).toHaveLength(1);
+            const deploymentInfo = result[Object.keys(result)[0]];
             expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
             expect(Object.keys(deploymentInfo.roles.cfe.instances))
                 .toHaveLength(1);
