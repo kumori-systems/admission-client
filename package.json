@@ -4,8 +4,20 @@
   "description": "Client Stub for ECloud Admission",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/.bin/jest test/*.test.ts",
     "clean": "rm -rf dist/src/index.js",
     "lint": "./node_modules/.bin/tslint src/swagger/*ts src/*ts ",
     "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist; echo Finished"
@@ -15,16 +27,20 @@
   "dependencies": {
     "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#ticket820",
     "axios": "0.16.2",
+    "bluebird": "^3.5.0",
+    "form-data": "2.2.0",
     "socket.io-client": "2.0.3",
-    "typed-event-emitter": "^1.0.3",
-    "form-data": "2.2.0"
+    "typed-event-emitter": "1.0.3"
   },
   "devDependencies": {
-    "tslint": "5.4.3",
-    "tslint-config-standard": "5.0.2",
-    "typescript": "2.3.3",
+    "@types/form-data": "0.0.33",
+    "@types/jest": "20.0.2",
     "@types/node": "7.0.22",
     "@types/socket.io-client": "1.4.29",
-    "@types/form-data": "0.0.33"
+    "jest": "20.0.4",
+    "ts-jest": "20.0.7",
+    "tslint": "5.4.3",
+    "tslint-config-standard": "5.0.2",
+    "typescript": "2.3.3"
   }
 }

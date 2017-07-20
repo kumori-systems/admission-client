@@ -119,11 +119,13 @@ class DefaultApi {
         }
         const requestOptions = {
             data: formParams,
-            headers: fd.getHeaders(),
             method: "POST",
             params: queryParameters,
             url: localVarPath,
         };
+        if (fd.getHeaders !== undefined) {
+            requestOptions.headers = fd.getHeaders();
+        }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
         // console.log(JSON.stringify(requestOptions.headers,null,2));

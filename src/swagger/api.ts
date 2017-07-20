@@ -179,14 +179,15 @@ export class DefaultApi {
     if (bundlesJson !== undefined) {
       fd.append("bundlesJson", bundlesJson, "bundle.json");
     }
-
     const requestOptions: AxiosRequestConfig = {
       data: formParams,
-      headers: fd.getHeaders(),
       method: "POST",
       params: queryParameters,
       url: localVarPath,
     };
+    if (fd.getHeaders !== undefined){
+      requestOptions.headers = fd.getHeaders();
+    }
 
     this.authentications.apiAuthorization.applyToRequest(requestOptions);
 

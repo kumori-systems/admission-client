@@ -10,5 +10,4 @@ cp -r $ACS/dist/* $H/node_modules/acs-client/dist
 
 cd $H
 npm run dist|grep -v swagger
-node dist/test/test-old.js
-
+./node_modules/.bin/jest dist/test/*.test.js
