@@ -17,7 +17,9 @@
     ]
   },
   "browser": {
-    "./dist/src/file-stream.js": "./dist/src/file-stream-browser.js"
+    "./dist/src/file-stream.d.ts": "./dist/src/file-stream-browser.d.ts",
+    "./dist/src/file-stream.js": "./dist/src/file-stream-browser.js",
+    "./dist/src/file-stream.js.map": "./dist/src/file-stream-browser.js.map"
   },
   "scripts": {
     "test": "./node_modules/.bin/jest test/*.test.ts",
