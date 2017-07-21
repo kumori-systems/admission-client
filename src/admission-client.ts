@@ -335,7 +335,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public linkDeployments(endpoints: Endpoint[]): Promise<any> {
     const deferred = new Deferred<any>();
-    this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
+    this.api.linksPost(generateLinkManifest(endpoints))
     .then( (value) => {
       if (value.success) {
         const result: any = value.data;
@@ -357,7 +357,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public unlinkDeployments(endpoints: Endpoint[]): Promise<any> {
     const deferred = new Deferred<any>();
-    this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
+    this.api.linksDelete(generateLinkManifest(endpoints))
     .then((value) => {
       if (value.success) {
         const result: any = value.data;
@@ -380,8 +380,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public modifyDeployment(configuration: DeploymentModification): Promise<any> {
     const deferred = new Deferred<any>();
-    this.api.modifyDeployment(Buffer.from(
-      JSON.stringify(configuration.generate())))
+    this.api.modifyDeployment(JSON.stringify(configuration.generate()))
     .then((value) => {
       if (value.success) {
         const result: any = value.data;
@@ -525,4 +524,20 @@ const mapInstanceInfoDefault = (name: string, role: string, i0: any) => {
     };
   }
   return instanceInfo;
+};
+
+const generateLinkManifest = (entrypoints: Endpoint[]):string => {
+  const manifest = {
+    spec: "http://eslap.cloud/manifest/link/1_0_0",
+    endpoints: [
+      {
+        "deployment": entrypoints[0].deployment,
+        "channel": entrypoints[0].channel
+      },{
+        "deployment": entrypoints[1].deployment,
+        "channel": entrypoints[1].channel
+     }
+   ]
+  };
+  return JSON.stringify(manifest);
 };

@@ -140,13 +140,13 @@ export declare class DefaultApi {
      * Removes a link between two services
      * @param linkManifest The manifest of the link to be removed.
      */
-    linksDelete(linkManifest: Buffer): Promise<InlineResponse2002>;
+    linksDelete(linkManifest: any): Promise<InlineResponse2002>;
     /**
      *
      * Creates a new link between two deployed services.
      * @param linkManifest The manifest of the desired link.
      */
-    linksPost(linkManifest: Buffer): Promise<InlineResponse2002>;
+    linksPost(linkManifest: any): Promise<InlineResponse2002>;
     /**
      *
      * Modification of some parameter of the deployment.
@@ -161,7 +161,7 @@ export declare class DefaultApi {
      * * configuration (only when reconfig action)
      * * roles (only when manualScaling action)
      */
-    modifyDeployment(inline: Buffer): Promise<InlineResponse2002>;
+    modifyDeployment(inline: any): Promise<InlineResponse2002>;
     /**
      *
      * Returns data of registered entities in the system. These can be

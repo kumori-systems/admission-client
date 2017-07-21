@@ -389,11 +389,11 @@ export class DefaultApi {
    * Removes a link between two services
    * @param linkManifest The manifest of the link to be removed.
    */
-  public linksDelete(linkManifest: Buffer): Promise<InlineResponse2002> {
+  public linksDelete(linkManifest: any): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + "/links";
     const queryParameters: any = {};
     const headerParams: any =  Object.assign({}, this.defaultHeaders);
-    const formParams: any = {};
+    const fd: FormData = new FormData();
 
     // verify required parameter "linkManifest" is not null or undefined
     if (linkManifest === null || linkManifest === undefined) {
@@ -401,20 +401,19 @@ export class DefaultApi {
           undefined when calling linksDelete.");
     }
 
-    let useFormData = false;
-
-    if (linkManifest !== undefined) {
-      formParams.linkManifest = linkManifest;
-    }
-    useFormData = true;
+    fd.append('linkManifest', linkManifest, 'Manifest.json');
 
     const requestOptions: AxiosRequestConfig = {
-      data: formParams,
+      data: fd,
       headers: headerParams,
       method: "DELETE",
       params: queryParameters,
       url: localVarPath,
     };
+
+    if (fd.getHeaders !== undefined){
+      requestOptions.headers = fd.getHeaders();
+    }
 
     this.authentications.apiAuthorization.applyToRequest(requestOptions);
 
@@ -442,30 +441,30 @@ export class DefaultApi {
    * Creates a new link between two deployed services.
    * @param linkManifest The manifest of the desired link.
    */
-  public linksPost(linkManifest: Buffer): Promise<InlineResponse2002> {
+  public linksPost(linkManifest: any): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + "/links";
     const queryParameters: any = {};
     const headerParams: any =  Object.assign({}, this.defaultHeaders);
-    const formParams: any = {};
+    const fd: FormData = new FormData();
 
     // verify required parameter "linkManifest" is not null or undefined
     if (linkManifest === null || linkManifest === undefined) {
       throw new Error("Required parameter linkManifest was null or \
             undefined when calling linksPost.");
     }
-
-    if (linkManifest !== undefined) {
-      formParams.linkManifest = linkManifest;
-    }
+    fd.append('linkManifest', linkManifest, 'Manifest.json');
 
     const requestOptions: AxiosRequestConfig = {
-      data: formParams,
+      data: fd,
       headers: headerParams,
       method: "POST",
       params: queryParameters,
       url: localVarPath,
     };
 
+    if (fd.getHeaders !== undefined){
+      requestOptions.headers = fd.getHeaders();
+    }
     this.authentications.apiAuthorization.applyToRequest(requestOptions);
 
     this.authentications.default.applyToRequest(requestOptions);
@@ -501,11 +500,11 @@ export class DefaultApi {
    * * configuration (only when reconfig action)
    * * roles (only when manualScaling action)
    */
-  public modifyDeployment(inline: Buffer): Promise<InlineResponse2002> {
+  public modifyDeployment(inline: any): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + "/deployments/configuration";
     const queryParameters: any = {};
     const headerParams: any =  Object.assign({}, this.defaultHeaders);
-    const formParams: any = {};
+    const fd: FormData = new FormData();
 
     // verify required parameter "inline" is not null or undefined
     if (inline === null || inline === undefined) {
@@ -513,17 +512,19 @@ export class DefaultApi {
           when calling modifyDeployment.");
     }
 
-    if (inline !== undefined) {
-      formParams.inline = inline;
-    }
+    fd.append('inline', inline, 'Manifest.json');
 
     const requestOptions: AxiosRequestConfig = {
-      data: formParams,
+      data: fd,
       headers: headerParams,
       method: "PUT",
       params: queryParameters,
       url: localVarPath,
     };
+
+    if (fd.getHeaders !== undefined){
+      requestOptions.headers = fd.getHeaders();
+    }
 
     this.authentications.apiAuthorization.applyToRequest(requestOptions);
 

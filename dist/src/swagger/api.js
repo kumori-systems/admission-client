@@ -292,24 +292,23 @@ class DefaultApi {
         const localVarPath = this.basePath + "/links";
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
-        const formParams = {};
+        const fd = new FormData();
         // verify required parameter "linkManifest" is not null or undefined
         if (linkManifest === null || linkManifest === undefined) {
             throw new Error("Required parameter linkManifest was null or \
           undefined when calling linksDelete.");
         }
-        let useFormData = false;
-        if (linkManifest !== undefined) {
-            formParams.linkManifest = linkManifest;
-        }
-        useFormData = true;
+        fd.append('linkManifest', linkManifest, 'Manifest.json');
         const requestOptions = {
-            data: formParams,
+            data: fd,
             headers: headerParams,
             method: "DELETE",
             params: queryParameters,
             url: localVarPath,
         };
+        if (fd.getHeaders !== undefined) {
+            requestOptions.headers = fd.getHeaders();
+        }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
         const deferred = new __1.Deferred();
@@ -336,22 +335,23 @@ class DefaultApi {
         const localVarPath = this.basePath + "/links";
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
-        const formParams = {};
+        const fd = new FormData();
         // verify required parameter "linkManifest" is not null or undefined
         if (linkManifest === null || linkManifest === undefined) {
             throw new Error("Required parameter linkManifest was null or \
             undefined when calling linksPost.");
         }
-        if (linkManifest !== undefined) {
-            formParams.linkManifest = linkManifest;
-        }
+        fd.append('linkManifest', linkManifest, 'Manifest.json');
         const requestOptions = {
-            data: formParams,
+            data: fd,
             headers: headerParams,
             method: "POST",
             params: queryParameters,
             url: localVarPath,
         };
+        if (fd.getHeaders !== undefined) {
+            requestOptions.headers = fd.getHeaders();
+        }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
         const deferred = new __1.Deferred();
@@ -387,22 +387,23 @@ class DefaultApi {
         const localVarPath = this.basePath + "/deployments/configuration";
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
-        const formParams = {};
+        const fd = new FormData();
         // verify required parameter "inline" is not null or undefined
         if (inline === null || inline === undefined) {
             throw new Error("Required parameter inline was null or undefined \
           when calling modifyDeployment.");
         }
-        if (inline !== undefined) {
-            formParams.inline = inline;
-        }
+        fd.append('inline', inline, 'Manifest.json');
         const requestOptions = {
-            data: formParams,
+            data: fd,
             headers: headerParams,
             method: "PUT",
             params: queryParameters,
             url: localVarPath,
         };
+        if (fd.getHeaders !== undefined) {
+            requestOptions.headers = fd.getHeaders();
+        }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
         const deferred = new __1.Deferred();

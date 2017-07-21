@@ -3,7 +3,7 @@ import {} from 'jest'
 
 import {AcsClient} from "acs-client";
 import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList, 
-  EcloudEventType, FileStream, RegistrationResult} 
+  EcloudEventType, Endpoint, FileStream, RegistrationResult} 
   from "../src";
 import {createReadStream, readFileSync} from 'fs';
 
@@ -16,7 +16,7 @@ let registries: number = 0;
 let preDeployments: number = 0;
 let preRegistries: number = 0;
 const counter: Map<string, number> = new Map<string, number>();
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
 
 describe('Check Admission-client', () => {
 
@@ -33,7 +33,7 @@ describe('Check Admission-client', () => {
       expect(token).toBeDefined();
       const accessToken = token.accessToken;
       expect(accessToken).toBeDefined();
-      // console.log("access_token", accessToken);
+      console.log("access_token", accessToken);
       admission = new AdmissionClient(config.admissionUri, accessToken);
       admission.onConnected(() => {
         connected = true
@@ -50,11 +50,14 @@ describe('Check Admission-client', () => {
         console.log("===========================ERROR***************");
         console.log(reason);
       });
+      console.log("Before init");
       return admission.init();
     }).then(() => {
+      console.log("After init");
       return updateState(admission);
     })
     .then(() => {
+      console.log("After updateState");
       expect(connected);
       done();
     });
@@ -112,7 +115,7 @@ describe('Check Admission-client', () => {
     });
   });
 
-  it('deploys a service', () => {
+  it('deploys a service with bundle', () => {
     return beforeAndAfter(admission, 
       admission.sendBundle(new FileStream(createReadStream(config.bundle))))
     .then((result:RegistrationResult) => {
@@ -130,7 +133,7 @@ describe('Check Admission-client', () => {
       });
   });
 
-  it('redeploys the service', () => {
+  it('redeploys the service with manifest', () => {
     return beforeAndAfter(admission, 
       admission.deploy(new FileStream(createReadStream(config.deployFile))))
     .then((result:DeploymentList) => {
@@ -165,6 +168,44 @@ describe('Check Admission-client', () => {
     });
   });
 
+  it('deploys two services with bundle and links/unlinks them with manifest', () => {
+    let urn1:string;
+    let urn2:string;
+    const link:Endpoint[] = new Array<Endpoint>();
+    console.log("Initialized");
+    return undeployService(admission, "eslap://sampleinterservice/services/samplefrontend/1_0_0")
+    .then(() => {
+      return undeployService(admission, "eslap://sampleinterservice/services/samplebackend/1_0_0")
+    })
+    .then(() => {
+      console.log("Cleaned");
+      return admission.sendBundle(
+        new FileStream(createReadStream(config.linkBundle1)))
+    })
+    .then((result:RegistrationResult) => {
+      console.log("Install 1");
+      const deploymentInfo = result.deployments.successful[0] 
+      urn1 = deploymentInfo.urn;
+      expect(urn1).toBeDefined();
+      return admission.sendBundle(
+        new FileStream(createReadStream(config.linkBundle2)))
+    })
+    .then((result:RegistrationResult) => {
+      console.log("Install 2");
+      const deploymentInfo = result.deployments.successful[0] 
+      urn2 = deploymentInfo.urn;
+      expect(urn2).toBeDefined();
+      link.push(new Endpoint(urn1, config.linkEntrypoint1));
+      link.push(new Endpoint(urn2, config.linkEntrypoint2));
+      return admission.linkDeployments(link)
+    })
+    .then(() => {
+      console.log("Linked!");
+      console.log("Vamos a hacer unlink");
+      return admission.unlinkDeployments(link)
+    });      
+  }); 
+
   it('check events', () => {
     // counter.forEach((value, key) => {
     //   console.log(key, "=", value);
@@ -176,7 +217,6 @@ describe('Check Admission-client', () => {
     expect(cget('instance/status')>0); 
     expect(cget('metrics/service')>0); 
   });
-
 });
 
 const undeployService = (adm:AdmissionClient,serviceUrn:string)=> {
