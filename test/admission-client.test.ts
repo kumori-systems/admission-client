@@ -33,7 +33,7 @@ describe('Check Admission-client', () => {
       expect(token).toBeDefined();
       const accessToken = token.accessToken;
       expect(accessToken).toBeDefined();
-      console.log("access_token", accessToken);
+      // console.log("access_token", accessToken);
       admission = new AdmissionClient(config.admissionUri, accessToken);
       admission.onConnected(() => {
         connected = true
@@ -50,14 +50,11 @@ describe('Check Admission-client', () => {
         console.log("===========================ERROR***************");
         console.log(reason);
       });
-      console.log("Before init");
       return admission.init();
     }).then(() => {
-      console.log("After init");
       return updateState(admission);
     })
     .then(() => {
-      console.log("After updateState");
       expect(connected);
       done();
     });
@@ -168,17 +165,17 @@ describe('Check Admission-client', () => {
     });
   });
 
-  it('deploys two services with bundle and links/unlinks them with manifest', () => {
+  it.only('deploys two services with bundle and links/unlinks them with manifest', (done) => {
     let urn1:string;
     let urn2:string;
+    // urn1 = "slap://sampleinterservice/deployments/20170721_074839/66e276bd"
+    // urn2 ="slap://sampleinterservice/deployments/20170721_074900/250c87db"
     const link:Endpoint[] = new Array<Endpoint>();
-    console.log("Initialized");
     return undeployService(admission, "eslap://sampleinterservice/services/samplefrontend/1_0_0")
     .then(() => {
       return undeployService(admission, "eslap://sampleinterservice/services/samplebackend/1_0_0")
     })
     .then(() => {
-      console.log("Cleaned");
       return admission.sendBundle(
         new FileStream(createReadStream(config.linkBundle1)))
     })
@@ -195,14 +192,24 @@ describe('Check Admission-client', () => {
       const deploymentInfo = result.deployments.successful[0] 
       urn2 = deploymentInfo.urn;
       expect(urn2).toBeDefined();
-      link.push(new Endpoint(urn1, config.linkEntrypoint1));
-      link.push(new Endpoint(urn2, config.linkEntrypoint2));
+       link.push(new Endpoint(urn1, config.linkEntrypoint1));
+       link.push(new Endpoint(urn2, config.linkEntrypoint2));
       return admission.linkDeployments(link)
     })
     .then(() => {
-      console.log("Linked!");
-      console.log("Vamos a hacer unlink");
-      return admission.unlinkDeployments(link)
+      console.log("Linked 1st!");
+      return admission.unlinkDeployments(link);
+    })
+    .then((result) => {
+      console.log("Unlinked!", JSON.stringify(result));
+      return admission.linkDeployments(link);
+    })
+    .then(() => {
+      console.log("Linked 2nd!");
+      done();
+    })
+    .catch((reason) => {
+      return done.fail(reason);
     });      
   }); 
 
@@ -214,6 +221,8 @@ describe('Check Admission-client', () => {
     expect(cget('service/undeployed')>0);
     expect(cget('service/deploying')>0);
     expect(cget('service/deployed')>0);  
+    expect(cget('service/link')>0); 
+    expect(cget('service/unlink')>0);  
     expect(cget('instance/status')>0); 
     expect(cget('metrics/service')>0); 
   });

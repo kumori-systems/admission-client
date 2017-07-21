@@ -221,14 +221,18 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                 result.testToken = data.testToken;
                 result.errors = data.errors;
                 result.successful = data.successful;
-                const deployments = new Array();
-                result.deployments = {
-                    errors: data.deployments.errors,
-                    successful: deployments,
-                };
-                data.deployments.successful.forEach((item) => {
-                    deployments.push(mapDeploymentDefault(item.deploymentURN, item.topology));
-                });
+                if (data.deployments !== undefined) {
+                    const deployments = new Array();
+                    result.deployments = {
+                        errors: data.deployments.errors,
+                        successful: deployments,
+                    };
+                    if (data.deployments.successful !== undefined) {
+                        data.deployments.successful.forEach((item) => {
+                            deployments.push(mapDeploymentDefault(item.deploymentURN, item.topology));
+                        });
+                    }
+                }
                 deferred.resolve(result);
             }
             else {

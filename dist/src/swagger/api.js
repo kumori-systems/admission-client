@@ -296,7 +296,7 @@ class DefaultApi {
         // verify required parameter "linkManifest" is not null or undefined
         if (linkManifest === null || linkManifest === undefined) {
             throw new Error("Required parameter linkManifest was null or \
-          undefined when calling linksDelete.");
+            undefined when calling linksDelete.");
         }
         fd.append('linkManifest', linkManifest, 'Manifest.json');
         const requestOptions = {
@@ -304,13 +304,14 @@ class DefaultApi {
             headers: headerParams,
             method: "DELETE",
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         if (fd.getHeaders !== undefined) {
             requestOptions.headers = fd.getHeaders();
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
+        console.log("unlink!:", JSON.stringify(requestOptions, null, 2));
         const deferred = new __1.Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
@@ -354,6 +355,7 @@ class DefaultApi {
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
+        console.log("link!:", JSON.stringify(requestOptions, null, 2));
         const deferred = new __1.Deferred();
         axios_1.default(requestOptions)
             .then((response) => {

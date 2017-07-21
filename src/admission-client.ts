@@ -247,15 +247,19 @@ export class AdmissionClient extends EventEmitter {
         result.testToken = data.testToken;
         result.errors = data.errors;
         result.successful = data.successful;
-        const deployments = new Array<Deployment>();
-        result.deployments = {
-          errors: data.deployments.errors,
-          successful: deployments,
-        };
-        data.deployments.successful.forEach((item: any) => {
-          deployments.push(mapDeploymentDefault(
-            item.deploymentURN, item.topology));
-        });
+        if (data.deployments !== undefined){
+          const deployments = new Array<Deployment>();
+          result.deployments = {
+            errors: data.deployments.errors,
+            successful: deployments,
+          };
+          if (data.deployments.successful !== undefined){
+            data.deployments.successful.forEach((item: any) => {
+              deployments.push(mapDeploymentDefault(
+                item.deploymentURN, item.topology));
+            });
+          }
+        }
         deferred.resolve(result);
       } else {
         deferred.reject(new Error(JSON.stringify(value)));
@@ -358,7 +362,7 @@ export class AdmissionClient extends EventEmitter {
   public unlinkDeployments(endpoints: Endpoint[]): Promise<any> {
     const deferred = new Deferred<any>();
     this.api.linksDelete(generateLinkManifest(endpoints))
-    .then((value) => {
+    .then( (value) => {
       if (value.success) {
         const result: any = value.data;
         deferred.resolve(result);
@@ -366,7 +370,7 @@ export class AdmissionClient extends EventEmitter {
         deferred.reject(new Error(value.message));
       }
     })
-    .catch((reason) => {
+    .catch( (reason) => {
       deferred.reject(reason);
     });
     return deferred.promise;

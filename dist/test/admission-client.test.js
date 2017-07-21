@@ -26,7 +26,7 @@ describe('Check Admission-client', () => {
             expect(token).toBeDefined();
             const accessToken = token.accessToken;
             expect(accessToken).toBeDefined();
-            console.log("access_token", accessToken);
+            // console.log("access_token", accessToken);
             admission = new src_1.AdmissionClient(config.admissionUri, accessToken);
             admission.onConnected(() => {
                 connected = true;
@@ -45,14 +45,11 @@ describe('Check Admission-client', () => {
                 console.log("===========================ERROR***************");
                 console.log(reason);
             });
-            console.log("Before init");
             return admission.init();
         }).then(() => {
-            console.log("After init");
             return updateState(admission);
         })
             .then(() => {
-            console.log("After updateState");
             expect(connected);
             done();
         });
@@ -140,17 +137,17 @@ describe('Check Admission-client', () => {
             expect(preDeployments === deployments);
         });
     });
-    it('deploys two services with bundle and links/unlinks them with manifest', () => {
+    it.only('deploys two services with bundle and links/unlinks them with manifest', (done) => {
         let urn1;
         let urn2;
+        // urn1 = "slap://sampleinterservice/deployments/20170721_074839/66e276bd"
+        // urn2 ="slap://sampleinterservice/deployments/20170721_074900/250c87db"
         const link = new Array();
-        console.log("Initialized");
         return undeployService(admission, "eslap://sampleinterservice/services/samplefrontend/1_0_0")
             .then(() => {
             return undeployService(admission, "eslap://sampleinterservice/services/samplebackend/1_0_0");
         })
             .then(() => {
-            console.log("Cleaned");
             return admission.sendBundle(new src_1.FileStream(fs_1.createReadStream(config.linkBundle1)));
         })
             .then((result) => {
@@ -170,9 +167,19 @@ describe('Check Admission-client', () => {
             return admission.linkDeployments(link);
         })
             .then(() => {
-            console.log("Linked!");
-            console.log("Vamos a hacer unlink");
+            console.log("Linked 1st!");
             return admission.unlinkDeployments(link);
+        })
+            .then((result) => {
+            console.log("Unlinked!", JSON.stringify(result));
+            return admission.linkDeployments(link);
+        })
+            .then(() => {
+            console.log("Linked 2nd!");
+            done();
+        })
+            .catch((reason) => {
+            return done.fail(reason);
         });
     });
     it('check events', () => {
@@ -183,6 +190,8 @@ describe('Check Admission-client', () => {
         expect(cget('service/undeployed') > 0);
         expect(cget('service/deploying') > 0);
         expect(cget('service/deployed') > 0);
+        expect(cget('service/link') > 0);
+        expect(cget('service/unlink') > 0);
         expect(cget('instance/status') > 0);
         expect(cget('metrics/service') > 0);
     });
