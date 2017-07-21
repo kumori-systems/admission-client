@@ -6,5 +6,7 @@ export { AdmissionClient } from "./admission-client";
 export { Endpoint } from "./endpoint";
 export { AdmissionEvent, EcloudEventName, EcloudEventType } from "./admission-event";
 export { DeploymentModification } from "./deployment-modification";
+export { ScalingDeploymentModification } from "./scaling-deployment-modification";
+export { ReconfigDeploymentModification } from "./reconfig-deployment-modification";
 export { Deferred } from "./deferred";
 export { FileStream } from "./file-stream";
