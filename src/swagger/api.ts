@@ -400,8 +400,7 @@ export class DefaultApi {
       throw new Error("Required parameter linkManifest was null or \
             undefined when calling linksDelete.");
     }
-    fd.append('linkManifest', linkManifest, 'Manifest.json');
-
+    queryParameters['linkManifest'] = linkManifest;
     const requestOptions: AxiosRequestConfig = {
       data: fd,
       headers: headerParams,
@@ -416,8 +415,6 @@ export class DefaultApi {
     this.authentications.apiAuthorization.applyToRequest(requestOptions);
 
     this.authentications.default.applyToRequest(requestOptions);
-
-    console.log("unlink!:",JSON.stringify(requestOptions, null ,2));
 
     const deferred: Deferred<InlineResponse2002> =
       new Deferred<InlineResponse2002>();
@@ -469,8 +466,6 @@ export class DefaultApi {
     this.authentications.apiAuthorization.applyToRequest(requestOptions);
 
     this.authentications.default.applyToRequest(requestOptions);
-
-    console.log("link!:",JSON.stringify(requestOptions, null ,2));
 
     const deferred: Deferred<InlineResponse2002> =
       new Deferred<InlineResponse2002>();

@@ -102,6 +102,7 @@ describe('Check Admission-client', () => {
             expect(preRegistries + 1 === registries);
             expect(preDeployments + 1 === deployments);
             expect(result).toHaveProperty('deployments.successful');
+            console.log(JSON.stringify(result.deployments.successful));
             expect(result.deployments.successful).toHaveLength(1);
             const deploymentInfo = result.deployments.successful[0];
             expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
@@ -137,7 +138,7 @@ describe('Check Admission-client', () => {
             expect(preDeployments === deployments);
         });
     });
-    it.only('deploys two services with bundle and links/unlinks them with manifest', (done) => {
+    it('deploys two services with bundle and links/unlinks them with manifest', (done) => {
         let urn1;
         let urn2;
         // urn1 = "slap://sampleinterservice/deployments/20170721_074839/66e276bd"
@@ -151,14 +152,12 @@ describe('Check Admission-client', () => {
             return admission.sendBundle(new src_1.FileStream(fs_1.createReadStream(config.linkBundle1)));
         })
             .then((result) => {
-            console.log("Install 1");
             const deploymentInfo = result.deployments.successful[0];
             urn1 = deploymentInfo.urn;
             expect(urn1).toBeDefined();
             return admission.sendBundle(new src_1.FileStream(fs_1.createReadStream(config.linkBundle2)));
         })
             .then((result) => {
-            console.log("Install 2");
             const deploymentInfo = result.deployments.successful[0];
             urn2 = deploymentInfo.urn;
             expect(urn2).toBeDefined();
@@ -167,15 +166,9 @@ describe('Check Admission-client', () => {
             return admission.linkDeployments(link);
         })
             .then(() => {
-            console.log("Linked 1st!");
             return admission.unlinkDeployments(link);
         })
-            .then((result) => {
-            console.log("Unlinked!", JSON.stringify(result));
-            return admission.linkDeployments(link);
-        })
             .then(() => {
-            console.log("Linked 2nd!");
             done();
         })
             .catch((reason) => {
