@@ -1,6 +1,6 @@
+package-lock.json
 node_modules
 build
 npm-debug.log
 coverage
-
-*.json
+test/admission-client
