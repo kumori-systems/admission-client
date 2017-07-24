@@ -4,3 +4,4 @@ build
 npm-debug.log
 coverage
 test/admission-client
+dist/test/admission-client

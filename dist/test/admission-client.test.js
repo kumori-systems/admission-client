@@ -102,7 +102,7 @@ describe('Check Admission-client', () => {
             expect(preRegistries + 1 === registries);
             expect(preDeployments + 1 === deployments);
             expect(result).toHaveProperty('deployments.successful');
-            console.log(JSON.stringify(result.deployments.successful));
+            // console.log(JSON.stringify(result.deployments.successful));
             expect(result.deployments.successful).toHaveLength(1);
             const deploymentInfo = result.deployments.successful[0];
             expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
