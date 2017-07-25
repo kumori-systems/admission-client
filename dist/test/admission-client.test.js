@@ -88,7 +88,7 @@ describe('Check Admission-client', () => {
     it('clean stamp', () => {
         return beforeAndAfter(admission, undeployService(admission, config.serviceUri))
             .then(() => {
-            return beforeAndAfter(admission, removeIfRegistered(admission, config.componentUri));
+            return beforeAndAfter(admission, removeIfRegistered(admission, config.serviceUri));
         })
             .then(() => {
             preRegistries = registries;
@@ -100,10 +100,10 @@ describe('Check Admission-client', () => {
             .then((result) => {
             // console.log(JSON.stringify(result, null, 2));
             expect(preRegistries).toBeLessThan(registries);
-            expect(preDeployments + 2).toBe(deployments);
             expect(result).toHaveProperty('deployments.successful');
             // console.log(JSON.stringify(result.deployments.successful));
-            expect(result.deployments.successful).toHaveLength(2);
+            expect(result.deployments.successful).toHaveLength(1);
+            expect(preDeployments + 1).toBe(deployments);
             const deploymentInfo = result.deployments.successful[0];
             expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
             expect(Object.keys(deploymentInfo.roles.cfe.instances))
@@ -116,9 +116,9 @@ describe('Check Admission-client', () => {
         return beforeAndAfter(admission, admission.deploy(new src_1.FileStream(fs_1.createReadStream(config.deployFile))))
             .then((result) => {
             // console.log(JSON.stringify(result, null, 2));
-            expect(preDeployments + 3).toBe(deployments);
             expect(result).toBeDefined();
             expect(Object.keys(result)).toHaveLength(1);
+            expect(preDeployments + 2).toBe(deployments);
             const deploymentInfo = result[Object.keys(result)[0]];
             expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
             expect(Object.keys(deploymentInfo.roles.cfe.instances))
@@ -130,7 +130,7 @@ describe('Check Admission-client', () => {
     it('clean stamp again', () => {
         return beforeAndAfter(admission, undeployService(admission, config.serviceUri))
             .then(() => {
-            return beforeAndAfter(admission, removeIfRegistered(admission, config.componentUri));
+            return beforeAndAfter(admission, removeIfRegistered(admission, config.serviceUri));
         })
             .then(() => {
             expect(preRegistries).toBe(registries);
@@ -140,8 +140,6 @@ describe('Check Admission-client', () => {
     it('deploys two services with bundle and links/unlinks them with manifest', (done) => {
         let urn1;
         let urn2;
-        // urn1 = "slap://sampleinterservice/deployments/20170721_074839/66e276bd"
-        // urn2 ="slap://sampleinterservice/deployments/20170721_074900/250c87db"
         const link = new Array();
         return undeployService(admission, "eslap://sampleinterservice/services/samplefrontend/1_0_0")
             .then(() => {
@@ -205,6 +203,10 @@ const updateState = (adm) => {
     return adm.findDeployments()
         .then((result) => {
         deployments = Object.keys(result).length;
+        // console.log("Current deployments")
+        // Object.keys(result).forEach((value) => {
+        //    console.log(value);
+        //  });
         // console.log("Deployments:", deployments);
         return adm.findStorage();
     })
@@ -228,9 +230,11 @@ const removeIfRegistered = (adm, urn) => {
     return adm.findStorage()
         .then((registries) => {
         if (registries.indexOf(urn) >= 0) {
-            admission.removeStorage(urn);
+            return admission.removeStorage(urn);
         }
-        ;
+        else {
+            return Promise.resolve(true);
+        }
     });
 };
 const cget = (key) => {

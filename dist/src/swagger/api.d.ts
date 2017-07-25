@@ -1,3 +1,4 @@
+/// <reference types="node" />
 export declare class GeneralResponse {
     "success": boolean;
     "message": string;
