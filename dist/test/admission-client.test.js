@@ -99,7 +99,7 @@ describe('Check Admission-client', () => {
         return beforeAndAfter(admission, admission.sendBundle(new src_1.FileStream(fs_1.createReadStream(config.bundle))))
             .then((result) => {
             // console.log(JSON.stringify(result, null, 2));
-            expect(preRegistries + 1).toBe(registries);
+            expect(preRegistries).toBeLessThan(registries);
             expect(preDeployments + 2).toBe(deployments);
             expect(result).toHaveProperty('deployments.successful');
             // console.log(JSON.stringify(result.deployments.successful));
@@ -116,7 +116,6 @@ describe('Check Admission-client', () => {
         return beforeAndAfter(admission, admission.deploy(new src_1.FileStream(fs_1.createReadStream(config.deployFile))))
             .then((result) => {
             // console.log(JSON.stringify(result, null, 2));
-            expect(preRegistries + 1).toBe(registries);
             expect(preDeployments + 3).toBe(deployments);
             expect(result).toBeDefined();
             expect(Object.keys(result)).toHaveLength(1);
