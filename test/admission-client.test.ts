@@ -117,11 +117,11 @@ describe('Check Admission-client', () => {
       admission.sendBundle(new FileStream(createReadStream(config.bundle))))
     .then((result:RegistrationResult) => {
         // console.log(JSON.stringify(result, null, 2));
-        expect(preRegistries +1 === registries);
-        expect(preDeployments +1 === deployments);
+        expect(preRegistries +1).toBe(registries)
+        expect(preDeployments +2).toBe(deployments);
         expect(result).toHaveProperty('deployments.successful');
         // console.log(JSON.stringify(result.deployments.successful));
-        expect(result.deployments.successful).toHaveLength(1);
+        expect(result.deployments.successful).toHaveLength(2);
         const deploymentInfo:Deployment = result.deployments.successful[0] 
         expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
         expect(Object.keys(deploymentInfo.roles.cfe.instances))
@@ -136,8 +136,8 @@ describe('Check Admission-client', () => {
       admission.deploy(new FileStream(createReadStream(config.deployFile))))
     .then((result:DeploymentList) => {
       // console.log(JSON.stringify(result, null, 2));
-      expect(preRegistries +2 === registries);
-      expect(preDeployments +2 === deployments);
+      expect(preRegistries +1).toBe(registries);
+      expect(preDeployments +3).toBe(deployments);
       expect(result).toBeDefined();
       expect(Object.keys(result)).toHaveLength(1);
       const deploymentInfo:Deployment = result[Object.keys(result)[0]];
@@ -161,8 +161,8 @@ describe('Check Admission-client', () => {
       );
     })
     .then(() => {
-        expect(preRegistries === registries);
-        expect(preDeployments === deployments);
+        expect(preRegistries).toBe(registries);
+        expect(preDeployments).toBe(deployments);
     });
   });
 
@@ -210,14 +210,14 @@ describe('Check Admission-client', () => {
     // counter.forEach((value, key) => {
     //   console.log(key, "=", value);
     // })
-    expect(cget('service/undeploying')>0);
-    expect(cget('service/undeployed')>0);
-    expect(cget('service/deploying')>0);
-    expect(cget('service/deployed')>0);  
-    expect(cget('service/link')>0); 
-    expect(cget('service/unlink')>0);  
-    expect(cget('instance/status')>0); 
-    expect(cget('metrics/service')>0); 
+    expect(cget('service/undeploying')).toBeGreaterThan(0);
+    expect(cget('service/undeployed')).toBeGreaterThan(0);
+    expect(cget('service/deploying')).toBeGreaterThan(0);
+    expect(cget('service/deployed')).toBeGreaterThan(0);
+    expect(cget('service/link')).toBeGreaterThan(0);
+    expect(cget('service/unlink')).toBeGreaterThan(0);
+    expect(cget('instance/status')).toBeGreaterThan(0);
+    expect(cget('metrics/service')).toBeGreaterThan(0);
   });
 });
 
