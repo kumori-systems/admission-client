@@ -1,6 +1,7 @@
-import { EventEmitter, Listener } from "typed-event-emitter";
-import Swagger = require("./swagger/api");
-import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, FileStream, RegistrationResult } from ".";
+/// <reference types="socket.io-client" />
+import { EventEmitter, Listener } from 'typed-event-emitter';
+import Swagger = require('./swagger/api');
+import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, FileStream, RegistrationResult } from '.';
 /**
  * Stub to give access to an ECloud admission instance.
  */
@@ -12,7 +13,8 @@ export declare class AdmissionClient extends EventEmitter {
     protected basePath: string;
     protected accessToken: string | undefined;
     protected api: Swagger.DefaultApi;
-    private ws;
+    protected ws: SocketIOClient.Socket;
+    protected dummy: Listener;
     /**
      *
      * @param basePath  URL where admission is waiting requests. For example:
@@ -99,4 +101,8 @@ export declare class AdmissionClient extends EventEmitter {
      * @param urn Identifier of the test context to be removed.
      */
     removeTestContext(urn: string): Promise<any>;
+    private mapDeploymentDefault;
+    private mapDeploymentLocalStamp;
+    private mapInstanceInfoDefault;
+    private generateLinkManifest;
 }

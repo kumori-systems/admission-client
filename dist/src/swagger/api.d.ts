@@ -1,71 +1,71 @@
 /// <reference types="node" />
 export declare class GeneralResponse {
-    "success": boolean;
-    "message": string;
-    "data": any;
+    'success': boolean;
+    'message': string;
+    'data': any;
 }
 export declare class InlineResponse200 {
-    "success": boolean;
-    "message": string;
-    "data": InlineResponse200Data;
+    'success': boolean;
+    'message': string;
+    'data': InlineResponse200Data;
 }
 export declare class InlineResponse2001 {
-    "success": boolean;
-    "message": string;
-    "data": {
+    'success': boolean;
+    'message': string;
+    'data': {
         [key: string]: InlineResponse2001Data;
     };
 }
 export declare class InlineResponse2001Arrangement {
-    "cpu": number;
-    "bandwidth": number;
-    "failurezones": number;
-    "mininstances": number;
-    "maxinstances": number;
+    'cpu': number;
+    'bandwidth': number;
+    'failurezones': number;
+    'mininstances': number;
+    'maxinstances': number;
 }
 export declare class InlineResponse2001Data {
-    "service": string;
-    "roles": {
+    'service': string;
+    'roles': {
         [key: string]: InlineResponse2001Roles;
     };
 }
 export declare class InlineResponse2003 {
-    "success": boolean;
-    "message": string;
-    "data": {
+    'success': boolean;
+    'message': string;
+    'data': {
         deploymentURN: string;
         topology: InlineResponse2001Data;
     };
 }
 export declare class InlineResponse2001Instances {
-    "id": string;
-    "privateIp": string;
-    "publicIp": string;
-    "arrangement": InlineResponse2001Arrangement;
+    'id': string;
+    'privateIp': string;
+    'publicIp': string;
+    'arrangement': InlineResponse2001Arrangement;
 }
 export declare class InlineResponse2001Roles {
-    "instances": {
+    'instances': {
         [key: string]: InlineResponse2001Instances;
     };
 }
 export declare class InlineResponse2002 {
-    "success": boolean;
-    "message": string;
-    "data": any;
+    'success': boolean;
+    'message': string;
+    'data': any;
 }
 export declare class InlineResponse200Data {
-    "successful": any;
-    "errors": any;
-    "deployments": any;
-    "links": any;
-    "tests": any;
-    "testToken": string;
+    'successful': any;
+    'errors': any;
+    'deployments': any;
+    'links': any;
+    'tests': any;
+    'testToken': string;
 }
 export declare class InstanceInfo {
-    "id": string;
-    "privateIp": string;
-    "publicIp": string;
-    "arrangement": InlineResponse2001Arrangement;
+    'id': string;
+    'privateIp': string;
+    'publicIp': string;
+    'arrangement': InlineResponse2001Arrangement;
 }
 export interface IAuthentication {
     /**
@@ -129,7 +129,7 @@ export declare class DefaultApi {
      * @param owner Only the deployments whose owner matches the value of the
      *  parameter are listed
      * @param show Desired format of the information provided for each
-     * deployment. Possible values are&amp;#58;
+     * deployment. Possible values are&amp#58
      *  * topology. It is the default value.
      *  * extended.
      *  * urn. Only urns are listed.
@@ -150,11 +150,11 @@ export declare class DefaultApi {
     /**
      *
      * Modification of some parameter of the deployment.
-     * There are two possible actions&amp;#58;
+     * There are two possible actions&amp#58
      * * Reconfiguration of parameters or deployment and
      * * Manual scaling.
      * @param inline The uploaded deployment file with the new configuration.
-     * The file must be a JSON with this keys&amp;#58;
+     * The file must be a JSON with this keys&amp#58
      * * deploymentURN. URN of the deployment to be reconfigured.
      * * action. manualScaling/reconfig
      * * entryPoints (only when reconfig action)
@@ -199,4 +199,5 @@ export declare class DefaultApi {
      * List current test contexts in the stamp.
      */
     testContextsGet(): Promise<InlineResponse2002>;
+    isNode(): boolean;
 }

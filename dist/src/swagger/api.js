@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ECloud Admission
  * The Admission API is the entry point for ECloud users to interact with the
@@ -10,11 +11,10 @@
  * found in the ECloud manual.
  *
  */
-Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const __1 = require("..");
-const defaultBasePath = "http://admission.argo.kumori.cloud/admission";
+const defaultBasePath = 'http://admission.argo.kumori.cloud/admission';
 /* tslint:disable:no-unused-variable */
 /* tslint:disable:max-classes-per-file */
 class GeneralResponse {
@@ -54,7 +54,7 @@ class HttpBasicAuth {
     applyToRequest(requestOptions) {
         requestOptions.auth = {
             password: this.password,
-            username: this.username,
+            username: this.username
         };
     }
 }
@@ -63,7 +63,7 @@ class OAuth {
     applyToRequest(requestOptions) {
         if (requestOptions && requestOptions.headers) {
             requestOptions.headers.authorization =
-                "Bearer " + this.accessToken;
+                'Bearer ' + this.accessToken;
         }
     }
 }
@@ -80,7 +80,7 @@ class DefaultApi {
         this.defaultHeaders = {};
         this.authentications = {
             apiAuthorization: new OAuth(),
-            default: new VoidAuth(),
+            default: new VoidAuth()
         };
         if (password) {
             if (basePath) {
@@ -108,30 +108,30 @@ class DefaultApi {
      *  manual, section 4.1.1.
      */
     bundlesPost(bundlesZip, bundlesJson) {
-        const localVarPath = this.basePath + "/bundles";
+        const localVarPath = this.basePath + '/bundles';
         const queryParameters = {};
-        // const headerParams: any =  Object.assign({}, this.defaultHeaders);
+        // const headerParams: any = Object.assign({}, this.defaultHeaders)
         let formParams;
         const fd = new FormData();
         formParams = fd;
         if (bundlesZip !== undefined) {
-            fd.append("bundlesZip", bundlesZip, "bundle.zip");
+            fd.append('bundlesZip', bundlesZip, 'bundle.zip');
         }
         if (bundlesJson !== undefined) {
-            fd.append("bundlesJson", bundlesJson, "bundle.json");
+            fd.append('bundlesJson', bundlesJson, 'bundle.json');
         }
         const requestOptions = {
             data: formParams,
-            method: "POST",
+            method: 'POST',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
-        if (fd.getHeaders !== undefined) {
+        if (this.isNode()) {
             requestOptions.headers = fd.getHeaders();
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
-        // console.log(JSON.stringify(requestOptions.headers,null,2));
+        // console.log(JSON.stringify(requestOptions.headers,null,2))
         const deferred = new __1.Deferred();
         axios_1.default(requestOptions)
             .then((response) => {
@@ -153,22 +153,20 @@ class DefaultApi {
      * @param urn Urn of deployment to be undeployed
      */
     deploymentsDelete(urn) {
-        const localVarPath = this.basePath + "/deployments";
+        const localVarPath = this.basePath + '/deployments';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
-        // verify required parameter "urn" is not null or undefined
-        if (urn === null || urn === undefined) {
-            throw new Error("Required parameter urn was null or undefined when \
-          calling deploymentsDelete.");
-        }
-        if (urn !== undefined) {
-            queryParameters.urn = urn;
-        }
+        // verify required parameter 'urn' is not null or undefined
+        // if (urn === null || urn === undefined) {
+        //   throw new Error('Required parameter urn was null or undefined when \
+        //       calling deploymentsDelete.')
+        // }
+        queryParameters.urn = urn;
         const requestOptions = {
             headers: headerParams,
-            method: "DELETE",
+            method: 'DELETE',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -194,28 +192,28 @@ class DefaultApi {
      * in ECloud Manual, section 4.
      */
     deploymentsPost(inline) {
-        const localVarPath = this.basePath + "/deployments";
+        const localVarPath = this.basePath + '/deployments';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const fd = new FormData();
-        // verify required parameter "inline" is not null or undefined
+        // verify required parameter 'inline' is not null or undefined
         if (inline === null || inline === undefined) {
-            throw new Error("Required parameter inline was null or undefined \
-          when calling deploymentsPost.");
+            throw new Error('Required parameter inline was null or undefined \
+          when calling deploymentsPost.');
         }
         if (inline !== undefined) {
-            fd.append("inline", inline, 'Manifest.json');
+            fd.append('inline', inline, 'Manifest.json');
         }
         const requestOptions = {
             data: fd,
             headers: headerParams,
-            method: "POST",
+            method: 'POST',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
-        if (fd.getHeaders !== undefined) {
+        if (this.isNode()) {
             requestOptions.headers = fd.getHeaders();
-            // console.log("Headers", requestOptions.headers);
+            // console.log('Headers', requestOptions.headers)
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -242,13 +240,13 @@ class DefaultApi {
      * @param owner Only the deployments whose owner matches the value of the
      *  parameter are listed
      * @param show Desired format of the information provided for each
-     * deployment. Possible values are&amp;#58;
+     * deployment. Possible values are&amp#58
      *  * topology. It is the default value.
      *  * extended.
      *  * urn. Only urns are listed.
      */
     findDeployments(urn, owner, show) {
-        const localVarPath = this.basePath + "/deployments";
+        const localVarPath = this.basePath + '/deployments';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         if (urn !== undefined) {
@@ -262,9 +260,9 @@ class DefaultApi {
         }
         const requestOptions = {
             headers: headerParams,
-            method: "get",
+            method: 'get',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -289,24 +287,24 @@ class DefaultApi {
      * @param linkManifest The manifest of the link to be removed.
      */
     linksDelete(linkManifest) {
-        const localVarPath = this.basePath + "/links";
+        const localVarPath = this.basePath + '/links';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const fd = new FormData();
-        // verify required parameter "linkManifest" is not null or undefined
+        // verify required parameter 'linkManifest' is not null or undefined
         if (linkManifest === null || linkManifest === undefined) {
-            throw new Error("Required parameter linkManifest was null or \
-            undefined when calling linksDelete.");
+            throw new Error('Required parameter linkManifest was null or \
+            undefined when calling linksDelete.');
         }
         queryParameters['linkManifest'] = linkManifest;
         const requestOptions = {
             data: fd,
             headers: headerParams,
-            method: "DELETE",
+            method: 'DELETE',
             params: queryParameters,
             url: localVarPath
         };
-        if (fd.getHeaders !== undefined) {
+        if (this.isNode()) {
             requestOptions.headers = fd.getHeaders();
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
@@ -332,24 +330,24 @@ class DefaultApi {
      * @param linkManifest The manifest of the desired link.
      */
     linksPost(linkManifest) {
-        const localVarPath = this.basePath + "/links";
+        const localVarPath = this.basePath + '/links';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const fd = new FormData();
-        // verify required parameter "linkManifest" is not null or undefined
+        // verify required parameter 'linkManifest' is not null or undefined
         if (linkManifest === null || linkManifest === undefined) {
-            throw new Error("Required parameter linkManifest was null or \
-            undefined when calling linksPost.");
+            throw new Error('Required parameter linkManifest was null or \
+            undefined when calling linksPost.');
         }
         fd.append('linkManifest', linkManifest, 'Manifest.json');
         const requestOptions = {
             data: fd,
             headers: headerParams,
-            method: "POST",
+            method: 'POST',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
-        if (fd.getHeaders !== undefined) {
+        if (this.isNode()) {
             requestOptions.headers = fd.getHeaders();
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
@@ -372,11 +370,11 @@ class DefaultApi {
     /**
      *
      * Modification of some parameter of the deployment.
-     * There are two possible actions&amp;#58;
+     * There are two possible actions&amp#58
      * * Reconfiguration of parameters or deployment and
      * * Manual scaling.
      * @param inline The uploaded deployment file with the new configuration.
-     * The file must be a JSON with this keys&amp;#58;
+     * The file must be a JSON with this keys&amp#58
      * * deploymentURN. URN of the deployment to be reconfigured.
      * * action. manualScaling/reconfig
      * * entryPoints (only when reconfig action)
@@ -384,24 +382,24 @@ class DefaultApi {
      * * roles (only when manualScaling action)
      */
     modifyDeployment(inline) {
-        const localVarPath = this.basePath + "/deployments/configuration";
+        const localVarPath = this.basePath + '/deployments/configuration';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const fd = new FormData();
-        // verify required parameter "inline" is not null or undefined
+        // verify required parameter 'inline' is not null or undefined
         if (inline === null || inline === undefined) {
-            throw new Error("Required parameter inline was null or undefined \
-          when calling modifyDeployment.");
+            throw new Error('Required parameter inline was null or undefined \
+          when calling modifyDeployment.');
         }
         fd.append('inline', inline, 'Manifest.json');
         const requestOptions = {
             data: fd,
             headers: headerParams,
-            method: "PUT",
+            method: 'PUT',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
-        if (fd.getHeaders !== undefined) {
+        if (this.isNode()) {
             requestOptions.headers = fd.getHeaders();
         }
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
@@ -429,17 +427,17 @@ class DefaultApi {
      * data about any accesible deployment is returned.
      */
     registriesGet(urn) {
-        let localVarPath = this.basePath + "/registries";
+        let localVarPath = this.basePath + '/registries';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         if (urn !== undefined) {
-            localVarPath = localVarPath + "/" + encodeURIComponent(urn);
+            localVarPath = localVarPath + '/' + encodeURIComponent(urn);
         }
         const requestOptions = {
             headers: headerParams,
-            method: "GET",
+            method: 'GET',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -464,19 +462,19 @@ class DefaultApi {
      * @param urn The urn of registered entity to be deleted.
      */
     registriesUrnDelete(urn) {
-        const localVarPath = this.basePath + "/registries";
+        const localVarPath = this.basePath + '/registries';
         const queryParameters = { urn };
         const headerParams = Object.assign({}, this.defaultHeaders);
-        // verify required parameter "urn" is not null or undefined
-        if (urn === null || urn === undefined) {
-            throw new Error("Required parameter urn was null or undefined when \
-          calling registriesUrnDelete.");
-        }
+        // verify required parameter 'urn' is not null or undefined
+        // if (urn === null || urn === undefined) {
+        //   throw new Error('Required parameter urn was null or undefined when \
+        //       calling registriesUrnDelete.')
+        // }
         const requestOptions = {
             headers: headerParams,
-            method: "DELETE",
+            method: 'DELETE',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -501,22 +499,22 @@ class DefaultApi {
      * @param urn The urn of registered entity to get its manifest .
      */
     registriesUrnGet(urn) {
-        const localVarPath = this.basePath + "/registries/{urn}"
-            .replace("{" + "urn" + "}", String(urn));
+        const localVarPath = this.basePath + '/registries/{urn}'
+            .replace('{' + 'urn' + '}', String(urn));
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const formParams = {};
-        // verify required parameter "urn" is not null or undefined
-        if (urn === null || urn === undefined) {
-            throw new Error("Required parameter urn was null or undefined when \
-          calling registriesUrnGet.");
-        }
+        // verify required parameter 'urn' is not null or undefined
+        // if (urn === null || urn === undefined) {
+        //   throw new Error('Required parameter urn was null or undefined when \
+        //       calling registriesUrnGet.')
+        // }
         const requestOptions = {
             data: formParams,
             headers: headerParams,
-            method: "GET",
+            method: 'GET',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -541,24 +539,22 @@ class DefaultApi {
      * @param inline
      */
     scaleInstances(inline) {
-        const localVarPath = this.basePath + "/deployments/instances";
+        const localVarPath = this.basePath + '/deployments/instances';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const formParams = {};
-        // verify required parameter "inline" is not null or undefined
-        if (inline === null || inline === undefined) {
-            throw new Error("Required parameter inline was null or undefined \
-          when calling scaleInstances.");
-        }
-        if (inline !== undefined) {
-            formParams.inline = inline;
-        }
+        // verify required parameter 'inline' is not null or undefined
+        // if (inline === null || inline === undefined) {
+        //   throw new Error('Required parameter inline was null or undefined \
+        //       when calling scaleInstances.')
+        // }
+        formParams.inline = inline;
         const requestOptions = {
             data: formParams,
             headers: headerParams,
-            method: "PUT",
+            method: 'PUT',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -583,24 +579,22 @@ class DefaultApi {
      * @param urn Identifier of the test context to be removed.
      */
     testContextsDelete(urn) {
-        const localVarPath = this.basePath + "/test-contexts";
+        const localVarPath = this.basePath + '/test-contexts';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const formParams = {};
-        // verify required parameter "urn" is not null or undefined
-        if (urn === null || urn === undefined) {
-            throw new Error("Required parameter urn was null or undefined \
-            when calling testContextsDelete.");
-        }
-        if (urn !== undefined) {
-            queryParameters.urn = urn;
-        }
+        // verify required parameter 'urn' is not null or undefined
+        // if (urn === null || urn === undefined) {
+        //   throw new Error('Required parameter urn was null or undefined \
+        //         when calling testContextsDelete.')
+        // }
+        queryParameters.urn = urn;
         const requestOptions = {
             data: formParams,
             headers: headerParams,
-            method: "DELETE",
+            method: 'DELETE',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -624,14 +618,14 @@ class DefaultApi {
      * List current test contexts in the stamp.
      */
     testContextsGet() {
-        const localVarPath = this.basePath + "/test-contexts";
+        const localVarPath = this.basePath + '/test-contexts';
         const queryParameters = {};
         const headerParams = Object.assign({}, this.defaultHeaders);
         const requestOptions = {
             headers: headerParams,
-            method: "GET",
+            method: 'GET',
             params: queryParameters,
-            url: localVarPath,
+            url: localVarPath
         };
         this.authentications.apiAuthorization.applyToRequest(requestOptions);
         this.authentications.default.applyToRequest(requestOptions);
@@ -650,18 +644,22 @@ class DefaultApi {
         });
         return deferred.promise;
     }
+    isNode() {
+        /* tslint:strict-type-predicates:disable */
+        return (typeof process === 'object' && process + '' === '[object process]');
+    }
 }
 exports.DefaultApi = DefaultApi;
 // function isFile(val:any) {
-//   return toString.call(val) === "[object File]";
+//   return toString.call(val) === '[object File]'
 // }
 // function isStream(val:any) {
-//   return isObject(val) && isFunction(val.pipe);
+//   return isObject(val) && isFunction(val.pipe)
 // }
 // function isFunction(val:any) {
-//   return toString.call(val) === "[object Function]";
+//   return toString.call(val) === '[object Function]'
 // }
 // function isObject(val:any) {
-//   return val !== null && typeof val === "object";
+//   return val !== null && typeof val === 'object'
 // }
 //# sourceMappingURL=api.js.map

@@ -22,17 +22,16 @@
     "./dist/src/file-stream.js.map": "./dist/src/file-stream-browser.js.map"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jest test/*.test.ts",
+    "spec": "./node_modules/.bin/jest dist/test/*.test.js",
     "clean": "rm -rf dist/src/index.js",
     "lint": "./node_modules/.bin/tslint src/swagger/*ts src/*ts ",
-    "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist; echo Finished"
+    "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist"
   },
-  "author": "",
+  "author": "jpla@iti.es",
   "license": "ISC",
   "dependencies": {
     "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#ticket820",
     "axios": "0.16.2",
-    "bluebird": "^3.5.0",
     "form-data": "2.2.0",
     "socket.io-client": "2.0.3",
     "typed-event-emitter": "1.0.3"
