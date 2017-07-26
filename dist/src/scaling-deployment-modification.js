@@ -4,7 +4,7 @@ const _1 = require(".");
 class ScalingDeploymentModification extends _1.DeploymentModification {
     constructor() {
         super(...arguments);
-        this.action = "manualScaling";
+        this.action = 'manualScaling';
     }
     generate() {
         const result = this.generateBase();

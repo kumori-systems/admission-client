@@ -1,5 +1,6 @@
 export declare class Deferred<T> {
     promise: Promise<T>;
+    protected promise2: Promise<void>;
     private fate;
     private state;
     private xresolve;

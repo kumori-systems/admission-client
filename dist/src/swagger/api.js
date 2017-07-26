@@ -645,7 +645,7 @@ class DefaultApi {
         return deferred.promise;
     }
     isNode() {
-        /* tslint:strict-type-predicates:disable */
+        // tslint:disable-next-line
         return (typeof process === 'object' && process + '' === '[object process]');
     }
 }

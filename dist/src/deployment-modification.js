@@ -4,7 +4,7 @@ class DeploymentModification {
     generateBase() {
         return {
             action: this.action,
-            deploymentURN: this.deploymentURN,
+            deploymentURN: this.deploymentURN
         };
     }
 }

@@ -1,16 +1,16 @@
-import { DeploymentInstanceInfo } from ".";
+import { DeploymentInstanceInfo } from '.';
 export declare class Deployment {
-    "urn": string;
-    "service": string;
-    "roles": {
+    'urn': string;
+    'service': string;
+    'roles': {
         [key: string]: {
-            "instances": {
+            'instances': {
                 [key: string]: DeploymentInstanceInfo;
             };
-            "configuration": {
+            'configuration': {
                 [key: string]: any;
             };
-            "entrypoint": {
+            'entrypoint': {
                 sslonly: boolean;
                 domain: string;
                 secrets: {

@@ -23,8 +23,8 @@
   },
   "scripts": {
     "spec": "./node_modules/.bin/jest dist/test/*.test.js",
-    "clean": "rm -rf dist/src/index.js",
-    "lint": "./node_modules/.bin/tslint src/swagger/*ts src/*ts ",
+    "clean": "rm -rf dist",
+    "lint": "./node_modules/.bin/tslint  --type-check --project .",
     "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist"
   },
   "author": "jpla@iti.es",

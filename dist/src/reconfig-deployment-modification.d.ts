@@ -1,4 +1,4 @@
-import { DeploymentModification } from ".";
+import { DeploymentModification } from '.';
 export declare class ReconfigDeploymentModification extends DeploymentModification {
     parameters: {
         [key: string]: any;

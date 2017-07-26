@@ -1,17 +1,17 @@
-export class FileStream{
+export class FileStream {
 
-  private stream: File|Blob;
+  private stream: File|Blob
 
-  public constructor(stream: File|Blob) {
-    this.stream = stream;
+  public constructor (stream: File|Blob) {
+    this.stream = stream
   }
 
-  public setStream(stream: File|Blob): void {
-    this.stream = stream;
+  public setStream (stream: File|Blob): void {
+    this.stream = stream
   }
 
-  public getStream():File|Blob {
-    return this.stream;
+  public getStream (): File|Blob {
+    return this.stream
   }
-  
+
 }
