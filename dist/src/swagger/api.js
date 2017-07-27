@@ -408,7 +408,7 @@ class DefaultApi {
         axios_1.default(requestOptions)
             .then((response) => {
             if (response.status >= 200 && response.status <= 299) {
-                deferred.resolve(response.data);
+                deferred.resolve(response.data || true);
             }
             else {
                 deferred.reject(response);
@@ -513,46 +513,6 @@ class DefaultApi {
             data: formParams,
             headers: headerParams,
             method: 'GET',
-            params: queryParameters,
-            url: localVarPath
-        };
-        this.authentications.apiAuthorization.applyToRequest(requestOptions);
-        this.authentications.default.applyToRequest(requestOptions);
-        const deferred = new __1.Deferred();
-        axios_1.default(requestOptions)
-            .then((response) => {
-            if (response.status >= 200 && response.status <= 299) {
-                deferred.resolve(response.data);
-            }
-            else {
-                deferred.reject(response);
-            }
-        })
-            .catch((reason) => {
-            deferred.reject(reason);
-        });
-        return deferred.promise;
-    }
-    /**
-     *
-     * Modifies the number of instances of some role of a deployment
-     * @param inline
-     */
-    scaleInstances(inline) {
-        const localVarPath = this.basePath + '/deployments/instances';
-        const queryParameters = {};
-        const headerParams = Object.assign({}, this.defaultHeaders);
-        const formParams = {};
-        // verify required parameter 'inline' is not null or undefined
-        // if (inline === null || inline === undefined) {
-        //   throw new Error('Required parameter inline was null or undefined \
-        //       when calling scaleInstances.')
-        // }
-        formParams.inline = inline;
-        const requestOptions = {
-            data: formParams,
-            headers: headerParams,
-            method: 'PUT',
             params: queryParameters,
             url: localVarPath
         };

@@ -2,7 +2,8 @@ import {} from 'jest'
 
 import {AcsClient} from 'acs-client'
 import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList,
-  EcloudEventType, Endpoint, FileStream, RegistrationResult}
+  EcloudEventType, Endpoint, FileStream, RegistrationResult,
+  ScalingDeploymentModification}
   from '../src'
 import {createReadStream, readFileSync} from 'fs'
 
@@ -183,26 +184,37 @@ describe('Check Admission-client', () => {
       expect(preRegistries).toBeLessThan(registries)
       expect(result).toHaveProperty('deployments.successful')
       // console.log(JSON.stringify(result.deployments.successful))
-      expect(result.deployments.successful).toHaveLength(1)
-      expect(preDeployments + 1).toBe(deployments)
-      const deploymentInfo: Deployment = result.deployments.successful[0]
-      expect(deploymentInfo).toHaveProperty('roles.cfe.instances')
-      expect(Object.keys(deploymentInfo.roles.cfe.instances))
-      .toHaveLength(1)
-      expect(Object.keys(deploymentInfo.roles.worker.instances))
-      .toHaveLength(1)
+      expect(result.deployments.successful.length).toBeGreaterThan(0)
+      expect(preDeployments).toBeLessThan(deployments)
+      const promises: Array<Promise<any>> = new Array<Promise<any>>();
+      result.deployments.successful.forEach((deploymentInfo: Deployment) => {
+        if (deploymentInfo.service === config.serviceUri){
+          expect(deploymentInfo).toHaveProperty('roles.cfe.instances')
+          expect(Object.keys(deploymentInfo.roles.cfe.instances))
+          .toHaveLength(1)
+          expect(Object.keys(deploymentInfo.roles.worker.instances))
+          .toHaveLength(1)
+        }
+        promises.push(admission.undeploy(deploymentInfo.urn))
+      })
+      return beforeAndAfter(admission, Promise.all(promises))
+      .then(() => {
+        expect(preDeployments).toBe(deployments);
+      })
     })
   })
 
-  it('redeploys the service with manifest', () => {
+  let calculatorURN: string;
+  it('redeploys service with manifest', () => {
     return beforeAndAfter(admission,
       admission.deploy(new FileStream(createReadStream(config.deployFile))))
     .then((result: DeploymentList) => {
       // console.log(JSON.stringify(result, null, 2))
       expect(result).toBeDefined()
       expect(Object.keys(result)).toHaveLength(1)
-      expect(preDeployments + 2).toBe(deployments)
+      expect(preDeployments).toBe(deployments - 1)
       const deploymentInfo: Deployment = result[Object.keys(result)[0]]
+      calculatorURN = deploymentInfo.urn;
       expect(deploymentInfo).toHaveProperty('roles.cfe.instances')
       expect(Object.keys(deploymentInfo.roles.cfe.instances))
       .toHaveLength(1)
@@ -211,11 +223,24 @@ describe('Check Admission-client', () => {
     })
   })
 
+  it('add more instances to deployment', () => {
+    const scale = new ScalingDeploymentModification()
+    scale.deploymentURN = calculatorURN
+    const scaleTarget = 2
+    scale.scaling = {'cfe': scaleTarget}
+    return admission.modifyDeployment(scale)
+    .then(() => {
+      return admission.findDeployments(calculatorURN)
+    })
+    .then((result: DeploymentList) => {
+      const info: Deployment = result[calculatorURN]
+      expect(Object.keys(info.roles.cfe.instances))
+      .toHaveLength(scaleTarget)
+    })
+  })
+
   it('clean stamp again', () => {
-    return beforeAndAfter(admission, undeployService(
-      admission,
-      config.serviceUri
-    ))
+    return beforeAndAfter(admission, admission.undeploy(calculatorURN))
     .then(() => {
       return beforeAndAfter(
         admission,
@@ -228,7 +253,8 @@ describe('Check Admission-client', () => {
     })
   })
 
-  it('deploys two services with bundle and links/unlinks them with manifest', (done) => {
+  it('deploys two services with bundle and links/unlinks them with manifest', 
+    () => {
     let urn1: string
     let urn2: string
     const link: Endpoint[] = new Array<Endpoint>()
@@ -259,14 +285,14 @@ describe('Check Admission-client', () => {
       return admission.unlinkDeployments(link)
     })
     .then(() => {
-      done()
-    })
-    .catch((reason) => {
-      return done.fail(reason)
+      return Promise.all([
+        admission.undeploy(urn1),
+        admission.undeploy(urn2)
+      ])
     })
   })
 
-  it('check events', () => {
+  it('check received events', () => {
     // counter.forEach((value, key) => {
     //   console.log(key, '=', value)
     // })

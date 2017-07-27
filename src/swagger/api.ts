@@ -529,7 +529,7 @@ export class DefaultApi {
     Axios(requestOptions)
       .then((response: AxiosResponse) => {
         if (response.status >= 200 && response.status <= 299) {
-          deferred.resolve(response.data)
+          deferred.resolve(response.data || true)
         } else {
           deferred.reject(response)
         }
@@ -649,51 +649,6 @@ export class DefaultApi {
       data: formParams,
       headers: headerParams,
       method: 'GET',
-      params: queryParameters,
-      url: localVarPath
-    }
-
-    this.authentications.apiAuthorization.applyToRequest(requestOptions)
-    this.authentications.default.applyToRequest(requestOptions)
-
-    const deferred: Deferred<InlineResponse2002> =
-      new Deferred<InlineResponse2002>()
-
-    Axios(requestOptions)
-      .then((response: AxiosResponse) => {
-        if (response.status >= 200 && response.status <= 299) {
-          deferred.resolve(response.data)
-        } else {
-          deferred.reject(response)
-        }
-      })
-      .catch((reason) => {
-        deferred.reject(reason)
-      })
-    return deferred.promise
-  }
-  /**
-   *
-   * Modifies the number of instances of some role of a deployment
-   * @param inline
-   */
-  public scaleInstances (inline: Buffer): Promise<InlineResponse2002> {
-    const localVarPath = this.basePath + '/deployments/instances'
-    const queryParameters: any = {}
-    const headerParams: any = Object.assign({}, this.defaultHeaders)
-    const formParams: any = {}
-
-    // verify required parameter 'inline' is not null or undefined
-    // if (inline === null || inline === undefined) {
-    //   throw new Error('Required parameter inline was null or undefined \
-    //       when calling scaleInstances.')
-    // }
-    formParams.inline = inline
-
-    const requestOptions: AxiosRequestConfig = {
-      data: formParams,
-      headers: headerParams,
-      method: 'PUT',
       params: queryParameters,
       url: localVarPath
     }

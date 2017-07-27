@@ -106,8 +106,18 @@ describe('Check Admission-client', () => {
             done();
         });
     });
-    afterAll(() => {
-        admission.close();
+    afterAll((done) => {
+        return undeployService(admission, config.linkService1)
+            .then(() => {
+            return undeployService(admission, config.linkService2);
+        })
+            .then(() => {
+            return undeployService(admission, config.serviceUri);
+        })
+            .then(() => {
+            admission.close();
+            done();
+        });
     });
     it('gets registries', () => {
         return admission.findStorage()
@@ -153,24 +163,36 @@ describe('Check Admission-client', () => {
             expect(preRegistries).toBeLessThan(registries);
             expect(result).toHaveProperty('deployments.successful');
             // console.log(JSON.stringify(result.deployments.successful))
-            expect(result.deployments.successful).toHaveLength(1);
-            expect(preDeployments + 1).toBe(deployments);
-            const deploymentInfo = result.deployments.successful[0];
-            expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
-            expect(Object.keys(deploymentInfo.roles.cfe.instances))
-                .toHaveLength(1);
-            expect(Object.keys(deploymentInfo.roles.worker.instances))
-                .toHaveLength(1);
+            expect(result.deployments.successful.length).toBeGreaterThan(0);
+            expect(preDeployments).toBeLessThan(deployments);
+            const promises = new Array();
+            result.deployments.successful.forEach((deploymentInfo) => {
+                console.log("== Undeploying", deploymentInfo.urn);
+                if (deploymentInfo.service === config.serviceUri) {
+                    expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
+                    expect(Object.keys(deploymentInfo.roles.cfe.instances))
+                        .toHaveLength(1);
+                    expect(Object.keys(deploymentInfo.roles.worker.instances))
+                        .toHaveLength(1);
+                }
+                promises.push(admission.undeploy(deploymentInfo.urn));
+            });
+            return beforeAndAfter(admission, Promise.all(promises))
+                .then(() => {
+                expect(preDeployments).toBe(deployments);
+            });
         });
     });
-    it('redeploys the service with manifest', () => {
+    let calculatorURN;
+    it('redeploys service with manifest', () => {
         return beforeAndAfter(admission, admission.deploy(new src_1.FileStream(fs_1.createReadStream(config.deployFile))))
             .then((result) => {
             // console.log(JSON.stringify(result, null, 2))
             expect(result).toBeDefined();
             expect(Object.keys(result)).toHaveLength(1);
-            expect(preDeployments + 2).toBe(deployments);
+            expect(preDeployments).toBe(deployments - 1);
             const deploymentInfo = result[Object.keys(result)[0]];
+            calculatorURN = deploymentInfo.urn;
             expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
             expect(Object.keys(deploymentInfo.roles.cfe.instances))
                 .toHaveLength(1);
@@ -178,8 +200,24 @@ describe('Check Admission-client', () => {
                 .toHaveLength(1);
         });
     });
+    it('add more instances to deployment', () => {
+        const scale = new src_1.ScalingDeploymentModification();
+        scale.deploymentURN = calculatorURN;
+        const scaleTarget = 2;
+        scale.scaling = { 'cfe': scaleTarget };
+        return admission.modifyDeployment(scale)
+            .then(() => {
+            return admission.findDeployments(calculatorURN);
+        })
+            .then((result) => {
+            const info = result[calculatorURN];
+            console.log("== Checking", info.urn);
+            expect(Object.keys(info.roles.cfe.instances))
+                .toHaveLength(scaleTarget);
+        });
+    });
     it('clean stamp again', () => {
-        return beforeAndAfter(admission, undeployService(admission, config.serviceUri))
+        return beforeAndAfter(admission, admission.undeploy(calculatorURN))
             .then(() => {
             return beforeAndAfter(admission, removeIfRegistered(admission, config.serviceUri));
         })
@@ -188,13 +226,13 @@ describe('Check Admission-client', () => {
             expect(preDeployments).toBe(deployments);
         });
     });
-    it('deploys two services with bundle and links/unlinks them with manifest', (done) => {
+    it('deploys two services with bundle and links/unlinks them with manifest', () => {
         let urn1;
         let urn2;
         const link = new Array();
-        return undeployService(admission, 'eslap://sampleinterservice/services/samplefrontend/1_0_0')
+        return undeployService(admission, config.linkService1)
             .then(() => {
-            return undeployService(admission, 'eslap://sampleinterservice/services/samplebackend/1_0_0');
+            return undeployService(admission, config.linkService2);
         })
             .then(() => {
             return admission.sendBundle(new src_1.FileStream(fs_1.createReadStream(config.linkBundle1)));
@@ -217,13 +255,13 @@ describe('Check Admission-client', () => {
             return admission.unlinkDeployments(link);
         })
             .then(() => {
-            done();
-        })
-            .catch((reason) => {
-            return done.fail(reason);
+            return Promise.all([
+                admission.undeploy(urn1),
+                admission.undeploy(urn2)
+            ]);
         });
     });
-    it('check events', () => {
+    it('check received events', () => {
         // counter.forEach((value, key) => {
         //   console.log(key, '=', value)
         // })

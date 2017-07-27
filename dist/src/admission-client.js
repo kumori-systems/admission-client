@@ -444,7 +444,8 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      */
     modifyDeployment(configuration) {
         const deferred = new _1.Deferred();
-        this.api.modifyDeployment(JSON.stringify(configuration.generate()))
+        const msg = JSON.stringify(configuration.generate());
+        this.api.modifyDeployment(msg)
             .then((value) => {
             if (value.success) {
                 const result = value.data;

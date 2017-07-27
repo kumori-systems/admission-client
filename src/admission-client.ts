@@ -373,7 +373,8 @@ export class AdmissionClient extends EventEmitter {
    */
   public modifyDeployment (configuration: DeploymentModification): Promise<any> {
     const deferred = new Deferred<any>()
-    this.api.modifyDeployment(JSON.stringify(configuration.generate()))
+    const msg:string = JSON.stringify(configuration.generate())
+    this.api.modifyDeployment(msg)
     .then((value) => {
       if (value.success) {
         const result: any = value.data

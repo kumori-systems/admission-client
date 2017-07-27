@@ -1,4 +1,3 @@
-/// <reference types="node" />
 export declare class GeneralResponse {
     'success': boolean;
     'message': string;
@@ -182,12 +181,6 @@ export declare class DefaultApi {
      * @param urn The urn of registered entity to get its manifest .
      */
     registriesUrnGet(urn: string): Promise<InlineResponse2002>;
-    /**
-     *
-     * Modifies the number of instances of some role of a deployment
-     * @param inline
-     */
-    scaleInstances(inline: Buffer): Promise<InlineResponse2002>;
     /**
      *
      * Removes a test context

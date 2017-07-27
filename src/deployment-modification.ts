@@ -6,7 +6,7 @@ export abstract class DeploymentModification {
   protected generateBase (): any {
     return {
       action: this.action,
-      deploymentURN: this.deploymentURN
+      deploymentUrn: this.deploymentURN
     }
   }
 }
