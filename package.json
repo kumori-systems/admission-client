@@ -30,7 +30,7 @@
   "author": "jpla@iti.es",
   "license": "ISC",
   "dependencies": {
-    "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#ticket820",
+    "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#master",
     "axios": "0.16.2",
     "form-data": "2.2.0",
     "socket.io-client": "2.0.3",
