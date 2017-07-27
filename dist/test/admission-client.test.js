@@ -167,7 +167,6 @@ describe('Check Admission-client', () => {
             expect(preDeployments).toBeLessThan(deployments);
             const promises = new Array();
             result.deployments.successful.forEach((deploymentInfo) => {
-                console.log("== Undeploying", deploymentInfo.urn);
                 if (deploymentInfo.service === config.serviceUri) {
                     expect(deploymentInfo).toHaveProperty('roles.cfe.instances');
                     expect(Object.keys(deploymentInfo.roles.cfe.instances))
@@ -211,7 +210,6 @@ describe('Check Admission-client', () => {
         })
             .then((result) => {
             const info = result[calculatorURN];
-            console.log("== Checking", info.urn);
             expect(Object.keys(info.roles.cfe.instances))
                 .toHaveLength(scaleTarget);
         });
