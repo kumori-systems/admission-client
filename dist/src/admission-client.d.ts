@@ -1,11 +1,7 @@
-/// <reference types="q" />
-/// <reference types="node" />
-import Swagger = require("./swagger/api");
-import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, RegistrationResult } from ".";
-import q = require("q");
-import Promise = q.Promise;
-import { EventEmitter, Listener } from "typed-event-emitter";
-import { ReadStream } from "fs";
+/// <reference types="socket.io-client" />
+import { EventEmitter, Listener } from 'typed-event-emitter';
+import Swagger = require('./swagger/api');
+import { AdmissionEvent, Deployment, DeploymentInstanceInfo, DeploymentList, DeploymentModification, Endpoint, FileStream, RegistrationResult } from '.';
 /**
  * Stub to give access to an ECloud admission instance.
  */
@@ -17,7 +13,8 @@ export declare class AdmissionClient extends EventEmitter {
     protected basePath: string;
     protected accessToken: string | undefined;
     protected api: Swagger.DefaultApi;
-    private ws;
+    protected ws: SocketIOClient.Socket;
+    protected dummy: Listener;
     /**
      *
      * @param basePath  URL where admission is waiting requests. For example:
@@ -28,7 +25,7 @@ export declare class AdmissionClient extends EventEmitter {
     /**
      * Asynchronous initialization of the stub.
      */
-    init(): q.Promise<void>;
+    init(): Promise<void>;
     close(): void;
     /**
      * Returns data of deployed services in system.
@@ -65,13 +62,13 @@ export declare class AdmissionClient extends EventEmitter {
      * The format of this file must follow the specification in the ECloud SDK
      * manual, section 4.1.1.
      */
-    sendBundle(bundlesZip?: ReadStream, bundlesJson?: ReadStream): Promise<RegistrationResult>;
+    sendBundle(bundlesZip?: FileStream, bundlesJson?: FileStream): Promise<RegistrationResult>;
     /**
      * Performs a new deployment in the system.
      * @param buffer Deployment file following specification in ECloud Manual,
      *  section 4.
      */
-    deploy(buffer: Buffer): Promise<DeploymentList>;
+    deploy(buffer: FileStream): Promise<DeploymentList>;
     /**
      * Undeploys a deployment in the system.
      * @param urn Urn of deployment to be undeployed
@@ -104,4 +101,8 @@ export declare class AdmissionClient extends EventEmitter {
      * @param urn Identifier of the test context to be removed.
      */
     removeTestContext(urn: string): Promise<any>;
+    private mapDeploymentDefault;
+    private mapDeploymentLocalStamp;
+    private mapInstanceInfoDefault;
+    private generateLinkManifest;
 }

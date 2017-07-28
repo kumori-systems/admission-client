@@ -1,5 +1,5 @@
-import {Deployment} from ".";
+import {Deployment} from '.'
 
 export class DeploymentList {
-  [key: string]: Deployment;
+  [key: string]: Deployment
 }

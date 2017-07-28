@@ -1,20 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const sio = require("socket.io-client");
+const typed_event_emitter_1 = require("typed-event-emitter");
 const Swagger = require("./swagger/api");
 const _1 = require(".");
-const q = require("q");
-const typed_event_emitter_1 = require("typed-event-emitter");
-const sio = require("socket.io-client");
-// export class GeneralResponse {
-//   public "success": boolean;
-//   public "message": string;
-//   public "data": any;
-// }
-// enum FindDeploymentsShow {
-//   topology,
-//   urn,
-//   extended
-// }
 /**
  * Stub to give access to an ECloud admission instance.
  */
@@ -31,53 +20,169 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         this.onDisconnected = this.registerEvent();
         this.onEcloudEvent = this.registerEvent();
         this.onError = this.registerEvent();
+        this.mapDeploymentDefault = (urn, data) => {
+            if (data.serviceURN) {
+                return this.mapDeploymentLocalStamp(urn, data);
+            }
+            const result = new _1.Deployment();
+            result.urn = urn;
+            result.service = data.service;
+            result.roles = {};
+            for (const roleName in data.roles) {
+                if (data.roles[roleName]) {
+                    const roleInfo = data.roles[roleName];
+                    result.roles[roleName] = {
+                        configuration: roleInfo.configuration,
+                        entrypoint: roleInfo.entrypoint,
+                        instances: {}
+                    };
+                    for (const instanceName in data.roles[roleName].instances) {
+                        if (data.roles[roleName].instances[instanceName]) {
+                            result.roles[roleName].instances[instanceName] =
+                                this.mapInstanceInfoDefault(instanceName, roleName, data.roles[roleName].instances[instanceName]);
+                        }
+                    }
+                }
+            }
+            return result;
+        };
+        this.mapDeploymentLocalStamp = (urn, data) => {
+            const result = new _1.Deployment();
+            result.urn = urn;
+            result.service = data.serviceURN;
+            result.roles = {};
+            for (const roleName in data.roles) {
+                if (data.roles[roleName]) {
+                    const roleInfo = data.roles[roleName];
+                    result.roles[roleName] = {
+                        configuration: roleInfo.configuration,
+                        entrypoint: roleInfo.entrypoint,
+                        instances: {}
+                    };
+                    roleInfo.instances.forEach((instanceName) => {
+                        const instance = new _1.DeploymentInstanceInfo();
+                        instance.id = instanceName;
+                        instance.role = roleName;
+                        instance.publicIp = '127.0.0.1';
+                        instance.privateIp = '127.0.0.1';
+                        if (data.volumes && data.volumes[instanceName]) {
+                            instance.volumes = data.volumes[instanceName];
+                        }
+                        if (data.portMapping) {
+                            data.portMapping.forEach((pm) => {
+                                if (pm.iid === instanceName) {
+                                    if (!instance.ports) {
+                                        instance.ports = {};
+                                    }
+                                    instance.ports[pm.endpoint] = pm.port;
+                                }
+                            });
+                        }
+                        result.roles[roleName].instances[instanceName] = instance;
+                    });
+                }
+            }
+            return result;
+        };
+        this.mapInstanceInfoDefault = (name, role, i0) => {
+            const instanceInfo = new _1.DeploymentInstanceInfo();
+            instanceInfo.id = name;
+            instanceInfo.role = role;
+            instanceInfo.cnid = i0.id;
+            instanceInfo.privateIp = i0.privateIp;
+            instanceInfo.publicIp = i0.publicIp;
+            if (i0.arrangement) {
+                instanceInfo.arrangement = {
+                    bandwith: i0.arrangement.bandwith,
+                    cpu: i0.arrangement.cpu,
+                    failureZones: i0.arrangement.failureZones,
+                    maxinstances: i0.arrangement.maxinstances,
+                    memory: i0.arrangement.memory,
+                    mininstances: i0.arrangement.mininstances
+                };
+            }
+            return instanceInfo;
+        };
+        this.generateLinkManifest = (entrypoints) => {
+            const manifest = {
+                spec: 'http://eslap.cloud/manifest/link/1_0_0',
+                endpoints: [
+                    {
+                        'deployment': entrypoints[0].deployment,
+                        'channel': entrypoints[0].channel
+                    }, {
+                        'deployment': entrypoints[1].deployment,
+                        'channel': entrypoints[1].channel
+                    }
+                ]
+            };
+            return JSON.stringify(manifest);
+        };
         this.basePath = basePath;
         this.accessToken = accessToken;
         this.api = new Swagger.DefaultApi(this.basePath);
-        if (this.accessToken == null) {
+        if (this.accessToken === undefined) {
             // stuff to modify protected property and fix generated api error
             const free = this.api;
             free.authentications.apiAuthorization = new Swagger.VoidAuth();
         }
         else {
-            this.api.accessToken = this.accessToken || "";
+            this.api.accessToken = this.accessToken || '';
         }
     }
     /**
      * Asynchronous initialization of the stub.
      */
     init() {
-        const deferred = q.defer();
-        if (this.accessToken) {
-            const wsConfig = {
-                extraHeaders: { Authorization: "Bearer " + this.accessToken },
-                reconnection: true,
-            };
-            const aux = this.basePath.split("/");
-            const wsUri = aux[0] + "//" + aux[2];
-            this.ws = sio(wsUri, wsConfig);
-            this.ws.on("connect", () => {
-                this.emit(this.onConnected);
-            });
-            this.ws.on("disconnect", () => {
+        const deferred = new _1.Deferred();
+        const wsConfig = {
+            reconnection: true
+        };
+        // if (this.accessToken) {
+        //   wsConfig.extraHeaders = {
+        //     Authorization: 'Basic ' +
+        //       new Buffer(this.accessToken).toString('base64')
+        //   }
+        // }
+        const aux = this.basePath.split('/');
+        let wsUri = aux[0] + '//' + aux[2];
+        if (this.accessToken !== undefined) {
+            wsUri = aux[0] + '//' + aux[2] + '?token=' + this.accessToken;
+        }
+        this.ws = sio(wsUri, wsConfig);
+        this.ws.on('connect', () => {
+            this.emit(this.onConnected);
+            this.ws.on('disconnect', () => {
                 this.emit(this.onDisconnected);
             });
-            this.ws.on("ecloud-event", (data) => {
+            this.ws.on('ecloud-event', (data) => {
                 const event = new _1.AdmissionEvent();
                 event.timestamp = data.timestamp;
                 event.entity = data.entity;
                 event.strType = data.type;
                 event.strName = data.name;
-                event.type = _1.EcloudEventType[data.type];
-                event.name = _1.EcloudEventName[data.name];
+                event.type =
+                    _1.EcloudEventType[data.type];
+                event.name =
+                    _1.EcloudEventName[data.name];
                 event.data = data.data;
                 this.emit(this.onEcloudEvent, event);
             });
-            this.ws.on("error", (reason) => {
+            this.ws.on('error', (reason) => {
                 this.emit(this.onError, reason);
             });
             deferred.resolve();
-        }
+        });
+        this.ws.on('unauthorized', (err) => {
+            if (deferred.isPending()) {
+                deferred.reject(new Error(err.message));
+            }
+        });
+        this.ws.on('connect_error', () => {
+            if (deferred.isPending()) {
+                deferred.reject(new Error('Connection error!'));
+            }
+        });
         return deferred.promise;
     }
     close() {
@@ -91,25 +196,25 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * of the parameter are listed
      */
     findDeployments(urn, owner) {
-        const deferred = q.defer();
+        const deferred = new _1.Deferred();
         this.api.findDeployments(urn, owner)
             .then((value) => {
-            if (value.body.success) {
+            if (value.success) {
                 const result = {};
-                // console.log("=====", JSON.stringify( value.body.data, null, 2));
-                for (const dname in value.body.data) {
+                // console.log('=====', JSON.stringify( value.data, null, 2))
+                for (const dname in value.data) {
                     // Predefined deployment in local-stamp
-                    if (dname === "default") {
+                    if (dname === 'default') {
                         continue;
                     }
-                    const d0 = value.body.data[dname];
-                    const d1 = mapDeploymentDefault(dname, d0);
+                    const d0 = value.data[dname];
+                    const d1 = this.mapDeploymentDefault(dname, d0);
                     result[dname] = d1;
                 }
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -122,15 +227,15 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  These can be component, services, runtimes and resources.
      */
     findStorage() {
-        const deferred = q.defer();
+        const deferred = new _1.Deferred();
         this.api.registriesGet()
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -143,15 +248,15 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn  The urn of registered entity to be deleted.
      */
     removeStorage(urn) {
-        const deferred = q.defer();
+        const deferred = new _1.Deferred();
         this.api.registriesUrnDelete(urn)
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -164,15 +269,15 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn The urn of registered entity to get its manifest.
      */
     getStorageManifest(urn) {
-        const deferred = q.defer();
+        const deferred = new _1.Deferred();
         this.api.registriesGet(urn)
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -191,29 +296,35 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * manual, section 4.1.1.
      */
     sendBundle(bundlesZip, bundlesJson) {
-        const deferred = q.defer();
-        this.api.bundlesPost(bundlesZip, bundlesJson)
+        const deferred = new _1.Deferred();
+        const zipStream = bundlesZip ? bundlesZip.getStream() : undefined;
+        const zipJson = bundlesJson ? bundlesJson.getStream() : undefined;
+        this.api.bundlesPost(zipStream, zipJson)
             .then((value) => {
-            if (value.body.success) {
-                const data = value.body.data;
+            if (value.success) {
+                const data = value.data;
                 const result = new _1.RegistrationResult();
                 result.links = data.links;
                 result.tests = data.tests;
                 result.testToken = data.testToken;
                 result.errors = data.errors;
                 result.successful = data.successful;
-                const deployments = new Array();
-                result.deployments = {
-                    errors: data.deployments.errors,
-                    successful: deployments,
-                };
-                data.deployments.successful.forEach((item) => {
-                    deployments.push(mapDeploymentDefault(item.deploymentURN, item.topology));
-                });
+                if (data.deployments !== undefined) {
+                    const deployments = new Array();
+                    result.deployments = {
+                        errors: data.deployments.errors,
+                        successful: deployments
+                    };
+                    if (data.deployments.successful !== undefined) {
+                        data.deployments.successful.forEach((item) => {
+                            deployments.push(this.mapDeploymentDefault(item.deploymentURN, item.topology));
+                        });
+                    }
+                }
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(JSON.stringify(value.body)));
+                deferred.reject(new Error(JSON.stringify(value)));
             }
         })
             .catch((reason) => {
@@ -227,22 +338,26 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  section 4.
      */
     deploy(buffer) {
-        const deferred = q.defer();
-        this.api.deploymentsPost(buffer)
+        const deferred = new _1.Deferred();
+        this.api.deploymentsPost(buffer.getStream())
             .then((value) => {
-            if (value.body.success) {
+            if (value.success) {
                 const result = {};
-                for (const dname in value.body.data) {
-                    if (value.body.data[dname]) {
-                        const d0 = value.body.data[dname];
-                        const d1 = mapDeploymentDefault(dname, d0);
+                const data = {};
+                const urn = value.data.deploymentURN;
+                data[urn] = value.data.topology;
+                // console.log('Deployment:',JSON.stringify(value.data, null, 2))
+                for (const dname in data) {
+                    if (data[dname]) {
+                        const d0 = data[dname];
+                        const d1 = this.mapDeploymentDefault(dname, d0);
                         result[dname] = d1;
                     }
                 }
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -255,22 +370,22 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Urn of deployment to be undeployed
      */
     undeploy(urn) {
-        const deferred = q.defer();
+        const deferred = new _1.Deferred();
         this.api.deploymentsDelete(urn)
             .then((value) => {
-            if (value.body.success) {
-                const response = value.body.data;
+            if (value.success) {
+                const response = value.data;
                 const result = new Array();
                 for (const killed in response.killedInstances) {
                     if (response.killedInstances[killed]) {
                         const killedInfo = response.killedInstances[killed];
-                        result.push(mapInstanceInfoDefault(killed, killedInfo.component, killedInfo));
+                        result.push(this.mapInstanceInfoDefault(killed, killedInfo.component, killedInfo));
                     }
                 }
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -283,15 +398,15 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param endpoints An array of 2 elements with desired link endpoints data.
      */
     linkDeployments(endpoints) {
-        const deferred = q.defer();
-        this.api.linksPost(Buffer.from(JSON.stringify(endpoints)))
+        const deferred = new _1.Deferred();
+        this.api.linksPost(this.generateLinkManifest(endpoints))
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -305,15 +420,15 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      *  to be removed.
      */
     unlinkDeployments(endpoints) {
-        const deferred = q.defer();
-        this.api.linksDelete(Buffer.from(JSON.stringify(endpoints)))
+        const deferred = new _1.Deferred();
+        this.api.linksDelete(this.generateLinkManifest(endpoints))
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -328,15 +443,16 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * ReconfigDeploymentModification.
      */
     modifyDeployment(configuration) {
-        const deferred = q.defer();
-        this.api.modifyDeployment(Buffer.from(JSON.stringify(configuration.generate())))
+        const deferred = new _1.Deferred();
+        const msg = JSON.stringify(configuration.generate());
+        this.api.modifyDeployment(msg)
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -348,15 +464,15 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * List current test contexts in the stamp.
      */
     listTestContexts() {
-        const deferred = q.defer();
+        const deferred = new _1.Deferred();
         this.api.testContextsGet()
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -369,15 +485,15 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
      * @param urn Identifier of the test context to be removed.
      */
     removeTestContext(urn) {
-        const deferred = q.defer();
+        const deferred = new _1.Deferred();
         this.api.testContextsDelete(urn)
             .then((value) => {
-            if (value.body.success) {
-                const result = value.body.data;
+            if (value.success) {
+                const result = value.data;
                 deferred.resolve(result);
             }
             else {
-                deferred.reject(new Error(value.body.message));
+                deferred.reject(new Error(value.message));
             }
         })
             .catch((reason) => {
@@ -387,87 +503,4 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
     }
 }
 exports.AdmissionClient = AdmissionClient;
-const mapDeploymentDefault = (urn, data) => {
-    if (data.serviceURN) {
-        return mapDeploymentLocalStamp(urn, data);
-    }
-    const result = new _1.Deployment();
-    result.urn = urn;
-    result.service = data.service;
-    result.roles = {};
-    for (const roleName in data.roles) {
-        if (data.roles[roleName]) {
-            const roleInfo = data.roles[roleName];
-            result.roles[roleName] = {
-                configuration: roleInfo.configuration,
-                entrypoint: roleInfo.entrypoint,
-                instances: {},
-            };
-            for (const instanceName in data.roles[roleName].instances) {
-                if (data.roles[roleName].instances[instanceName]) {
-                    result.roles[roleName].instances[instanceName] =
-                        mapInstanceInfoDefault(instanceName, roleName, data.roles[roleName].instances[instanceName]);
-                }
-            }
-        }
-    }
-    return result;
-};
-const mapDeploymentLocalStamp = (urn, data) => {
-    const result = new _1.Deployment();
-    result.urn = urn;
-    result.service = data.serviceURN;
-    result.roles = {};
-    for (const roleName in data.roles) {
-        if (data.roles[roleName]) {
-            const roleInfo = data.roles[roleName];
-            result.roles[roleName] = {
-                configuration: roleInfo.configuration,
-                entrypoint: roleInfo.entrypoint,
-                instances: {},
-            };
-            roleInfo.instances.forEach((instanceName) => {
-                const instance = new _1.DeploymentInstanceInfo();
-                instance.id = instanceName;
-                instance.role = roleName;
-                instance.publicIp = "127.0.0.1";
-                instance.privateIp = "127.0.0.1";
-                if (data.volumes && data.volumes[instanceName]) {
-                    instance.volumes = data.volumes[instanceName];
-                }
-                if (data.portMapping) {
-                    data.portMapping.forEach((pm) => {
-                        if (pm.iid === instanceName) {
-                            if (!instance.ports) {
-                                instance.ports = {};
-                            }
-                            instance.ports[pm.endpoint] = pm.port;
-                        }
-                    });
-                }
-                result.roles[roleName].instances[instanceName] = instance;
-            });
-        }
-    }
-    return result;
-};
-const mapInstanceInfoDefault = (name, role, i0) => {
-    const instanceInfo = new _1.DeploymentInstanceInfo();
-    instanceInfo.id = name;
-    instanceInfo.role = role;
-    instanceInfo.cnid = i0.id;
-    instanceInfo.privateIp = i0.privateIp;
-    instanceInfo.publicIp = i0.publicIp;
-    if (i0.arrangement) {
-        instanceInfo.arrangement = {
-            bandwith: i0.arrangement.bandwith,
-            cpu: i0.arrangement.cpu,
-            failureZones: i0.arrangement.failureZones,
-            maxinstances: i0.arrangement.maxinstances,
-            memory: i0.arrangement.memory,
-            mininstances: i0.arrangement.mininstances,
-        };
-    }
-    return instanceInfo;
-};
 //# sourceMappingURL=admission-client.js.map

@@ -1,0 +1,16 @@
+{
+  "acsUri": "http://acs-dame-argo.slap53.iti.es/acs",
+  "admissionUri": "http://admission-dame-argo.slap53.iti.es/admission",
+  "bundle": "/examples/calculator_1_0_0/deploy_bundle.zip",
+  "deployFile": "/examples/calculator_1_0_0/deploy.json",
+  "serviceUri": "eslap://sampleservicecalculator/services/sampleservicecalculator/1_0_0",
+  "manifestUri": "eslap://eslap.cloud/components/acs/1_0_0",
+  "linkService1": "eslap://sampleinterservice/services/samplebackend/1_0_0",
+  "linkBundle1": "/examples/interservice-example/front/bundles/deploy_bundle.zip",
+  "linkEntrypoint1": "back",
+  "linkService2": "eslap://sampleinterservice/services/samplefrontend/1_0_0",
+  "linkBundle2": "/examples/interservice-example/back/bundles/deploy_bundle.zip",
+  "linkEntrypoint2": "service",
+  "user": "josep@iti.es",
+  "password": "josep"
+  }

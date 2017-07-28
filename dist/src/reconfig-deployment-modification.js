@@ -4,13 +4,13 @@ const _1 = require(".");
 class ReconfigDeploymentModification extends _1.DeploymentModification {
     constructor() {
         super(...arguments);
-        this.action = "reconfig";
+        this.action = 'reconfig';
     }
     generate() {
         const result = this.generateBase();
         result.configuration = {
             parameters: this.parameters,
-            resources: this.resources,
+            resources: this.resources
         };
         return result;
     }

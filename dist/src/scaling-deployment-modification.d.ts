@@ -1,4 +1,4 @@
-import { DeploymentModification } from ".";
+import { DeploymentModification } from '.';
 export declare class ScalingDeploymentModification extends DeploymentModification {
     scaling: {
         [key: string]: number;

@@ -2,32 +2,49 @@
   "name": "admission-client",
   "version": "1.0.0",
   "description": "Client Stub for ECloud Admission",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf dist/src/index.js",
-    "lint": "./node_modules/.bin/tslint src/*.ts",
-    "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist; echo Finished"
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
   },
-  "author": "",
+  "browser": {
+    "./dist/src/file-stream.d.ts": "./dist/src/file-stream-browser.d.ts",
+    "./dist/src/file-stream.js": "./dist/src/file-stream-browser.js",
+    "./dist/src/file-stream.js.map": "./dist/src/file-stream-browser.js.map"
+  },
+  "scripts": {
+    "spec": "./node_modules/.bin/jest dist/test/*.test.js",
+    "clean": "rm -rf dist",
+    "lint": "./node_modules/.bin/tslint  --type-check --project .",
+    "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist"
+  },
+  "author": "jpla@iti.es",
   "license": "ISC",
   "dependencies": {
     "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#master",
-    "bluebird": "3.5.0",
-    "q": "1.5.0",
-    "request": "2.81.0",
+    "axios": "0.16.2",
+    "form-data": "2.2.0",
     "socket.io-client": "2.0.3",
-    "typed-event-emitter": "^1.0.3"
+    "typed-event-emitter": "1.0.3"
   },
   "devDependencies": {
+    "@types/form-data": "0.0.33",
+    "@types/jest": "20.0.2",
+    "@types/node": "7.0.22",
+    "@types/socket.io-client": "1.4.29",
+    "jest": "20.0.4",
+    "ts-jest": "20.0.7",
     "tslint": "5.4.3",
     "tslint-config-standard": "5.0.2",
-    "typescript": "2.3.3",
-    "@types/request": "0.0.43",
-    "@types/node": "7.0.22",
-    "@types/bluebird": "3.5.4",
-    "@types/q": "1.0.0",
-    "@types/socket.io-client": "1.4.29"
+    "typescript": "2.3.3"
   }
 }
