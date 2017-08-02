@@ -253,7 +253,7 @@ describe('Check Admission-client', () => {
     })
   })
 
-  it('deploys two services with bundle and links/unlinks them with manifest', 
+  it.only('deploys two services with bundle and links/unlinks them with manifest', 
     () => {
     let urn1: string
     let urn2: string
@@ -280,6 +280,20 @@ describe('Check Admission-client', () => {
       link.push(new Endpoint(urn1, config.linkEntrypoint1))
       link.push(new Endpoint(urn2, config.linkEntrypoint2))
       return admission.linkDeployments(link)
+    })
+    .then(() => {
+      return admission.findDeployments(urn1)
+    })
+    .then((result: DeploymentList) => {
+      const info: Deployment = result[urn1]
+      expect(info).toBeDefined()
+    })
+    .then(() => {
+      return admission.findDeployments(urn2)
+    })
+    .then((result: DeploymentList) => {
+      const info: Deployment = result[urn2]
+      expect(info).toBeDefined()
     })
     .then(() => {
       return admission.unlinkDeployments(link)

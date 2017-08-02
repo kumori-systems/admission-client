@@ -24,15 +24,19 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             if (data.serviceURN) {
                 return this.mapDeploymentLocalStamp(urn, data);
             }
+            console.log("== data", JSON.stringify(data, null, 2));
             const result = new _1.Deployment();
             result.urn = urn;
             result.service = data.service;
+            result.links = data.links;
             result.roles = {};
             for (const roleName in data.roles) {
                 if (data.roles[roleName]) {
                     const roleInfo = data.roles[roleName];
                     result.roles[roleName] = {
-                        configuration: roleInfo.configuration,
+                        configuration: {
+                            parameters: roleInfo.configuration
+                        },
                         entrypoint: roleInfo.entrypoint,
                         instances: {}
                     };
@@ -44,6 +48,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                     }
                 }
             }
+            console.log("== generated", JSON.stringify(result, null, 2));
             return result;
         };
         this.mapDeploymentLocalStamp = (urn, data) => {
@@ -98,7 +103,8 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                     failureZones: i0.arrangement.failureZones,
                     maxinstances: i0.arrangement.maxinstances,
                     memory: i0.arrangement.memory,
-                    mininstances: i0.arrangement.mininstances
+                    mininstances: i0.arrangement.mininstances,
+                    resilience: i0.arrangement.__resilience
                 };
             }
             return instanceInfo;

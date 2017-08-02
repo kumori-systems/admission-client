@@ -224,7 +224,7 @@ describe('Check Admission-client', () => {
             expect(preDeployments).toBe(deployments);
         });
     });
-    it('deploys two services with bundle and links/unlinks them with manifest', () => {
+    it.only('deploys two services with bundle and links/unlinks them with manifest', () => {
         let urn1;
         let urn2;
         const link = new Array();
@@ -248,6 +248,20 @@ describe('Check Admission-client', () => {
             link.push(new src_1.Endpoint(urn1, config.linkEntrypoint1));
             link.push(new src_1.Endpoint(urn2, config.linkEntrypoint2));
             return admission.linkDeployments(link);
+        })
+            .then(() => {
+            return admission.findDeployments(urn1);
+        })
+            .then((result) => {
+            const info = result[urn1];
+            expect(info).toBeDefined();
+        })
+            .then(() => {
+            return admission.findDeployments(urn2);
+        })
+            .then((result) => {
+            const info = result[urn2];
+            expect(info).toBeDefined();
         })
             .then(() => {
             return admission.unlinkDeployments(link);

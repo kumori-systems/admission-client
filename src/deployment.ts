@@ -1,13 +1,15 @@
 import {DeploymentInstanceInfo} from '.'
 
 export class Deployment {
-  public 'urn': string
-  public 'service': string
-  public 'roles': {
+  public urn: string
+  public service: string
+  public roles: {
     [key: string]: {
-      'instances': {[key: string]: DeploymentInstanceInfo}
-      'configuration': { [key: string]: any }
-      'entrypoint': {
+      instances: {[key: string]: DeploymentInstanceInfo}
+      configuration:{
+        parameters: {[key: string]: any}
+      } 
+      entrypoint: {
         sslonly: boolean
         domain: string
         secrets: {
@@ -17,5 +19,11 @@ export class Deployment {
         }
       }
     }
+  }
+  public links: {
+    [key: string]: 
+      {[key: string]: 
+        {[key: string]: any} 
+      }
   }
 }
