@@ -434,7 +434,7 @@ export class AdmissionClient extends EventEmitter {
     if (data.serviceURN) {
       return this.mapDeploymentLocalStamp(urn, data)
     }
-    console.log("== data", JSON.stringify(data,null,2));
+    // console.log("== data", JSON.stringify(data,null,2));
     const result = new Deployment()
     result.urn = urn
     result.service = data.service
@@ -462,7 +462,7 @@ export class AdmissionClient extends EventEmitter {
         }
       }
     }
-    console.log("== generated", JSON.stringify(result,null,2));
+    // console.log("== generated", JSON.stringify(result,null,2));
     return result
   }
 

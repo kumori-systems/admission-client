@@ -24,7 +24,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             if (data.serviceURN) {
                 return this.mapDeploymentLocalStamp(urn, data);
             }
-            console.log("== data", JSON.stringify(data, null, 2));
+            // console.log("== data", JSON.stringify(data,null,2));
             const result = new _1.Deployment();
             result.urn = urn;
             result.service = data.service;
@@ -48,7 +48,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                     }
                 }
             }
-            console.log("== generated", JSON.stringify(result, null, 2));
+            // console.log("== generated", JSON.stringify(result,null,2));
             return result;
         };
         this.mapDeploymentLocalStamp = (urn, data) => {
