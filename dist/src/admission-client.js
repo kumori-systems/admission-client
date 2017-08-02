@@ -307,6 +307,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         const zipJson = bundlesJson ? bundlesJson.getStream() : undefined;
         this.api.bundlesPost(zipStream, zipJson)
             .then((value) => {
+            // console.log("== bundlePost ", JSON.stringify(value, null, 2))
             if (value.success) {
                 const data = value.data;
                 const result = new _1.RegistrationResult();

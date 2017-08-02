@@ -6,9 +6,9 @@ export class Deployment {
   public roles: {
     [key: string]: {
       instances: {[key: string]: DeploymentInstanceInfo}
-      configuration:{
+      configuration: {
         parameters: {[key: string]: any}
-      } 
+      }
       entrypoint: {
         sslonly: boolean
         domain: string
@@ -21,9 +21,9 @@ export class Deployment {
     }
   }
   public links: {
-    [key: string]: 
-      {[key: string]: 
-        {[key: string]: any} 
+    [key: string]:
+      {[key: string]:
+        {[key: string]: any}
       }
   }
 }

@@ -224,7 +224,7 @@ describe('Check Admission-client', () => {
             expect(preDeployments).toBe(deployments);
         });
     });
-    it.only('deploys two services with bundle and links/unlinks them with manifest', () => {
+    it('deploys two services and links/unlinks them with manifest', () => {
         let urn1;
         let urn2;
         const link = new Array();
@@ -239,6 +239,18 @@ describe('Check Admission-client', () => {
             const deploymentInfo = result.deployments.successful[0];
             urn1 = deploymentInfo.urn;
             expect(urn1).toBeDefined();
+            // console.log('Parameters de', urn1,
+            // JSON.stringify(deploymentInfo.roles['cfe'].configuration.parameters))
+            const expected = {
+                'json': { 'a': 1 },
+                'number': 5,
+                'zero': 0,
+                'hello': 'hello',
+                'true': true,
+                'false': false
+            };
+            expect(deploymentInfo.roles['cfe'].configuration.parameters)
+                .toEqual(expected);
             return admission.sendBundle(new src_1.FileStream(fs_1.createReadStream(config.linkBundle2)));
         })
             .then((result) => {
@@ -254,14 +266,26 @@ describe('Check Admission-client', () => {
         })
             .then((result) => {
             const info = result[urn1];
+            // console.log('Links de', urn1, JSON.stringify(info.links))
             expect(info).toBeDefined();
+            const expected = {};
+            expected[config.linkEntrypoint1] = {};
+            expected[config.linkEntrypoint1][urn2] = {};
+            expected[config.linkEntrypoint1][urn2][config.linkEntrypoint2] = {};
+            expect(info.links).toEqual(expected);
         })
             .then(() => {
             return admission.findDeployments(urn2);
         })
             .then((result) => {
             const info = result[urn2];
+            // console.log('Links de', urn2, JSON.stringify(info.links))
             expect(info).toBeDefined();
+            const expected = {};
+            expected[config.linkEntrypoint2] = {};
+            expected[config.linkEntrypoint2][urn1] = {};
+            expected[config.linkEntrypoint2][urn1][config.linkEntrypoint1] = {};
+            expect(info.links).toEqual(expected);
         })
             .then(() => {
             return admission.unlinkDeployments(link);

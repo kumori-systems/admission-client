@@ -226,6 +226,7 @@ export class AdmissionClient extends EventEmitter {
     const zipJson = bundlesJson ? bundlesJson.getStream() : undefined
     this.api.bundlesPost(zipStream, zipJson)
     .then( (value) => {
+      // console.log("== bundlePost ", JSON.stringify(value, null, 2))
       if (value.success) {
         const data: Swagger.InlineResponse200Data = value.data
         const result = new RegistrationResult()
@@ -373,7 +374,7 @@ export class AdmissionClient extends EventEmitter {
    */
   public modifyDeployment (configuration: DeploymentModification): Promise<any> {
     const deferred = new Deferred<any>()
-    const msg:string = JSON.stringify(configuration.generate())
+    const msg: string = JSON.stringify(configuration.generate())
     this.api.modifyDeployment(msg)
     .then((value) => {
       if (value.success) {
@@ -444,7 +445,7 @@ export class AdmissionClient extends EventEmitter {
       if (data.roles[roleName]) {
         const roleInfo = data.roles[roleName]
         result.roles[roleName] = {
-          configuration:{
+          configuration: {
             parameters: roleInfo.configuration
           },
           entrypoint: roleInfo.entrypoint,
