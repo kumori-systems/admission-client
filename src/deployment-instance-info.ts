@@ -14,6 +14,7 @@ export class DeploymentInstanceInfo {
     // __resilience: number
     mininstances: number
     maxinstances: number
+    resilience: number
     cpu: number
     memory: number
     bandwith: number

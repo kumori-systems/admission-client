@@ -7,6 +7,7 @@ export declare class DeploymentInstanceInfo {
     arrangement: {
         mininstances: number;
         maxinstances: number;
+        resilience: number;
         cpu: number;
         memory: number;
         bandwith: number;

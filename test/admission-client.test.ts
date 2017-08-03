@@ -186,9 +186,9 @@ describe('Check Admission-client', () => {
       // console.log(JSON.stringify(result.deployments.successful))
       expect(result.deployments.successful.length).toBeGreaterThan(0)
       expect(preDeployments).toBeLessThan(deployments)
-      const promises: Array<Promise<any>> = new Array<Promise<any>>();
+      const promises: Array<Promise<any>> = new Array<Promise<any>>()
       result.deployments.successful.forEach((deploymentInfo: Deployment) => {
-        if (deploymentInfo.service === config.serviceUri){
+        if (deploymentInfo.service === config.serviceUri) {
           expect(deploymentInfo).toHaveProperty('roles.cfe.instances')
           expect(Object.keys(deploymentInfo.roles.cfe.instances))
           .toHaveLength(1)
@@ -199,12 +199,12 @@ describe('Check Admission-client', () => {
       })
       return beforeAndAfter(admission, Promise.all(promises))
       .then(() => {
-        expect(preDeployments).toBe(deployments);
+        expect(preDeployments).toBe(deployments)
       })
     })
   })
 
-  let calculatorURN: string;
+  let calculatorURN: string
   it('redeploys service with manifest', () => {
     return beforeAndAfter(admission,
       admission.deploy(new FileStream(createReadStream(config.deployFile))))
@@ -214,7 +214,7 @@ describe('Check Admission-client', () => {
       expect(Object.keys(result)).toHaveLength(1)
       expect(preDeployments).toBe(deployments - 1)
       const deploymentInfo: Deployment = result[Object.keys(result)[0]]
-      calculatorURN = deploymentInfo.urn;
+      calculatorURN = deploymentInfo.urn
       expect(deploymentInfo).toHaveProperty('roles.cfe.instances')
       expect(Object.keys(deploymentInfo.roles.cfe.instances))
       .toHaveLength(1)
@@ -253,8 +253,7 @@ describe('Check Admission-client', () => {
     })
   })
 
-  it('deploys two services with bundle and links/unlinks them with manifest', 
-    () => {
+  it('deploys two services and links/unlinks them with manifest', () => {
     let urn1: string
     let urn2: string
     const link: Endpoint[] = new Array<Endpoint>()
@@ -270,6 +269,18 @@ describe('Check Admission-client', () => {
       const deploymentInfo = result.deployments.successful[0]
       urn1 = deploymentInfo.urn
       expect(urn1).toBeDefined()
+      // console.log('Parameters de', urn1,
+      // JSON.stringify(deploymentInfo.roles['cfe'].configuration.parameters))
+      const expected = {
+        'json': {'a': 1},
+        'number': 5,
+        'zero': 0,
+        'hello': 'hello',
+        'true': true,
+        'false': false
+      }
+      expect(deploymentInfo.roles['cfe'].configuration.parameters)
+      .toEqual(expected)
       return admission.sendBundle(
         new FileStream(createReadStream(config.linkBundle2)))
     })
@@ -280,6 +291,32 @@ describe('Check Admission-client', () => {
       link.push(new Endpoint(urn1, config.linkEntrypoint1))
       link.push(new Endpoint(urn2, config.linkEntrypoint2))
       return admission.linkDeployments(link)
+    })
+    .then(( ) => {
+      return admission.findDeployments(urn1)
+    })
+    .then((result: DeploymentList) => {
+      const info: Deployment = result[urn1]
+      // console.log('Links de', urn1, JSON.stringify(info.links))
+      expect(info).toBeDefined()
+      const expected: any = {}
+      expected[config.linkEntrypoint1] = {}
+      expected[config.linkEntrypoint1][urn2] = {}
+      expected[config.linkEntrypoint1][urn2][config.linkEntrypoint2] = {}
+      expect(info.links).toEqual(expected)
+    })
+    .then(( ) => {
+      return admission.findDeployments(urn2)
+    })
+    .then((result: DeploymentList) => {
+      const info: Deployment = result[urn2]
+      // console.log('Links de', urn2, JSON.stringify(info.links))
+      expect(info).toBeDefined()
+      const expected: any = {}
+      expected[config.linkEntrypoint2] = {}
+      expected[config.linkEntrypoint2][urn1] = {}
+      expected[config.linkEntrypoint2][urn1][config.linkEntrypoint1] = {}
+      expect(info.links).toEqual(expected)
     })
     .then(() => {
       return admission.unlinkDeployments(link)
