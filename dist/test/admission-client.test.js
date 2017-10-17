@@ -214,6 +214,9 @@ describe('Check Admission-client', () => {
                 .toHaveLength(scaleTarget);
         });
     });
+    it('let some time pass... meanwhile metrics should arrive', () => {
+        return new Promise(resolve => setTimeout(resolve, 70 * 1000));
+    });
     it('clean stamp again', () => {
         return beforeAndAfter(admission, admission.undeploy(calculatorURN))
             .then(() => {
