@@ -38,7 +38,20 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                             parameters: roleInfo.configuration
                         },
                         entrypoint: roleInfo.entrypoint,
-                        instances: {}
+                        instances: {},
+                        arrangement: {
+                            cpu: roleInfo.arrangement.cpu,
+                            bandwidth: roleInfo.arrangement.bandwidth,
+                            failurezones: roleInfo.arrangement.failurezones,
+                            instances: roleInfo.arrangement.__instances,
+                            ioperf: roleInfo.arrangement.__ioperf,
+                            iopsintensive: roleInfo.arrangement.__iopsintensive,
+                            maxinstances: roleInfo.arrangement.maxinstances,
+                            memory: roleInfo.arrangement.memory,
+                            mininstances: roleInfo.arrangement.mininstances,
+                            resilience: roleInfo.arrangement.__resilience
+                        },
+                        component: roleInfo.component
                     };
                     for (const instanceName in data.roles[roleName].instances) {
                         if (data.roles[roleName].instances[instanceName]) {
@@ -60,9 +73,22 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                 if (data.roles[roleName]) {
                     const roleInfo = data.roles[roleName];
                     result.roles[roleName] = {
+                        instances: {},
                         configuration: roleInfo.configuration,
-                        entrypoint: roleInfo.entrypoint,
-                        instances: {}
+                        arrangement: {
+                            cpu: roleInfo.arrangement.cpu,
+                            bandwidth: roleInfo.arrangement.bandwidth,
+                            failurezones: roleInfo.arrangement.failurezones,
+                            instances: roleInfo.arrangement.__instances,
+                            ioperf: roleInfo.arrangement.__ioperf,
+                            iopsintensive: roleInfo.arrangement.__iopsintensive,
+                            maxinstances: roleInfo.arrangement.maxinstances,
+                            memory: roleInfo.arrangement.memory,
+                            mininstances: roleInfo.arrangement.mininstances,
+                            resilience: roleInfo.arrangement.__resilience
+                        },
+                        component: roleInfo.component,
+                        entrypoint: roleInfo.entrypoint
                     };
                     roleInfo.instances.forEach((instanceName) => {
                         const instance = new _1.DeploymentInstanceInfo();

@@ -4,6 +4,7 @@ export declare class DeploymentInstanceInfo {
     cnid: string;
     publicIp: string;
     privateIp: string;
+    connected: boolean;
     arrangement: {
         mininstances: number;
         maxinstances: number;

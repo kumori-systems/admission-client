@@ -4,6 +4,7 @@ export class DeploymentInstanceInfo {
   public cnid: string
   public publicIp: string
   public privateIp: string
+  public connected: boolean
   public arrangement: {
     // __instances:number
     // __cpu: number
