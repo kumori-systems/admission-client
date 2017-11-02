@@ -5,6 +5,16 @@ export declare class DeploymentInstanceInfo {
     publicIp: string;
     privateIp: string;
     connected: boolean;
+    configuration: {
+        'resources': {
+            [key: string]: {
+                'type': string;
+                'parameters': {
+                    [key: string]: any;
+                };
+            };
+        };
+    };
     arrangement: {
         mininstances: number;
         maxinstances: number;
