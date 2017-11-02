@@ -24,7 +24,7 @@ const undeployService = (adm: AdmissionClient, serviceUrn: string) => {
     const promises = []
     for (const k in result) {
       if (result[k].service === serviceUrn) {
-        // console.log(result[k].urn)
+        // console.debug(result[k].urn)
         promises.push(admission.undeploy(result[k].urn))
       }
     }
@@ -36,16 +36,16 @@ const updateState = (adm: AdmissionClient) => {
   return adm.findDeployments()
   .then((result) => {
     deployments = Object.keys(result).length
-    // console.log('Current deployments')
+    // console.debug('Current deployments')
     // Object.keys(result).forEach((value) => {
-    //    console.log(value)
+    //    console.debug(value)
     //  })
-    // console.log('Deployments:', deployments)
+    // console.debug('Deployments:', deployments)
     return adm.findStorage()
   })
   .then((result) => {
     registries = result.length
-    // console.log('Registries:', registries)
+    // console.debug('Registries:', registries)
   })
 }
 
@@ -88,22 +88,21 @@ describe('Check Admission-client', () => {
       expect(token).toBeDefined()
       const accessToken = token.accessToken
       expect(accessToken).toBeDefined()
-      // console.log('access_token', accessToken)
+      console.debug('access_token', accessToken)
       admission = new AdmissionClient(config.admissionUri, accessToken)
       admission.onConnected(() => {
         connected = true
       })
       admission.onEcloudEvent((event: AdmissionEvent) => {
         const key = event.strType + '/' + event.strName
-        // console.log('=========================== Event ' + key +
-        //   ' ***************')
+        console.debug('=========================== Event ' + key +
+        ' ***************')
         counter.set(key, cget(key) + 1)
         if (event.type === EcloudEventType.metrics) { return }
-        // console.log(JSON.stringify(event, null, 2))
+        console.debug(JSON.stringify(event, null, 2))
       })
       admission.onError((reason: any) => {
-        console.log('===========================ERROR***************')
-        console.log(reason)
+        console.error('===========================ERROR***************\n', reason)
       })
       return admission.init()
     }).then(() => {
@@ -112,6 +111,8 @@ describe('Check Admission-client', () => {
     .then(() => {
       expect(connected)
       done()
+    }).catch((error) => {
+      console.error('Error in beforeAll:', error)
     })
   })
 
@@ -133,7 +134,7 @@ describe('Check Admission-client', () => {
     return admission.findStorage()
     .then((result) => {
       registries = result.length
-      // console.log('Registries:', registries)
+      console.debug('Registries:', registries)
       expect(registries).toBeGreaterThan(5)
     })
   })
@@ -142,7 +143,7 @@ describe('Check Admission-client', () => {
     return admission.findDeployments()
     .then((result) => {
       deployments = Object.keys(result).length
-      // console.log('Deployments:', registries)
+      console.debug('Deployments:', registries)
       expect(deployments).toBeGreaterThan(5)
       const deployment: Deployment = result[Object.keys(result)[5]]
       expect(deployment.service).toBeDefined()
@@ -180,10 +181,10 @@ describe('Check Admission-client', () => {
     return beforeAndAfter(admission,
       admission.sendBundle(new FileStream(createReadStream(config.bundle))))
     .then((result: RegistrationResult) => {
-      // console.log(JSON.stringify(result, null, 2))
+      console.log(JSON.stringify(result, null, 2))
       expect(preRegistries).toBeLessThan(registries)
       expect(result).toHaveProperty('deployments.successful')
-      // console.log(JSON.stringify(result.deployments.successful))
+      console.log(JSON.stringify(result.deployments.successful))
       expect(result.deployments.successful.length).toBeGreaterThan(0)
       expect(preDeployments).toBeLessThan(deployments)
       const promises: Array<Promise<any>> = new Array<Promise<any>>()
@@ -209,7 +210,7 @@ describe('Check Admission-client', () => {
     return beforeAndAfter(admission,
       admission.deploy(new FileStream(createReadStream(config.deployFile))))
     .then((result: DeploymentList) => {
-      // console.log(JSON.stringify(result, null, 2))
+      console.debug(JSON.stringify(result, null, 2))
       expect(result).toBeDefined()
       expect(Object.keys(result)).toHaveLength(1)
       expect(preDeployments).toBe(deployments - 1)
@@ -273,8 +274,8 @@ describe('Check Admission-client', () => {
       const deploymentInfo = result.deployments.successful[0]
       urn1 = deploymentInfo.urn
       expect(urn1).toBeDefined()
-      // console.log('Parameters de', urn1,
-      // JSON.stringify(deploymentInfo.roles['cfe'].configuration.parameters))
+      console.log('Parameters de', urn1,
+      JSON.stringify(deploymentInfo.roles['cfe'].configuration.parameters))
       const expected = {
         'json': {'a': 1},
         'number': 5,
@@ -301,7 +302,7 @@ describe('Check Admission-client', () => {
     })
     .then((result: DeploymentList) => {
       const info: Deployment = result[urn1]
-      // console.log('Links de', urn1, JSON.stringify(info.links))
+      console.debug('Links de', urn1, JSON.stringify(info.links))
       expect(info).toBeDefined()
       const expected: any = {}
       expected[config.linkEntrypoint1] = {}
@@ -314,7 +315,7 @@ describe('Check Admission-client', () => {
     })
     .then((result: DeploymentList) => {
       const info: Deployment = result[urn2]
-      // console.log('Links de', urn2, JSON.stringify(info.links))
+      console.debug('Links de', urn2, JSON.stringify(info.links))
       expect(info).toBeDefined()
       const expected: any = {}
       expected[config.linkEntrypoint2] = {}
@@ -334,9 +335,9 @@ describe('Check Admission-client', () => {
   })
 
   it('check received events', () => {
-    // counter.forEach((value, key) => {
-    //   console.log(key, '=', value)
-    // })
+    counter.forEach((value, key) => {
+      console.debug(key, '=', value)
+    })
     expect(cget('service/undeploying')).toBeGreaterThan(0)
     expect(cget('service/undeployed')).toBeGreaterThan(0)
     expect(cget('service/deploying')).toBeGreaterThan(0)
