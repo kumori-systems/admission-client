@@ -518,15 +518,15 @@ export class AdmissionClient extends EventEmitter {
               {'type': string,'parameters': {[key: string]: any}}}} = {
                 'resources': {}
               }
-            roleInfo.instances[instanceName].configuration.resources
-            .forEach((resourceName: string) => {
+            for (let resourceName in roleInfo.instances[instanceName]
+              .configuration.resources) {
               configuration['resources'][resourceName] = {
                 'type': roleInfo.instances[instanceName]
                 .configuration['resources'][resourceName].type,
                 'parameters': roleInfo.instances[instanceName].configuration
                 .resources[resourceName].parameters
               }
-            })
+            }
             instance.configuration = configuration
           }
 
@@ -560,13 +560,12 @@ export class AdmissionClient extends EventEmitter {
         {'type': string,'parameters': {[key: string]: any}}}} = {
           'resources': {}
         }
-      i0.configuration.resources
-      .forEach((resourceName: string) => {
+      for (let resourceName in i0.configuration.resources) {
         configuration['resources'][resourceName] = {
           'type': i0.configuration.resources[resourceName].type,
           'parameters': i0.configuration.resources[resourceName].parameters
         }
-      })
+      }
       instanceInfo.configuration = configuration
     }
     if (i0.arrangement) {
