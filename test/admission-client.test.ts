@@ -24,7 +24,7 @@ const undeployService = (adm: AdmissionClient, serviceUrn: string) => {
     const promises = []
     for (const k in result) {
       if (result[k].service === serviceUrn) {
-        // console.debug(result[k].urn)
+        // console.log(result[k].urn)
         promises.push(admission.undeploy(result[k].urn))
       }
     }
@@ -36,16 +36,16 @@ const updateState = (adm: AdmissionClient) => {
   return adm.findDeployments()
   .then((result) => {
     deployments = Object.keys(result).length
-    // console.debug('Current deployments')
+    // console.log('Current deployments')
     // Object.keys(result).forEach((value) => {
-    //    console.debug(value)
+    //    console.log(value)
     //  })
-    // console.debug('Deployments:', deployments)
+    // console.log('Deployments:', deployments)
     return adm.findStorage()
   })
   .then((result) => {
     registries = result.length
-    // console.debug('Registries:', registries)
+    // console.log('Registries:', registries)
   })
 }
 
@@ -88,7 +88,7 @@ describe('Check Admission-client', () => {
       expect(token).toBeDefined()
       const accessToken = token.accessToken
       expect(accessToken).toBeDefined()
-      console.log('access_token', accessToken)
+      // console.log('access_token', accessToken)
       admission = new AdmissionClient(config.admissionUri, accessToken)
       admission.onConnected(() => {
         connected = true
@@ -102,7 +102,7 @@ describe('Check Admission-client', () => {
         // console.log(JSON.stringify(event, null, 2))
       })
       admission.onError((reason: any) => {
-        console.error('===========================ERROR***************\n', reason)
+        console.log('===========================ERROR***************\n', reason)
       })
       return admission.init()
     }).then(() => {
@@ -111,8 +111,6 @@ describe('Check Admission-client', () => {
     .then(() => {
       expect(connected)
       done()
-    }).catch((error) => {
-      console.error('Error in beforeAll:', error)
     })
   })
 
