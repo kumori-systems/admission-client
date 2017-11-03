@@ -38,7 +38,20 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                             parameters: roleInfo.configuration
                         },
                         entrypoint: roleInfo.entrypoint,
-                        instances: {}
+                        instances: {},
+                        arrangement: {
+                            cpu: roleInfo.arrangement.cpu,
+                            bandwidth: roleInfo.arrangement.bandwidth,
+                            failurezones: roleInfo.arrangement.failurezones,
+                            instances: roleInfo.arrangement.__instances,
+                            ioperf: roleInfo.arrangement.__ioperf,
+                            iopsintensive: roleInfo.arrangement.__iopsintensive,
+                            maxinstances: roleInfo.arrangement.maxinstances,
+                            memory: roleInfo.arrangement.memory,
+                            mininstances: roleInfo.arrangement.mininstances,
+                            resilience: roleInfo.arrangement.__resilience
+                        },
+                        component: roleInfo.component
                     };
                     for (const instanceName in data.roles[roleName].instances) {
                         if (data.roles[roleName].instances[instanceName]) {
@@ -60,9 +73,22 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                 if (data.roles[roleName]) {
                     const roleInfo = data.roles[roleName];
                     result.roles[roleName] = {
+                        instances: {},
                         configuration: roleInfo.configuration,
-                        entrypoint: roleInfo.entrypoint,
-                        instances: {}
+                        arrangement: {
+                            cpu: roleInfo.arrangement.cpu,
+                            bandwidth: roleInfo.arrangement.bandwidth,
+                            failurezones: roleInfo.arrangement.failurezones,
+                            instances: roleInfo.arrangement.__instances,
+                            ioperf: roleInfo.arrangement.__ioperf,
+                            iopsintensive: roleInfo.arrangement.__iopsintensive,
+                            maxinstances: roleInfo.arrangement.maxinstances,
+                            memory: roleInfo.arrangement.memory,
+                            mininstances: roleInfo.arrangement.mininstances,
+                            resilience: roleInfo.arrangement.__resilience
+                        },
+                        component: roleInfo.component,
+                        entrypoint: roleInfo.entrypoint
                     };
                     roleInfo.instances.forEach((instanceName) => {
                         const instance = new _1.DeploymentInstanceInfo();
@@ -70,6 +96,21 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                         instance.role = roleName;
                         instance.publicIp = '127.0.0.1';
                         instance.privateIp = '127.0.0.1';
+                        if (roleInfo.instances[instanceName].configuration) {
+                            const configuration = {
+                                'resources': {}
+                            };
+                            for (let resourceName in roleInfo.instances[instanceName]
+                                .configuration.resources) {
+                                configuration['resources'][resourceName] = {
+                                    'type': roleInfo.instances[instanceName]
+                                        .configuration['resources'][resourceName].type,
+                                    'parameters': roleInfo.instances[instanceName].configuration
+                                        .resources[resourceName].parameters
+                                };
+                            }
+                            instance.configuration = configuration;
+                        }
                         if (data.volumes && data.volumes[instanceName]) {
                             instance.volumes = data.volumes[instanceName];
                         }
@@ -96,6 +137,18 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             instanceInfo.cnid = i0.id;
             instanceInfo.privateIp = i0.privateIp;
             instanceInfo.publicIp = i0.publicIp;
+            if (i0.configuration) {
+                const configuration = {
+                    'resources': {}
+                };
+                for (let resourceName in i0.configuration.resources) {
+                    configuration['resources'][resourceName] = {
+                        'type': i0.configuration.resources[resourceName].type,
+                        'parameters': i0.configuration.resources[resourceName].parameters
+                    };
+                }
+                instanceInfo.configuration = configuration;
+            }
             if (i0.arrangement) {
                 instanceInfo.arrangement = {
                     bandwith: i0.arrangement.bandwith,

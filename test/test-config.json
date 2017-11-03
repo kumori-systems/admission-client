@@ -1,6 +1,6 @@
 {
-  "acsUri": "http://acs-dame-argo.slap53.iti.es/acs",
-  "admissionUri": "http://admission-dame-argo.slap53.iti.es/admission",
+  "acsUri": "http://acs.stamp-name.kumori.cloud/acs",
+  "admissionUri": "https://admission.stamp-name.kumori.cloud/admission",
   "bundle": "/examples/calculator_1_0_0/deploy_bundle.zip",
   "deployFile": "/examples/calculator_1_0_0/deploy.json",
   "serviceUri": "eslap://sampleservicecalculator/services/sampleservicecalculator/1_0_0",

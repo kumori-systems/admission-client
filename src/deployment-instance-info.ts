@@ -4,6 +4,17 @@ export class DeploymentInstanceInfo {
   public cnid: string
   public publicIp: string
   public privateIp: string
+  public connected: boolean
+  public configuration: {
+    'resources': {
+      [key: string]: {
+        'type': string,
+        'parameters': {
+          [key: string]: any
+        }
+      }
+    }
+  }
   public arrangement: {
     // __instances:number
     // __cpu: number
