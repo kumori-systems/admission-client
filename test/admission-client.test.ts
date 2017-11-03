@@ -96,13 +96,14 @@ describe('Check Admission-client', () => {
       admission.onEcloudEvent((event: AdmissionEvent) => {
         const key = event.strType + '/' + event.strName
         // console.log('=========================== Event ' + key +
-        // ' ***************')
+        //   ' ***************')
         counter.set(key, cget(key) + 1)
         if (event.type === EcloudEventType.metrics) { return }
         // console.log(JSON.stringify(event, null, 2))
       })
       admission.onError((reason: any) => {
-        console.log('===========================ERROR***************\n', reason)
+        console.log('===========================ERROR***************')
+        console.log(reason)
       })
       return admission.init()
     }).then(() => {
@@ -334,7 +335,7 @@ describe('Check Admission-client', () => {
 
   it('check received events', () => {
     // counter.forEach((value, key) => {
-      // console.log(key, '=', value)
+    //   console.log(key, '=', value)
     // })
     expect(cget('service/undeploying')).toBeGreaterThan(0)
     expect(cget('service/undeployed')).toBeGreaterThan(0)
