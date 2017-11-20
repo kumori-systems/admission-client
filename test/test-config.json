@@ -1,10 +1,9 @@
 {
-  "acsUri": "http://acs.stamp-name.kumori.cloud/acs",
-  "admissionUri": "https://admission.stamp-name.kumori.cloud/admission",
-  "bundle": "/examples/calculator_1_0_0/deploy_bundle.zip",
+  "acsUri": "http://192.168.4.158:8090/acs",
+  "admissionUri": "http://192.168.4.158:8090/admission",
+  "bundle": "/examples/calculator_1_0_0/deploy_calc_bundle.zip",
   "deployFile": "/examples/calculator_1_0_0/deploy.json",
   "serviceUri": "eslap://sampleservicecalculator/services/sampleservicecalculator/1_0_0",
-  "manifestUri": "eslap://eslap.cloud/components/acs/1_0_0",
   "linkService1": "eslap://sampleinterservice/services/samplefrontend/1_0_12",
   "linkBundle1": "/examples/interservice-example/front/bundles/deploy_bundle.zip",
   "linkEntrypoint1": "back",
