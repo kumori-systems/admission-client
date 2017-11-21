@@ -391,7 +391,7 @@ class DefaultApi {
             throw new Error('Required parameter inline was null or undefined \
           when calling modifyDeployment.');
         }
-        fd.append('inline', new Blob([inline], { type: 'application/json' }), 'Manifest.json');
+        fd.append('inline', inline, 'Manifest.json');
         const requestOptions = {
             data: fd,
             headers: headerParams,

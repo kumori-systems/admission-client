@@ -160,7 +160,7 @@ export declare class DefaultApi {
      * * configuration (only when reconfig action)
      * * roles (only when manualScaling action)
      */
-    modifyDeployment(inline: string): Promise<InlineResponse2002>;
+    modifyDeployment(inline: any): Promise<InlineResponse2002>;
     /**
      *
      * Returns data of registered entities in the system. These can be

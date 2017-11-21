@@ -197,8 +197,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
     init() {
         const deferred = new _1.Deferred();
         const wsConfig = {
-            reconnection: true,
-            reconnectionAttempts: 3
+            reconnection: true
         };
         // if (this.accessToken) {
         //   wsConfig.extraHeaders = {
