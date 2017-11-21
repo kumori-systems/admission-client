@@ -49,7 +49,8 @@ export class AdmissionClient extends EventEmitter {
   public init (): Promise<void> {
     const deferred = new Deferred<void>()
     const wsConfig: any = {
-      reconnection: true
+      reconnection: true,
+      reconnectionAttempts: 3
     }
 
     // if (this.accessToken) {
@@ -529,7 +530,7 @@ export class AdmissionClient extends EventEmitter {
             }
             instance.configuration = configuration
           }
-
+          instance.connected = roleInfo.instances[instanceName].connected
           if (data.volumes && data.volumes[instanceName]) {
             instance.volumes = data.volumes[instanceName]
           }
@@ -579,6 +580,7 @@ export class AdmissionClient extends EventEmitter {
         resilience: i0.arrangement.__resilience
       }
     }
+    instanceInfo.connected = i0.connected
     return instanceInfo
   }
 
