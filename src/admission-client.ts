@@ -49,8 +49,7 @@ export class AdmissionClient extends EventEmitter {
   public init (): Promise<void> {
     const deferred = new Deferred<void>()
     const wsConfig: any = {
-      reconnection: true,
-      reconnectionAttempts: 3
+      reconnection: true
     }
 
     // if (this.accessToken) {
