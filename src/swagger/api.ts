@@ -493,7 +493,7 @@ export class DefaultApi {
    * * configuration (only when reconfig action)
    * * roles (only when manualScaling action)
    */
-  public modifyDeployment (inline: string): Promise<InlineResponse2002> {
+  public modifyDeployment (inline: any): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/deployments/configuration'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -505,7 +505,7 @@ export class DefaultApi {
           when calling modifyDeployment.')
     }
 
-    fd.append('inline', new Blob([inline], {type : 'application/json'}), 'Manifest.json')
+    fd.append('inline', inline, 'Manifest.json')
 
     const requestOptions: AxiosRequestConfig = {
       data: fd,
