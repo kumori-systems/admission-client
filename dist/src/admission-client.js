@@ -111,6 +111,9 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                             }
                             instance.configuration = configuration;
                         }
+                        if (roleInfo.instances[instanceName].connected !== undefined) {
+                            instance.connected = roleInfo.instances[instanceName].connected;
+                        }
                         if (data.volumes && data.volumes[instanceName]) {
                             instance.volumes = data.volumes[instanceName];
                         }
@@ -159,6 +162,9 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                     mininstances: i0.arrangement.mininstances,
                     resilience: i0.arrangement.__resilience
                 };
+            }
+            if (i0.connected !== undefined) {
+                instanceInfo.connected = i0.connected;
             }
             return instanceInfo;
         };
