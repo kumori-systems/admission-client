@@ -440,6 +440,7 @@ export class AdmissionClient extends EventEmitter {
     result.urn = urn
     result.service = data.service
     result.links = data.links
+    result.resources = data.resources
     result.roles = {}
     for (const roleName in data.roles) {
       if (data.roles[roleName]) {
@@ -530,6 +531,10 @@ export class AdmissionClient extends EventEmitter {
             instance.configuration = configuration
           }
 
+          if (roleInfo.instances[instanceName].connected !== undefined) {
+            instance.connected = roleInfo.instances[instanceName].connected
+          }
+
           if (data.volumes && data.volumes[instanceName]) {
             instance.volumes = data.volumes[instanceName]
           }
@@ -578,6 +583,9 @@ export class AdmissionClient extends EventEmitter {
         mininstances: i0.arrangement.mininstances,
         resilience: i0.arrangement.__resilience
       }
+    }
+    if (i0.connected !== undefined) {
+      instanceInfo.connected = i0.connected
     }
     return instanceInfo
   }
