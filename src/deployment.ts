@@ -40,7 +40,9 @@ export class Deployment {
       }
   }
   public resources: {
-    [key: string]: {
+    [key: string]: any
+    /* // Not all certs have this architecture
+    {
       type: string
       resource: {
         spec: string
@@ -50,5 +52,6 @@ export class Deployment {
         }
       }
     }
+    */
   }
 }
