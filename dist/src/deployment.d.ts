@@ -44,15 +44,6 @@ export declare class Deployment {
         };
     };
     resources: {
-        [key: string]: {
-            type: string;
-            resource: {
-                spec: string;
-                name: string;
-                parameters: {
-                    [key: string]: any;
-                };
-            };
-        };
+        [key: string]: any;
     };
 }

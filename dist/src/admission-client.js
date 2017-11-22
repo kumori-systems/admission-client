@@ -29,6 +29,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             result.urn = urn;
             result.service = data.service;
             result.links = data.links;
+            result.resources = data.resources;
             result.roles = {};
             for (const roleName in data.roles) {
                 if (data.roles[roleName]) {
