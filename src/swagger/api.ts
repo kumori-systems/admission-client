@@ -505,7 +505,7 @@ export class DefaultApi {
           when calling modifyDeployment.')
     }
 
-    fd.append('inline', inline, 'Manifest.json')
+    fd.append('inline', new Blob([inline]), 'Manifest.json')
 
     const requestOptions: AxiosRequestConfig = {
       data: fd,
