@@ -391,6 +391,10 @@ class DefaultApi {
             throw new Error('Required parameter inline was null or undefined \
           when calling modifyDeployment.');
         }
+        if (!this.isNode()) {
+            // Browsers need to transform the content from a string to a Blob
+            inline = new Blob([inline]);
+        }
         fd.append('inline', inline, 'Manifest.json');
         const requestOptions = {
             data: fd,
