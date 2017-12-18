@@ -395,6 +395,7 @@ export class DefaultApi {
       throw new Error('Required parameter linkManifest was null or \
             undefined when calling linksDelete.')
     }
+
     queryParameters['linkManifest'] = linkManifest
     const requestOptions: AxiosRequestConfig = {
       data: fd,
@@ -445,6 +446,12 @@ export class DefaultApi {
       throw new Error('Required parameter linkManifest was null or \
             undefined when calling linksPost.')
     }
+
+    if (!this.isNode()) {
+      // Browsers need to transform the content from a string to a Blob
+      linkManifest = new Blob([linkManifest])
+    }
+
     fd.append('linkManifest', linkManifest, 'Manifest.json')
 
     const requestOptions: AxiosRequestConfig = {
