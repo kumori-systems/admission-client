@@ -10,7 +10,7 @@
  *
  */
 import Axios from 'axios'
-import {AxiosRequestConfig, AxiosResponse} from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import FormData = require('form-data')
 import { Deferred } from '..'
 
@@ -96,13 +96,13 @@ export interface IAuthentication {
   /**
    * Apply authentication settings to header and query params.
    */
-  applyToRequest (requestOptions: any): void
+  applyToRequest(requestOptions: any): void
 }
 
 export class HttpBasicAuth implements IAuthentication {
   public username: string
   public password: string
-  public applyToRequest (requestOptions: any): void {
+  public applyToRequest(requestOptions: any): void {
     requestOptions.auth = {
       password: this.password,
       username: this.username
@@ -113,7 +113,7 @@ export class HttpBasicAuth implements IAuthentication {
 export class OAuth implements IAuthentication {
   public accessToken: string
 
-  public applyToRequest (requestOptions: any): void {
+  public applyToRequest(requestOptions: any): void {
     if (requestOptions && requestOptions.headers) {
       requestOptions.headers.authorization =
         'Bearer ' + this.accessToken
@@ -124,7 +124,7 @@ export class OAuth implements IAuthentication {
 export class VoidAuth implements IAuthentication {
   public username: string
   public password: string
-  public applyToRequest (_: any): void {
+  public applyToRequest(_: any): void {
     // Do nothing
   }
 }
@@ -138,9 +138,9 @@ export class DefaultApi {
     default: new VoidAuth()
   }
 
-  constructor (basePath?: string)
+  constructor(basePath?: string)
 
-  constructor (
+  constructor(
     basePathOrUsername: string,
     password?: string,
     basePath?: string) {
@@ -156,7 +156,7 @@ export class DefaultApi {
     }
   }
 
-  set accessToken (token: string) {
+  set accessToken(token: string) {
     this.authentications.apiAuthorization.accessToken = token
   }
 
@@ -171,7 +171,7 @@ export class DefaultApi {
    * The format of this file must follow the specification in the ECloud SDK
    *  manual, section 4.1.1.
    */
-  public bundlesPost (bundlesZip?: any, bundlesJson?: any):
+  public bundlesPost(bundlesZip?: any, bundlesJson?: any):
     Promise<InlineResponse200> {
     const localVarPath = this.basePath + '/bundles'
     const queryParameters: any = {}
@@ -225,7 +225,7 @@ export class DefaultApi {
    * Undeploys a deployment in the system.
    * @param urn Urn of deployment to be undeployed
    */
-  public deploymentsDelete (urn: string): Promise<InlineResponse2002> {
+  public deploymentsDelete(urn: string): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/deployments'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -270,7 +270,7 @@ export class DefaultApi {
    * @param inline The uploaded deployment file following specification
    * in ECloud Manual, section 4.
    */
-  public deploymentsPost (inline: any): Promise<InlineResponse2003> {
+  public deploymentsPost(inline: any): Promise<InlineResponse2003> {
     const localVarPath = this.basePath + '/deployments'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -333,7 +333,7 @@ export class DefaultApi {
    *  * extended.
    *  * urn. Only urns are listed.
    */
-  public findDeployments (urn?: string, owner?: string, show?: string):
+  public findDeployments(urn?: string, owner?: string, show?: string):
     Promise<InlineResponse2001> {
     const localVarPath = this.basePath + '/deployments'
     const queryParameters: any = {}
@@ -384,7 +384,7 @@ export class DefaultApi {
    * Removes a link between two services
    * @param linkManifest The manifest of the link to be removed.
    */
-  public linksDelete (linkManifest: any): Promise<InlineResponse2002> {
+  public linksDelete(linkManifest: any): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/links'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -434,7 +434,7 @@ export class DefaultApi {
    * Creates a new link between two deployed services.
    * @param linkManifest The manifest of the desired link.
    */
-  public linksPost (linkManifest: any): Promise<InlineResponse2002> {
+  public linksPost(linkManifest: any): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/links'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -493,7 +493,7 @@ export class DefaultApi {
    * * configuration (only when reconfig action)
    * * roles (only when manualScaling action)
    */
-  public modifyDeployment (inline: any): Promise<InlineResponse2002> {
+  public modifyDeployment(inline: any): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/deployments/configuration'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -503,6 +503,11 @@ export class DefaultApi {
     if (inline === null || inline === undefined) {
       throw new Error('Required parameter inline was null or undefined \
           when calling modifyDeployment.')
+    }
+
+    if (!this.isNode()) {
+      // Browsers need to transform the content from a string to a Blob
+      inline = new Blob([inline])
     }
 
     fd.append('inline', inline, 'Manifest.json')
@@ -546,7 +551,7 @@ export class DefaultApi {
    * @param urn urn of deployment whose data is needed. If not provided,
    * data about any accesible deployment is returned.
    */
-  public registriesGet (urn?: string): Promise<InlineResponse2002> {
+  public registriesGet(urn?: string): Promise<InlineResponse2002> {
     let localVarPath = this.basePath + '/registries'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -588,9 +593,9 @@ export class DefaultApi {
    * Remove a registered entity based on its urn.
    * @param urn The urn of registered entity to be deleted.
    */
-  public registriesUrnDelete (urn: string): Promise<InlineResponse2002> {
+  public registriesUrnDelete(urn: string): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/registries'
-    const queryParameters: any = {urn}
+    const queryParameters: any = { urn }
     const headerParams: any = Object.assign({}, this.defaultHeaders)
 
     // verify required parameter 'urn' is not null or undefined
@@ -632,7 +637,7 @@ export class DefaultApi {
    * Returns manifest of a registered entity based on its urn.
    * @param urn The urn of registered entity to get its manifest .
    */
-  public registriesUrnGet (urn: string): Promise<InlineResponse2002> {
+  public registriesUrnGet(urn: string): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/registries/{urn}'
       .replace('{' + 'urn' + '}', String(urn))
     const queryParameters: any = {}
@@ -677,7 +682,7 @@ export class DefaultApi {
    * Removes a test context
    * @param urn Identifier of the test context to be removed.
    */
-  public testContextsDelete (urn: string): Promise<InlineResponse2002> {
+  public testContextsDelete(urn: string): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/test-contexts'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -721,7 +726,7 @@ export class DefaultApi {
    *
    * List current test contexts in the stamp.
    */
-  public testContextsGet (): Promise<InlineResponse2002> {
+  public testContextsGet(): Promise<InlineResponse2002> {
     const localVarPath = this.basePath + '/test-contexts'
     const queryParameters: any = {}
     const headerParams: any = Object.assign({}, this.defaultHeaders)
@@ -753,7 +758,7 @@ export class DefaultApi {
     return deferred.promise
   }
 
-  public isNode (): boolean {
+  public isNode(): boolean {
     // tslint:disable-next-line
     return (typeof process === 'object' && process + '' === '[object process]')
   }
