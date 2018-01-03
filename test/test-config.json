@@ -4,7 +4,7 @@
   "bundle": "/examples/calculator_1_0_0/deploy_bundle.zip",
   "deployFile": "/examples/calculator_1_0_0/deploy.json",
   "serviceUri": "eslap://sampleservicecalculator/services/sampleservicecalculator/1_0_0",
-  "manifestUri": "eslap://eslap.cloud/components/acs/1_0_0",
+  "manifestUri": "eslap://eslap.cloud/components/acs/1_0_1",
   "linkService1": "eslap://sampleinterservice/services/samplefrontend/1_0_12",
   "linkBundle1": "/examples/interservice-example/front/bundles/deploy_bundle.zip",
   "linkEntrypoint1": "back",
