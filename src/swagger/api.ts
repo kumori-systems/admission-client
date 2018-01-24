@@ -187,7 +187,11 @@ export class DefaultApi {
     if (bundlesJson !== undefined) {
       fd.append('bundlesJson', bundlesJson, 'bundle.json')
     }
+
+    const headerParams: any = Object.assign({}, this.defaultHeaders)
+
     const requestOptions: AxiosRequestConfig = {
+      headers: headerParams,
       data: formParams,
       method: 'POST',
       params: queryParameters,

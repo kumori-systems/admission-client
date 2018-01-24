@@ -120,7 +120,9 @@ class DefaultApi {
         if (bundlesJson !== undefined) {
             fd.append('bundlesJson', bundlesJson, 'bundle.json');
         }
+        const headerParams = Object.assign({}, this.defaultHeaders);
         const requestOptions = {
+            headers: headerParams,
             data: formParams,
             method: 'POST',
             params: queryParameters,
