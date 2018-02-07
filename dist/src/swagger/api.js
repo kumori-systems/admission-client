@@ -14,6 +14,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const __1 = require("..");
+const followRedirects = require("follow-redirects");
+followRedirects.maxBodyLength = 5 * 1024 * 1024 * 1024;
 const defaultBasePath = 'http://admission.argo.kumori.cloud/admission';
 /* tslint:disable:no-unused-variable */
 /* tslint:disable:max-classes-per-file */

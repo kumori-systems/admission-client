@@ -13,6 +13,9 @@ import Axios from 'axios'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import FormData = require('form-data')
 import { Deferred } from '..'
+import followRedirects = require('follow-redirects')
+
+followRedirects.maxBodyLength =  5 * 1024 * 1024 * 1024
 
 const defaultBasePath = 'http://admission.argo.kumori.cloud/admission'
 
