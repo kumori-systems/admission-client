@@ -13,7 +13,7 @@ import Axios from 'axios'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import FormData = require('form-data')
 import { Deferred } from '..'
-import followRedirects = require('follow-redirects')
+const followRedirects = require('follow-redirects')
 
 followRedirects.maxBodyLength =  5 * 1024 * 1024 * 1024
 
@@ -190,7 +190,11 @@ export class DefaultApi {
     if (bundlesJson !== undefined) {
       fd.append('bundlesJson', bundlesJson, 'bundle.json')
     }
+
+    const headerParams: any = Object.assign({}, this.defaultHeaders)
+
     const requestOptions: AxiosRequestConfig = {
+      headers: headerParams,
       data: formParams,
       method: 'POST',
       params: queryParameters,
