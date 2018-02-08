@@ -237,7 +237,9 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             this.ws.on('error', (reason) => {
                 this.emit(this.onError, reason);
             });
-            deferred.resolve();
+            if (deferred.isPending()) {
+                deferred.resolve();
+            }
         });
         this.ws.on('unauthorized', (err) => {
             if (deferred.isPending()) {
