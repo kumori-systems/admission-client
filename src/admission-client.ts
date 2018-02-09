@@ -43,13 +43,26 @@ export class AdmissionClient extends EventEmitter {
     }
   }
 
+  public refreshToken (refreshedAccessToken: string) {
+    if (refreshedAccessToken) { // Check it's neither null or undefined
+      this.accessToken = refreshedAccessToken
+      if (this.api && this.api.accessToken) { // Updates swagger's api
+        this.api.accessToken = 'Bearer ' + this.accessToken
+      }
+      if (this.ws) { // Updates the websocket
+        this.ws.io.opts.query = 'token=' + this.accessToken
+      }
+    }
+  }
+
   /**
    * Asynchronous initialization of the stub.
    */
   public init (): Promise<void> {
     const deferred = new Deferred<void>()
     const wsConfig: any = {
-      reconnection: true
+      reconnection: true,
+      query: this.accessToken ? 'token=' + this.accessToken : undefined
     }
 
     // if (this.accessToken) {
@@ -61,10 +74,6 @@ export class AdmissionClient extends EventEmitter {
 
     const aux = this.basePath.split('/')
     let wsUri = aux[0] + '//' + aux[2]
-
-    if (this.accessToken !== undefined) {
-      wsUri = aux[0] + '//' + aux[2] + '?token=' + this.accessToken
-    }
 
     this.ws = sio(wsUri, wsConfig)
 
