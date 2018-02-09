@@ -200,7 +200,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         if (refreshedAccessToken) {
             this.accessToken = refreshedAccessToken;
             if (this.api && this.api.accessToken) {
-                this.api.accessToken = 'Bearer ' + this.accessToken;
+                this.api.accessToken = this.accessToken;
             }
             if (this.ws) {
                 this.ws.io.opts.query = 'token=' + this.accessToken;

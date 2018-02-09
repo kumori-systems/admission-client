@@ -47,7 +47,7 @@ export class AdmissionClient extends EventEmitter {
     if (refreshedAccessToken) { // Check it's neither null or undefined
       this.accessToken = refreshedAccessToken
       if (this.api && this.api.accessToken) { // Updates swagger's api
-        this.api.accessToken = 'Bearer ' + this.accessToken
+        this.api.accessToken = this.accessToken
       }
       if (this.ws) { // Updates the websocket
         this.ws.io.opts.query = 'token=' + this.accessToken

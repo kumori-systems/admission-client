@@ -159,6 +159,10 @@ export class DefaultApi {
     }
   }
 
+  get accessToken() {
+    return this.authentications.apiAuthorization.accessToken
+  }
+
   set accessToken(token: string) {
     this.authentications.apiAuthorization.accessToken = token
   }
