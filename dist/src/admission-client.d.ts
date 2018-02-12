@@ -22,6 +22,7 @@ export declare class AdmissionClient extends EventEmitter {
      * @param accessToken ACS token with credentials for operating in the stamp.
      */
     constructor(basePath: string, accessToken?: string);
+    refreshToken(refreshedAccessToken: string): void;
     /**
      * Asynchronous initialization of the stub.
      */

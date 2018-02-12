@@ -196,13 +196,25 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             this.api.accessToken = this.accessToken || '';
         }
     }
+    refreshToken(refreshedAccessToken) {
+        if (refreshedAccessToken) {
+            this.accessToken = refreshedAccessToken;
+            if (this.api && this.api.accessToken) {
+                this.api.accessToken = this.accessToken;
+            }
+            if (this.ws) {
+                this.ws.io.opts.query = 'token=' + this.accessToken;
+            }
+        }
+    }
     /**
      * Asynchronous initialization of the stub.
      */
     init() {
         const deferred = new _1.Deferred();
         const wsConfig = {
-            reconnection: true
+            reconnection: true,
+            query: this.accessToken ? 'token=' + this.accessToken : undefined
         };
         // if (this.accessToken) {
         //   wsConfig.extraHeaders = {
@@ -212,9 +224,6 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         // }
         const aux = this.basePath.split('/');
         let wsUri = aux[0] + '//' + aux[2];
-        if (this.accessToken !== undefined) {
-            wsUri = aux[0] + '//' + aux[2] + '?token=' + this.accessToken;
-        }
         this.ws = sio(wsUri, wsConfig);
         this.ws.on('connect', () => {
             this.emit(this.onConnected);
@@ -237,7 +246,9 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             this.ws.on('error', (reason) => {
                 this.emit(this.onError, reason);
             });
-            deferred.resolve();
+            if (deferred.isPending()) {
+                deferred.resolve();
+            }
         });
         this.ws.on('unauthorized', (err) => {
             if (deferred.isPending()) {
