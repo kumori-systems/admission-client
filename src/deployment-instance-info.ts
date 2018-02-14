@@ -31,7 +31,7 @@ export class DeploymentInstanceInfo {
     bandwith: number
     failureZones: number
   }
-  // This only is used in the context of local-stamp
-  public volumes?: { [key: string]: string }
+  // This is only used in the local-stamp context
+  public volumes?: { [key: string]: { urn: string, id: string } }
   public ports?: { [key: string]: string }
 }
