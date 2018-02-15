@@ -32,6 +32,6 @@ export class DeploymentInstanceInfo {
     failureZones: number
   }
   // This is only used in the local-stamp context
-  public volumes?: { [key: string]: { urn: string, id: string } }
+  public volumes?: { [key: string]: string | { id: string, urn?: string } }
   public ports?: { [key: string]: string }
 }

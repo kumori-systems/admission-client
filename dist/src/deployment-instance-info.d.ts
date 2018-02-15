@@ -25,9 +25,9 @@ export declare class DeploymentInstanceInfo {
         failureZones: number;
     };
     volumes?: {
-        [key: string]: {
-            urn: string;
+        [key: string]: string | {
             id: string;
+            urn?: string;
         };
     };
     ports?: {
