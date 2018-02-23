@@ -372,8 +372,7 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         this.api.resourcesGet(urn)
             .then((value) => {
             if (value.success) {
-                const result = value.data;
-                deferred.resolve(result);
+                deferred.resolve(value.data);
             }
             else {
                 deferred.reject(new Error(value.message));

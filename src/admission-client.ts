@@ -226,13 +226,12 @@ export class AdmissionClient extends EventEmitter {
    * is provided, only returns the info related to that resource.
    * @param urn The urn of the registered resource to get its manifest.
    */
-  public getResources (urn?: string): Promise<string[]> {
-    const deferred = new Deferred<string[]>()
+  public getResources (urn?: string): Promise<any> {
+    const deferred = new Deferred<any>()
     this.api.resourcesGet(urn)
     .then((value) => {
       if (value.success) {
-        const result: string[] = value.data
-        deferred.resolve(result)
+        deferred.resolve(value.data)
       } else {
         deferred.reject(new Error(value.message))
       }

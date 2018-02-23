@@ -58,7 +58,7 @@ export declare class AdmissionClient extends EventEmitter {
      * is provided, only returns the info related to that resource.
      * @param urn The urn of the registered resource to get its manifest.
      */
-    getResources(urn?: string): Promise<string[]>;
+    getResources(urn?: string): Promise<any>;
     /**
      * Registers a set of bundles in the system.
      * At least one of the parameters must have a proper value.
