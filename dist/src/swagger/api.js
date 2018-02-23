@@ -623,6 +623,36 @@ class DefaultApi {
         // tslint:disable-next-line
         return (typeof process === 'object' && process + '' === '[object process]');
     }
+    resourcesGet(urn) {
+        let localVarPath = this.basePath + '/resources';
+        const queryParameters = {};
+        const headerParams = Object.assign({}, this.defaultHeaders);
+        if (urn !== undefined) {
+            localVarPath = localVarPath + '/' + encodeURIComponent(urn);
+        }
+        const requestOptions = {
+            headers: headerParams,
+            method: 'GET',
+            params: queryParameters,
+            url: localVarPath
+        };
+        this.authentications.apiAuthorization.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
+        const deferred = new __1.Deferred();
+        axios_1.default(requestOptions)
+            .then((response) => {
+            if (response.status >= 200 && response.status <= 299) {
+                deferred.resolve(response.data);
+            }
+            else {
+                deferred.reject(response);
+            }
+        })
+            .catch((reason) => {
+            deferred.reject(reason);
+        });
+        return deferred.promise;
+    }
 }
 exports.DefaultApi = DefaultApi;
 // function isFile(val:any) {

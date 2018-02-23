@@ -363,6 +363,28 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         return deferred.promise;
     }
     /**
+     * Returns a list of volumes and information related to that volumes. If URN
+     * is provided, only returns the info related to that resource.
+     * @param urn The urn of the registered resource to get its manifest.
+     */
+    getResources(urn) {
+        const deferred = new _1.Deferred();
+        this.api.resourcesGet(urn)
+            .then((value) => {
+            if (value.success) {
+                const result = value.data;
+                deferred.resolve(result);
+            }
+            else {
+                deferred.reject(new Error(value.message));
+            }
+        })
+            .catch((reason) => {
+            deferred.reject(reason);
+        });
+        return deferred.promise;
+    }
+    /**
      * Registers a set of bundles in the system.
      * At least one of the parameters must have a proper value.
      * @param bundlesZip A zip with a set of bundles, each one of them in a

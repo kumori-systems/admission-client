@@ -222,6 +222,28 @@ export class AdmissionClient extends EventEmitter {
   }
 
   /**
+   * Returns a list of volumes and information related to that volumes. If URN
+   * is provided, only returns the info related to that resource.
+   * @param urn The urn of the registered resource to get its manifest.
+   */
+  public getResources (urn?: string): Promise<string[]> {
+    const deferred = new Deferred<string[]>()
+    this.api.resourcesGet(urn)
+    .then((value) => {
+      if (value.success) {
+        const result: string[] = value.data
+        deferred.resolve(result)
+      } else {
+        deferred.reject(new Error(value.message))
+      }
+    })
+    .catch( (reason) => {
+      deferred.reject(reason)
+    })
+    return deferred.promise
+  }
+
+  /**
    * Registers a set of bundles in the system.
    * At least one of the parameters must have a proper value.
    * @param bundlesZip A zip with a set of bundles, each one of them in a
