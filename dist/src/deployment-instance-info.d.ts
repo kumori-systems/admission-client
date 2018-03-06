@@ -8,6 +8,7 @@ export declare class DeploymentInstanceInfo {
     configuration: {
         'resources': {
             [key: string]: {
+                'name': string;
                 'type': string;
                 'parameters': {
                     [key: string]: any;
@@ -25,9 +26,9 @@ export declare class DeploymentInstanceInfo {
         failureZones: number;
     };
     volumes?: {
-        [key: string]: {
-            urn: string;
+        [key: string]: string | {
             id: string;
+            urn?: string;
         };
     };
     ports?: {

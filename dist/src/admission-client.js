@@ -107,7 +107,9 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
                                     'type': roleInfo.instances[instanceName]
                                         .configuration['resources'][resourceName].type,
                                     'parameters': roleInfo.instances[instanceName].configuration
-                                        .resources[resourceName].parameters
+                                        .resources[resourceName].parameters,
+                                    'name': roleInfo.instances[instanceName]
+                                        .configuration['resources'][resourceName].name
                                 };
                             }
                             instance.configuration = configuration;
@@ -142,12 +144,11 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             instanceInfo.privateIp = i0.privateIp;
             instanceInfo.publicIp = i0.publicIp;
             if (i0.configuration) {
-                const configuration = {
-                    'resources': {}
-                };
+                const configuration = { 'resources': {} };
                 for (let resourceName in i0.configuration.resources) {
                     configuration['resources'][resourceName] = {
                         'type': i0.configuration.resources[resourceName].type,
+                        'name': i0.configuration.resources[resourceName].name,
                         'parameters': i0.configuration.resources[resourceName].parameters
                     };
                 }
@@ -352,6 +353,27 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             if (value.success) {
                 const result = value.data;
                 deferred.resolve(result);
+            }
+            else {
+                deferred.reject(new Error(value.message));
+            }
+        })
+            .catch((reason) => {
+            deferred.reject(reason);
+        });
+        return deferred.promise;
+    }
+    /**
+     * Returns a list of volumes and information related to that volumes. If URN
+     * is provided, only returns the info related to that resource.
+     * @param urn The urn of the registered resource to get its manifest.
+     */
+    getResources(urn) {
+        const deferred = new _1.Deferred();
+        this.api.resourcesGet(urn)
+            .then((value) => {
+            if (value.success) {
+                deferred.resolve(value.data);
             }
             else {
                 deferred.reject(new Error(value.message));

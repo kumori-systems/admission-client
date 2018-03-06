@@ -19,6 +19,7 @@ export declare enum EcloudEventName {
     reconfig = 11,
     node = 12,
     service = 13,
+    volume = 14,
 }
 export declare class AdmissionEvent {
     timestamp: string;

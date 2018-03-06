@@ -193,4 +193,5 @@ export declare class DefaultApi {
      */
     testContextsGet(): Promise<InlineResponse2002>;
     isNode(): boolean;
+    resourcesGet(urn?: string): Promise<InlineResponse2002>;
 }

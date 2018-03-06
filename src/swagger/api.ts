@@ -781,6 +781,45 @@ export class DefaultApi {
     return (typeof process === 'object' && process + '' === '[object process]')
   }
 
+  public resourcesGet(urn?: string): Promise<InlineResponse2002>{
+
+    let localVarPath = this.basePath + '/resources'
+    const queryParameters: any = {}
+    const headerParams: any = Object.assign({}, this.defaultHeaders)
+
+    if (urn !== undefined) {
+      localVarPath = localVarPath + '/' + encodeURIComponent(urn)
+    }
+
+    const requestOptions: AxiosRequestConfig = {
+      headers: headerParams,
+      method: 'GET',
+      params: queryParameters,
+      url: localVarPath
+    }
+
+    this.authentications.apiAuthorization.applyToRequest(requestOptions)
+
+    this.authentications.default.applyToRequest(requestOptions)
+
+    const deferred: Deferred<InlineResponse2001> =
+      new Deferred<InlineResponse2001>()
+
+    Axios(requestOptions)
+      .then((response: AxiosResponse) => {
+        if (response.status >= 200 && response.status <= 299) {
+          deferred.resolve(response.data)
+        } else {
+          deferred.reject(response)
+        }
+      })
+      .catch((reason) => {
+        deferred.reject(reason)
+      })
+    return deferred.promise
+    
+  }
+
 }
 
 // function isFile(val:any) {

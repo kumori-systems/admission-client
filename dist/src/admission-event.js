@@ -23,6 +23,7 @@ var EcloudEventName;
     EcloudEventName[EcloudEventName["reconfig"] = 11] = "reconfig";
     EcloudEventName[EcloudEventName["node"] = 12] = "node";
     EcloudEventName[EcloudEventName["service"] = 13] = "service";
+    EcloudEventName[EcloudEventName["volume"] = 14] = "volume";
 })(EcloudEventName = exports.EcloudEventName || (exports.EcloudEventName = {}));
 class AdmissionEvent {
 }
