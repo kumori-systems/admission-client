@@ -8,6 +8,7 @@ export declare class DeploymentInstanceInfo {
     configuration: {
         'resources': {
             [key: string]: {
+                'name': string;
                 'type': string;
                 'parameters': {
                     [key: string]: any;
