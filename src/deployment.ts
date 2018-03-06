@@ -2,6 +2,7 @@ import {DeploymentInstanceInfo} from '.'
 
 export class Deployment {
   public urn: string
+  public nickname: string
   public service: string
   public roles: {
     [key: string]: {

@@ -1,6 +1,7 @@
 import { DeploymentInstanceInfo } from '.';
 export declare class Deployment {
     urn: string;
+    nickname: string;
     service: string;
     roles: {
         [key: string]: {

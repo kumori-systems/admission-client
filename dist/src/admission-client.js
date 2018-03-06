@@ -27,6 +27,8 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
             // console.log("== data", JSON.stringify(data,null,2));
             const result = new _1.Deployment();
             result.urn = urn;
+            if (data.nickname)
+                result.nickname = data.nickname;
             result.service = data.service;
             result.links = data.links;
             result.resources = data.resources;
@@ -68,6 +70,8 @@ class AdmissionClient extends typed_event_emitter_1.EventEmitter {
         this.mapDeploymentLocalStamp = (urn, data) => {
             const result = new _1.Deployment();
             result.urn = urn;
+            if (data.nickname)
+                result.nickname = data.nickname;
             result.service = data.serviceURN;
             result.roles = {};
             for (const roleName in data.roles) {
