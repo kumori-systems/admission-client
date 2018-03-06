@@ -471,6 +471,7 @@ export class AdmissionClient extends EventEmitter {
     // console.log("== data", JSON.stringify(data,null,2));
     const result = new Deployment()
     result.urn = urn
+    if(data.nickname) result.nickname = data.nickname
     result.service = data.service
     result.links = data.links
     result.resources = data.resources
@@ -517,6 +518,7 @@ export class AdmissionClient extends EventEmitter {
   private mapDeploymentLocalStamp = (urn: string, data: any): Deployment => {
     const result = new Deployment()
     result.urn = urn
+    if(data.nickname) result.nickname = data.nickname
     result.service = data.serviceURN
     result.roles = {}
     for (const roleName in data.roles) {
