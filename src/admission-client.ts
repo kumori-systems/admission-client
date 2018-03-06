@@ -549,7 +549,9 @@ export class AdmissionClient extends EventEmitter {
 
           if (roleInfo.instances[instanceName].configuration) {
             const configuration: {'resources': {[key: string]:
-              {'type': string,'parameters': {[key: string]: any}}}} = {
+              {'type': string,
+              'name':string,
+              'parameters': {[key: string]: any}}}} = {
                 'resources': {}
               }
             for (let resourceName in roleInfo.instances[instanceName]
@@ -558,7 +560,9 @@ export class AdmissionClient extends EventEmitter {
                 'type': roleInfo.instances[instanceName]
                 .configuration['resources'][resourceName].type,
                 'parameters': roleInfo.instances[instanceName].configuration
-                .resources[resourceName].parameters
+                .resources[resourceName].parameters,
+                'name': roleInfo.instances[instanceName]
+                .configuration['resources'][resourceName].name
               }
             }
             instance.configuration = configuration
@@ -594,13 +598,19 @@ export class AdmissionClient extends EventEmitter {
     instanceInfo.privateIp = i0.privateIp
     instanceInfo.publicIp = i0.publicIp
     if (i0.configuration) {
-      const configuration: {'resources': {[key: string]:
-        {'type': string,'parameters': {[key: string]: any}}}} = {
-          'resources': {}
+      const configuration: {
+        'resources': {
+          [key: string]: {
+            'type': string,
+            'name':string,
+            'parameters': {[key: string]: any}
+          }
         }
+      } = { 'resources': { } }
       for (let resourceName in i0.configuration.resources) {
         configuration['resources'][resourceName] = {
           'type': i0.configuration.resources[resourceName].type,
+          'name': i0.configuration.resources[resourceName].name,
           'parameters': i0.configuration.resources[resourceName].parameters
         }
       }
