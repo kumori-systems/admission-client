@@ -379,7 +379,7 @@ describe('Check Admission-client', () => {
         console.log('Checked instance/status OK')
         // expect(cget('metrics/service')).toBeGreaterThan(0)
         done()
-      } catch err {
+      } catch(err) {
         done(err)
       }
     }, 120*1000)
