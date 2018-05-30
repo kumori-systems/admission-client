@@ -1,10 +1,10 @@
 import {} from 'jest'
 
-import {AcsClient} from 'acs-client'
+import {AcsClient} from '@kumori/acs-client'
 import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList,
   EcloudEventType, Endpoint, FileStream, RegistrationResult,
   ScalingDeploymentModification}
-  from '../src'
+  from '../lib'
 import {createReadStream, readFileSync} from 'fs'
 
 let admission: AdmissionClient
