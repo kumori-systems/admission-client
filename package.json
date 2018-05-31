@@ -28,10 +28,14 @@
     "clean": "taskr clean",
     "superclean": "taskr superclean"
   },
-  "author": "jpla@iti.es",
-  "license": "ISC",
+  "author": "Kumori Systems <info@kumori.systems>",
+  "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/kumori-systems/admission-client.git"
+  },
   "dependencies": {
-    "@kumori/acs-client": "https://github.com/kumori-systems/acs-client.git#master",
+    "@kumori/acs-client": "1.0.0",
     "axios": "0.16.2",
     "form-data": "2.2.0",
     "socket.io-client": "2.0.3",
