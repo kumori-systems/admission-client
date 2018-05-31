@@ -15,7 +15,7 @@ exports.default = function * (task) {
 }
 
 exports.clean = function * (task) {
-  yield task.clear(['lib-test', 'coverage']);
+  yield task.clear(['coverage']);
 }
 
 exports.superclean = function * (task) {
@@ -46,26 +46,12 @@ exports.build = function * (task) {
     })
 }
 
-exports.buildtest = function * (task) {
-  let tsopts = getJSON('./tsconfig.json')
-    ;
-
-  yield task.serial(['build'])
-    .source("test/**/*.ts")
-    .typescript(tsopts)
-    .target("lib-test")
-}
-
 exports.test = function * (task) {
-  exports.test = function * (task) {
-    yield task.source('test/**/*.js').jest({ bail:true, notify:true });
-  }
-  yield task.serial(['buildtest'])
-    .source("./lib-test/test/**/*.test.js")
-    .jest()
+  let tsopts = getJSON('./jest.json')
+  yield task.jest(tsopts)
 }
 
 exports.lint = function * (task) {
-  yield task.source('./{src,test}/**/*.ts')
+  yield task.source('./{src,tests}/**/*.ts')
     .shell('tslint --type-check --project $glob')
 }
