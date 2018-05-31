@@ -4,7 +4,7 @@ This is a node.js module to communication with the Kumori Platform's Admission S
 
 ## Description
 
-This module avoids using the Acs REST Admission raw.
+This module avoids using the Admission REST Admission raw.
 
 ## Table of Contents
 

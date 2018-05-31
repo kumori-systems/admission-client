@@ -10,18 +10,6 @@ function getJSON(filepath) {
   return (new vm.Script(jsonString)).runInNewContext();
 }
 
-function *createProductionPackage(file) {
-  let packjson = JSON.parse(file.data.toString('utf8'))
-  if (packjson.devDependencies) {
-    delete packjson.devDependencies
-  }
-  if (packjson.scripts) {
-    delete packjson.scripts
-  }
-  file.base = path.parse(file.base).name + ".json";
-  file.data = new Buffer(JSON.stringify(packjson, null, 2));
-}
-
 exports.default = function * (task) {
   yield task.serial(['build']);
 }
