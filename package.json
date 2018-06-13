@@ -1,6 +1,6 @@
 {
   "name": "@kumori/admission-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Client Stub for Kumori Admission service",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -31,8 +31,8 @@
   "author": "Kumori Systems <info@kumori.systems>",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/kumori-systems/admission-client.git"
+    "type": "git",
+    "url": "https://github.com/kumori-systems/admission-client.git"
   },
   "dependencies": {
     "@kumori/acs-client": "1.0.0",
