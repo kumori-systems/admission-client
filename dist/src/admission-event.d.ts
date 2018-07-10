@@ -13,13 +13,15 @@ export declare enum EcloudEventName {
     undeploying = 5,
     undeployed = 6,
     scale = 7,
-    realocate = 8,
-    restart = 9,
-    status = 10,
-    reconfig = 11,
-    node = 12,
-    service = 13,
-    volume = 14,
+    scaling = 8,
+    scaled = 9,
+    realocate = 10,
+    restart = 11,
+    status = 12,
+    reconfig = 13,
+    node = 14,
+    service = 15,
+    volume = 16,
 }
 export declare class AdmissionEvent {
     timestamp: string;

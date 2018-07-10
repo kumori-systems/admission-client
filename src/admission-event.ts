@@ -1,10 +1,9 @@
 export enum EcloudEventType {node, service, instance, metrics}
 
 export enum EcloudEventName {
-  disconnected,
-  deploying, deployed, link, unlink, undeploying, undeployed, scale, realocate,
-  restart, status, reconfig,
-  node, service, volume
+  disconnected, deploying, deployed, link, unlink, undeploying, undeployed,
+  scale, scaling, scaled, realocate, restart, status, reconfig, node, service,
+  volume
 }
 
 export class AdmissionEvent {

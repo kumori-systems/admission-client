@@ -17,13 +17,15 @@ var EcloudEventName;
     EcloudEventName[EcloudEventName["undeploying"] = 5] = "undeploying";
     EcloudEventName[EcloudEventName["undeployed"] = 6] = "undeployed";
     EcloudEventName[EcloudEventName["scale"] = 7] = "scale";
-    EcloudEventName[EcloudEventName["realocate"] = 8] = "realocate";
-    EcloudEventName[EcloudEventName["restart"] = 9] = "restart";
-    EcloudEventName[EcloudEventName["status"] = 10] = "status";
-    EcloudEventName[EcloudEventName["reconfig"] = 11] = "reconfig";
-    EcloudEventName[EcloudEventName["node"] = 12] = "node";
-    EcloudEventName[EcloudEventName["service"] = 13] = "service";
-    EcloudEventName[EcloudEventName["volume"] = 14] = "volume";
+    EcloudEventName[EcloudEventName["scaling"] = 8] = "scaling";
+    EcloudEventName[EcloudEventName["scaled"] = 9] = "scaled";
+    EcloudEventName[EcloudEventName["realocate"] = 10] = "realocate";
+    EcloudEventName[EcloudEventName["restart"] = 11] = "restart";
+    EcloudEventName[EcloudEventName["status"] = 12] = "status";
+    EcloudEventName[EcloudEventName["reconfig"] = 13] = "reconfig";
+    EcloudEventName[EcloudEventName["node"] = 14] = "node";
+    EcloudEventName[EcloudEventName["service"] = 15] = "service";
+    EcloudEventName[EcloudEventName["volume"] = 16] = "volume";
 })(EcloudEventName = exports.EcloudEventName || (exports.EcloudEventName = {}));
 class AdmissionEvent {
 }
