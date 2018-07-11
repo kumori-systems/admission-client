@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var EcloudEventType;
 (function (EcloudEventType) {
-    EcloudEventType[EcloudEventType["node"] = 0] = "node";
-    EcloudEventType[EcloudEventType["service"] = 1] = "service";
-    EcloudEventType[EcloudEventType["instance"] = 2] = "instance";
-    EcloudEventType[EcloudEventType["metrics"] = 3] = "metrics";
+    EcloudEventType[EcloudEventType["admission"] = 0] = "admission";
+    EcloudEventType[EcloudEventType["node"] = 1] = "node";
+    EcloudEventType[EcloudEventType["service"] = 2] = "service";
+    EcloudEventType[EcloudEventType["instance"] = 3] = "instance";
+    EcloudEventType[EcloudEventType["metrics"] = 4] = "metrics";
 })(EcloudEventType = exports.EcloudEventType || (exports.EcloudEventType = {}));
 var EcloudEventName;
 (function (EcloudEventName) {

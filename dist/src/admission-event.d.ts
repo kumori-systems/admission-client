@@ -1,8 +1,9 @@
 export declare enum EcloudEventType {
-    node = 0,
-    service = 1,
-    instance = 2,
-    metrics = 3,
+    admission = 0,
+    node = 1,
+    service = 2,
+    instance = 3,
+    metrics = 4,
 }
 export declare enum EcloudEventName {
     disconnected = 0,
