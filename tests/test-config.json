@@ -10,6 +10,6 @@
   "linkService2": "eslap://sampleinterservice/services/samplebackend/1_0_12",
   "linkBundle2": "/examples/interservice-example/back/bundles/deploy_bundle.zip",
   "linkEntrypoint2": "service",
-  "user": "admin-eslap@iti.es",
-  "password": "admin"
+  "user": "__admin_user__",
+  "password": "__admin_pass__"
 }
