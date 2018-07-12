@@ -60,5 +60,27 @@
     "tslint": "5.4.3",
     "tslint-config-standard": "5.0.2",
     "typescript": "2.3.3"
+  },
+  "release": {
+    "noCi": true,
+    "dryRun": true,
+    "branch": "github-ready",
+    "verifyConditions": [
+      "@semantic-release/github",
+      "@semantic-release/npm"
+    ],
+    "analyzeCommits": {
+      "parserOpts": {
+        "mergePattern": "^Merge branch \\'(.+)\\' into \\'(.+)\\'$"
+      }
+    },
+    "publish": [
+      "@semantic-release/github",
+      "@semantic-release/npm"
+    ],
+    "prepare": [
+      "@semantic-release/changelog",
+      "@semantic-release/git"
+    ]
   }
 }
