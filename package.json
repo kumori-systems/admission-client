@@ -5,6 +5,9 @@
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
   "jest": {
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!@foo)"
+    ],
     "testEnvironment": "node",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
