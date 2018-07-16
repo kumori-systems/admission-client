@@ -44,7 +44,7 @@ const updateState = (adm: AdmissionClient) => {
     return adm.findStorage()
   })
   .then((result) => {
-    return registries = result.length
+    registries = result.length
     // console.log('Registries:', registries)
   })
 }
@@ -129,7 +129,7 @@ describe('Check Admission-client', () => {
     })
     .then(() => {
       admission.close()
-      return done()
+      done()
     })
   })
 
@@ -138,7 +138,7 @@ describe('Check Admission-client', () => {
     .then((result) => {
       registries = result.length
       // console.log('Registries:', registries)
-      return expect(registries).toBeGreaterThan(-1)
+      expect(registries).toBeGreaterThan(-1)
     })
   })
 
@@ -147,7 +147,7 @@ describe('Check Admission-client', () => {
     .then((result) => {
       deployments = Object.keys(result).length
       // console.log('Deployments:', registries)
-      return expect(deployments).toBeGreaterThan(-1)
+      expect(deployments).toBeGreaterThan(-1)
       // const deployment: Deployment = result[Object.keys(result)[5]]
       // expect(deployment.service).toBeDefined()
       // expect(deployment.urn).toBeDefined()
@@ -169,7 +169,6 @@ describe('Check Admission-client', () => {
     .then(() => {
       preRegistries = registries
       preDeployments = deployments
-      return null;
     })
   })
 
@@ -207,7 +206,6 @@ describe('Check Admission-client', () => {
     .then((manifest) => {
       expect(manifest).toBeDefined()
       expect(manifest.name).toBe(config.serviceUri)
-      return null
     })
   })
 
@@ -227,7 +225,6 @@ describe('Check Admission-client', () => {
       .toHaveLength(1)
       expect(Object.keys(deploymentInfo.roles.worker.instances))
       .toHaveLength(1)
-      return null
     })
   })
 
@@ -244,7 +241,6 @@ describe('Check Admission-client', () => {
       const info: Deployment = result[calculatorURN]
       expect(Object.keys(info.roles.cfe.instances))
       .toHaveLength(scaleTarget)
-      return null
     })
   })
 
@@ -261,7 +257,6 @@ describe('Check Admission-client', () => {
       const info: Deployment = result[calculatorURN]
       expect(Object.keys(info.roles.cfe.instances))
       .toHaveLength(scaleTarget)
-      return null
     })
   })
 
@@ -282,7 +277,6 @@ describe('Check Admission-client', () => {
       // console.log("preDeployments", preDeployments, "deployments", deployments);
       expect([preRegistries, preRegistries + 2]).toContain(registries)
       expect(preDeployments).toBe(deployments)
-      return null
     })
   })
 
@@ -336,7 +330,6 @@ describe('Check Admission-client', () => {
       expected[config.linkEntrypoint1][urn2] = {}
       expected[config.linkEntrypoint1][urn2][config.linkEntrypoint2] = {}
       expect(info.links).toEqual(expected)
-      return null
     })
     .then(( ) => {
       return admission.findDeployments(urn2)
@@ -350,7 +343,6 @@ describe('Check Admission-client', () => {
       expected[config.linkEntrypoint2][urn1] = {}
       expected[config.linkEntrypoint2][urn1][config.linkEntrypoint1] = {}
       expect(info.links).toEqual(expected)
-      return null
     })
     .then(() => {
       return admission.unlinkDeployments(link)
