@@ -5,6 +5,7 @@
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
   "jest": {
+    "testEnvironment": "node",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
@@ -12,10 +13,7 @@
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
+      "js"
     ]
   },
   "browser": {
@@ -24,7 +22,7 @@
     "./dist/src/file-stream.js.map": "./dist/src/file-stream-browser.js.map"
   },
   "scripts": {
-    "spec": "./node_modules/.bin/jest",
+    "spec": "./node_modules/.bin/jest dist/test/*.test.js",
     "clean": "rm -rf dist",
     "lint": "./node_modules/.bin/tslint  --type-check --project .",
     "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist"
