@@ -79,6 +79,7 @@ const cget = (key: string): number => {
 describe('Check Admission-client', () => {
 
   beforeAll((done) => {
+    console.log('Executing before all');
     config = JSON.parse(readFileSync(configPath).toString())
     expect(config).toHaveProperty('acsUri')
     acs = new AcsClient(config.acsUri)
