@@ -1,5 +1,3 @@
-import {} from 'jest'
-
 import {AcsClient} from 'acs-client'
 import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList,
   EcloudEventType, Endpoint, FileStream, RegistrationResult,
