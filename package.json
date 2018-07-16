@@ -24,7 +24,7 @@
     "./dist/src/file-stream.js.map": "./dist/src/file-stream-browser.js.map"
   },
   "scripts": {
-    "spec": "./node_modules/.bin/jest dist/test/*.test.js",
+    "spec": "./node_modules/.bin/jest",
     "clean": "rm -rf dist",
     "lint": "./node_modules/.bin/tslint  --type-check --project .",
     "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist"
