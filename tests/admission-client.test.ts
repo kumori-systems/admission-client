@@ -1,5 +1,4 @@
 import {} from 'jest'
-
 import { AcsClient } from '@kumori/acs-client'
 import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList,
   EcloudEventType, Endpoint, FileStream, RegistrationResult,
