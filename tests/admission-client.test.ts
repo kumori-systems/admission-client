@@ -1,4 +1,5 @@
-import {AcsClient} from 'acs-client'
+import {} from 'jest'
+import { AcsClient } from '@kumori/acs-client'
 import {AdmissionClient, AdmissionEvent, Deployment, DeploymentList,
   EcloudEventType, Endpoint, FileStream, RegistrationResult,
   ScalingDeploymentModification}
@@ -7,7 +8,7 @@ import {createReadStream, readFileSync} from 'fs'
 
 let admission: AdmissionClient
 let acs: AcsClient
-const configPath = __dirname + '/../../test/test-config.json'
+const configPath = __dirname + '/../tests/test-config.json'
 let config: any
 let deployments: number = 0
 let registries: number = 0
@@ -78,7 +79,7 @@ const cget = (key: string): number => {
 
 describe('Check Admission-client', () => {
 
-  beforeAll((done) => {
+  beforeAll(() => {
     config = JSON.parse(readFileSync(configPath).toString())
     expect(config).toHaveProperty('acsUri')
     acs = new AcsClient(config.acsUri)
@@ -115,7 +116,7 @@ describe('Check Admission-client', () => {
     })
     .then(() => {
       expect(connected)
-      done()
+      // done()
     })
   })
 

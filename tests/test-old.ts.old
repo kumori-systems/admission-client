@@ -1,6 +1,6 @@
 
-import {AcsClient} from "acs-client";
-import {AdmissionClient, AdmissionEvent, Deployment, EcloudEventType} 
+import {AcsClient} from "@kumori/acs-client";
+import {AdmissionClient, AdmissionEvent, Deployment, EcloudEventType}
   from "../src";
 import {createReadStream} from 'fs';
 
@@ -56,7 +56,7 @@ const beforeAndAfter = (adm:AdmissionClient, promise:Promise<any>) => {
     return updateState(adm);
   })
   .then (() => {
-    return result;  
+    return result;
   })
 };
 
@@ -79,7 +79,7 @@ acs.login(username, password)
     console.log("===========================CONNECT***************");
   });
   admission.onEcloudEvent((event:AdmissionEvent) => {
-   console.log("=========================== Event " + event.strType + "/" + 
+   console.log("=========================== Event " + event.strType + "/" +
      event.strName + " ***************");
     if (event.type == EcloudEventType.metrics){return;}
     console.log(JSON.stringify(event, null, 2));
@@ -114,7 +114,7 @@ acs.login(username, password)
 })
 .then(() => {
   console.log("DEPLOYING COMPONENT", BUNDLE);
-  return beforeAndAfter(admission, 
+  return beforeAndAfter(admission,
     admission.sendBundle(createReadStream(BUNDLE)));
 })
 .then((result) => {

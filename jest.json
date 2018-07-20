@@ -1,0 +1,26 @@
+{
+  "verbose": true,
+  "bail": false,
+  "notify": true,
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "**/src/*.{ts,tsx,js,jsx}"
+  ],
+  "coverageDirectory": "./coverage",
+  "testEnvironment": "node",
+  "transform": {
+    "^.+\\.(t|j)sx?$": "ts-jest"
+  },
+  "roots": [
+    "<rootDir>/tests"
+  ],
+  "testRegex": "tests\\/.*.test.ts",
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js",
+    "jsx",
+    "json",
+    "node"
+  ]
+}

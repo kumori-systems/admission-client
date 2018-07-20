@@ -1,9 +1,9 @@
 {
-  "name": "admission-client",
+  "name": "@kumori/admission-client",
   "version": "1.0.0",
-  "description": "Client Stub for ECloud Admission",
-  "main": "dist/src/index.js",
-  "typings": "dist/src/index.d.ts",
+  "description": "Client Stub for Kumori Admission service",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "jest": {
     "testEnvironment": "node",
     "transform": {
@@ -17,34 +17,50 @@
     ]
   },
   "browser": {
-    "./dist/src/file-stream.d.ts": "./dist/src/file-stream-browser.d.ts",
-    "./dist/src/file-stream.js": "./dist/src/file-stream-browser.js",
-    "./dist/src/file-stream.js.map": "./dist/src/file-stream-browser.js.map"
+    "./lib/file-stream.d.ts": "./lib/file-stream-browser.d.ts",
+    "./lib/file-stream.js": "./lib/file-stream-browser.js",
+    "./lib/file-stream.js.map": "./lib/file-stream-browser.js.map"
   },
   "scripts": {
-    "spec": "./node_modules/.bin/jest dist/test/*.test.js",
-    "clean": "rm -rf dist",
-    "lint": "./node_modules/.bin/tslint  --type-check --project .",
-    "dist": "rm -rf dist;mkdir dist;./node_modules/.bin/tsc -p tsconfig.json --outDir dist"
+    "build": "taskr build",
+    "lint": "taskr lint",
+    "test": "taskr test ",
+    "clean": "taskr clean",
+    "superclean": "taskr superclean"
   },
-  "author": "jpla@iti.es",
-  "license": "ISC",
+  "author": "Kumori Systems <info@kumori.systems>",
+  "license": "MIT",
+  "repository": "github:kumori-systems/admission-client",
   "dependencies": {
-    "acs-client": "git+ssh://git@gitlab.com:ECloud/acs-client.git#master",
+    "@kumori/acs-client": "gitlab:ECloud/acs-client#ticket1300",
+    "@types/form-data": "0.0.33",
+    "@types/node": "7.0.22",
+    "@types/socket.io-client": "1.4.29",
     "axios": "0.16.2",
     "form-data": "2.2.0",
     "socket.io-client": "2.0.3",
     "typed-event-emitter": "1.0.3"
   },
   "devDependencies": {
-    "@types/form-data": "0.0.33",
+    "@taskr/clear": "^1.1.0",
+    "@taskr/jest": "^1.1.1",
+    "@taskr/shell": "^1.1.0",
+    "@taskr/typescript": "^1.1.0",
     "@types/jest": "20.0.2",
     "@types/node": "7.0.22",
-    "@types/socket.io-client": "1.4.29",
-    "jest": "23.4.1",
-    "ts-jest": "23.0.0",
+    "jest": "20.0.4",
+    "semantic-release": "^15.8.1",
+    "semantic-release-shared-config": "gitlab:kumori/semantic-release-shared-config",
+    "taskr": "1.1.0",
+    "ts-jest": "22.4.6",
     "tslint": "5.4.3",
     "tslint-config-standard": "5.0.2",
     "typescript": "2.3.3"
+  },
+  "release": {
+    "extends": "semantic-release-shared-config",
+    "noCi": false,
+    "dryRun": false,
+    "npmPublish": true
   }
 }
